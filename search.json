@@ -91,11 +91,32 @@
     "text": "Technical Implementation\nData Sources: B3 (Brazilian Stock Exchange) official financial reports\nAnalysis Tools: R (tidyverse, GetDFPData2, ggplot2, plotly)\nMethodology: Balance sheet analysis with sector benchmarking\nInteractivity: Dynamic plots with hover information and classification tooltips\n_____________________________________________________________________________________________________________\nThis analysis demonstrates the integration of financial data extraction, statistical analysis, and interactive visualization techniques using R programming. The complete methodology can be adapted for analyzing any publicly traded company on B3."
   },
   {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
+    "objectID": "index.en.html",
+    "href": "index.en.html",
+    "title": "Sidney Bissoli",
     "section": "",
-    "text": "Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets.\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "I am a psychologist with expertise in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior."
+  },
+  {
+    "objectID": "index.en.html#welcome",
+    "href": "index.en.html#welcome",
+    "title": "Sidney Bissoli",
+    "section": "",
+    "text": "I am a psychologist with expertise in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior."
+  },
+  {
+    "objectID": "index.en.html#research-interests",
+    "href": "index.en.html#research-interests",
+    "title": "Sidney Bissoli",
+    "section": "Research Interests",
+    "text": "Research Interests\n\nPsychology: Psychoanalysis, behavioral economics, decision-making processes\nPublic Health: Population health patterns, epidemiological analysis, health policy research\nFinancial Markets: Investment analysis, market behavior, economic indicators"
+  },
+  {
+    "objectID": "index.en.html#skills-tools",
+    "href": "index.en.html#skills-tools",
+    "title": "Sidney Bissoli",
+    "section": "Skills & Tools",
+    "text": "Skills & Tools\n\nProgramming: R (tidyverse, ggplot2, tidymodels)\nAnalysis: Statistical modeling, data visualization, predictive analytics\nDomains: Psychological research, public health data, financial market analysis\n\n\nExplore my projects to see R analysis in psychology, health, and finance, or read my blog for insights on these interconnected fields."
   },
   {
     "objectID": "about.html",
@@ -105,32 +126,39 @@
     "text": "About this site\n\n1 + 1\n\n[1] 2"
   },
   {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets.\n\n\n\n\n\n\n\n\nNenhum item correspondente"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Sidney Bissoli",
     "section": "",
-    "text": "I am a psychologist with expertise in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior."
+    "text": "Sou psicólogo, com experiência em pesquisa na área de saúde pública e análise do mercado financeiro. Uso a linguagem de programação R para explorar dados complexos e obter insights vaIiosos que conectam Psicologia, políticas públicas de saúde e comportamento econômico."
   },
   {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
+    "objectID": "index.html#bem-vindo",
+    "href": "index.html#bem-vindo",
     "title": "Sidney Bissoli",
     "section": "",
-    "text": "I am a psychologist with expertise in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior."
+    "text": "Sou psicólogo, com experiência em pesquisa na área de saúde pública e análise do mercado financeiro. Uso a linguagem de programação R para explorar dados complexos e obter insights vaIiosos que conectam Psicologia, políticas públicas de saúde e comportamento econômico."
   },
   {
-    "objectID": "index.html#research-interests",
-    "href": "index.html#research-interests",
+    "objectID": "index.html#interesses-de-pesquisa",
+    "href": "index.html#interesses-de-pesquisa",
     "title": "Sidney Bissoli",
-    "section": "Research Interests",
-    "text": "Research Interests\n\nPsychology: Psychoanalysis, behavioral economics, decision-making processes\nPublic Health: Population health patterns, epidemiological analysis, health policy research\nFinancial Markets: Investment analysis, market behavior, economic indicators"
+    "section": "Interesses de pesquisa",
+    "text": "Interesses de pesquisa\n\nPsicologia: Psicanálise, comportamento econômico, processo de tomada de decisão\nSaúde pública: padrões de saúde/doença da população, análise epidemiológica, políticas públicas de saúde\nMercado financeiro: análise de investimento, comportamento do mercado, indicadores econômicos"
   },
   {
-    "objectID": "index.html#skills-tools",
-    "href": "index.html#skills-tools",
+    "objectID": "index.html#habilidades-ferramentas",
+    "href": "index.html#habilidades-ferramentas",
     "title": "Sidney Bissoli",
-    "section": "Skills & Tools",
-    "text": "Skills & Tools\n\nProgramming: R (tidyverse, ggplot2, tidymodels)\nAnalysis: Statistical modeling, data visualization, predictive analytics\nDomains: Psychological research, public health data, financial market analysis\n\n\nExplore my projects to see R analysis in psychology, health, and finance, or read my blog for insights on these interconnected fields."
+    "section": "Habilidades & Ferramentas",
+    "text": "Habilidades & Ferramentas\n\nProgramação: R (tidyverse, ggplot2, tidymodels)\nAnálise: modelagem estatística, visualização de dados, análise preditiva\nDomínios: pesquisa em Psicologia, dados de saúde pública, análise do mercado financeiro\n\n\nExplore meus projetos e veja análises baseadas em R nas áreas de Psicologia, saúde e finanças."
   },
   {
     "objectID": "projects/index.html",
