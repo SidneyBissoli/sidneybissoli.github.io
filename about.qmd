@@ -1,9 +1,39 @@
 ---
-title: "About"
+title: "Sobre mim"
+page-layout: article
+toc: true
 ---
 
-About this site
+## Quem sou eu
 
-```{r}
-1 + 1
-```
+Sou psicólogo com mestrado, com experiência em **pesquisa em saúde pública** e **análise de mercados financeiros**. Utilizo a programação em R para explorar dados complexos e descobrir insights que conectam psicologia, políticas de saúde e comportamento econômico.
+
+Minha formação em psicologia, com ênfase em psicanálise, me proporcionou uma perspectiva única sobre tomada de decisão humana — algo que aplico tanto na análise de dados de saúde quanto no estudo de mercados financeiros.
+
+## Áreas de atuação
+
+### Saúde Pública
+Análise de padrões de saúde populacional, pesquisa epidemiológica e avaliação de políticas de saúde. Trabalho com dados do SUS e outras fontes para entender tendências e informar decisões.
+
+### Mercados Financeiros
+Análise de investimentos, comportamento de mercado e indicadores econômicos. Foco especial em empresas brasileiras listadas na B3, utilizando dados de balanços e demonstrações financeiras.
+
+### Ciência de Dados
+Modelagem estatística, visualização de dados e análise preditiva. Utilizo o ecossistema tidyverse do R para transformar dados brutos em insights acionáveis.
+
+## Habilidades técnicas
+
+- **Programação:** R (tidyverse, ggplot2, tidymodels, Shiny)
+- **Análise:** Modelagem estatística, visualização de dados, análise preditiva
+- **Ferramentas:** Quarto, Git/GitHub, RStudio
+- **Dados:** Extração de APIs, web scraping, manipulação de grandes conjuntos de dados
+
+## Fora do trabalho
+
+Quando não estou analisando dados ou estudando mercados, gosto de ler sobre filosofia e história, assistir documentários e passar tempo com a família. Acredito que uma vida equilibrada contribui para um pensamento mais criativo e uma análise mais perspicaz.
+
+---
+
+::: {.cv-download}
+[Baixar CV (PDF)](#){.btn .btn-primary}
+:::

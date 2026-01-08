@@ -1,0 +1,39 @@
+---
+title: "Research"
+subtitle: "Academic Publications and Professional Work"
+page-layout: article
+toc: true
+---
+
+## Academic Publications
+
+### Published Papers
+
+::: {.publication}
+**The notion of transference in "Studies on hysteria" (Breuer & Freud, 1895)**
+
+*Paidéia (Ribeirão Preto)*
+
+This article is part of a larger project examining how the concept of transference is dealt with in Freudian psychoanalysis. As the notion of transference appears for the first time in chapter 4 of "Studies on hysteria", this work acquires the status of the starting point for that examination. It verifies that the notion of transference cannot be understood as the whole relationship that a patient establishes with their psychoanalyst. It cannot either be understood as the total perturbation in this type of relationship, as it was later interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient's past.
+
+[[Paper](https://www.scielo.br/j/paideia/a/HkYZXPyFrr4Jp8q4QWxzyzD/)]{.publication-links}
+:::
+
+---
+
+## R Analysis Projects
+
+Visit my [Projects](/projects/) page to see detailed R analysis on:
+
+- Psychological and behavioral research
+- Public health data analysis
+- Financial markets research
+- Predictive modeling applications
+
+### RPubs Portfolio
+
+You can also explore my complete portfolio at [RPubs.com/Bissoli](https://rpubs.com/Bissoli).
+
+---
+
+*This page will be updated as new publications and projects are completed.*

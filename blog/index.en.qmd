@@ -1,0 +1,16 @@
+---
+title: "Blog"
+subtitle: "Insights on Psychology, Public Health and Finance"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: grid
+  categories: true
+  fields: [image, title, subtitle, categories, date, reading-time]
+  grid-columns: 3
+  page-size: 9
+page-layout: full
+toc: false
+---
+
+Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets, always with a focus on data analysis and R programming.

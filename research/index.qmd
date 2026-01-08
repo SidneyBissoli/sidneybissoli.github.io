@@ -1,0 +1,39 @@
+---
+title: "Pesquisa"
+subtitle: "Publicações Acadêmicas e Trabalhos Profissionais"
+page-layout: article
+toc: true
+---
+
+## Publicações Acadêmicas
+
+### Artigos Publicados
+
+::: {.publication}
+**A noção de transferência nos "Estudos sobre a histeria" (Breuer & Freud, 1895)**
+
+*Paidéia (Ribeirão Preto)*
+
+Este artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos "Estudos sobre a histeria", este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.
+
+[[Artigo](https://www.scielo.br/j/paideia/a/HkYZXPyFrr4Jp8q4QWxzyzD/)]{.publication-links}
+:::
+
+---
+
+## Projetos de Análise em R
+
+Visite minha página de [Projetos](/projects/) para ver análises detalhadas em R sobre:
+
+- Pesquisa psicológica e comportamental
+- Análise de dados em saúde pública
+- Pesquisa em mercados financeiros
+- Aplicações de modelagem preditiva
+
+### Portfólio no RPubs
+
+Você também pode explorar meu portfólio completo no [RPubs.com/Bissoli](https://rpubs.com/Bissoli).
+
+---
+
+*Esta página será atualizada conforme novas publicações e projetos forem concluídos.*

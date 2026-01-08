@@ -1,14 +1,16 @@
 ---
 title: "Blog"
-subtitle: "Insights on Psychology, Public Health, and Finance"
+subtitle: "Insights sobre Psicologia, Saúde Pública e Finanças"
 listing:
   contents: posts
   sort: "date desc"
   type: grid
   categories: true
-  sort-ui: false
-  filter-ui: false
+  fields: [image, title, subtitle, categories, date, reading-time]
+  grid-columns: 3
+  page-size: 9
 page-layout: full
+toc: false
 ---
 
-Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets.
+Bem-vindo ao meu blog! Aqui compartilho insights, tutoriais e reflexões sobre psicologia, saúde pública e mercados financeiros, sempre com foco em análise de dados e programação em R.

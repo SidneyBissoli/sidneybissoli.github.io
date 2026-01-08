@@ -1,27 +1,24 @@
 ---
-title: "Projects"
-subtitle: "R Analysis in Psychology, Public Health, and Financial Markets"
+title: "Projetos"
+subtitle: "Análises em R para Psicologia, Saúde Pública e Mercados Financeiros"
+listing:
+  contents:
+    - "**/*.qmd"
+    - "!index.qmd"
+    - "!index.en.qmd"
+  sort: "date desc"
+  type: grid
+  categories: true
+  fields: [image, title, subtitle, categories, date]
+  grid-columns: 3
+  page-size: 9
 page-layout: full
+toc: false
 ---
 
-Welcome to my projects showcase! Here you'll find my data analysis work using R, organized into three main areas:
+Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.
 
-## 🧠 Psychology
-
-Research and analysis in psychological sciences.
-
-## 🏥 Public Health Studies
-
-Analyzing health data to understand patterns, trends, and public health implications.
-
-## 📈 Financial Markets Research
-
-Exploring financial data, market analysis, and investment strategies using R.
-
-### Featured Analysis:
-
--   [**Liquidity Ratios Analysis**](financial-markets/liquidity-analysis/) - Balance sheet analysis of Brazilian companies (B3) with interactive visualizations comparing company performance against sector averages.
-
-------------------------------------------------------------------------
-
-*More projects coming soon as we migrate from [RPubs](https://rpubs.com/Bissoli).*
+::: {.callout-tip}
+## Filtrando projetos
+Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).
+:::

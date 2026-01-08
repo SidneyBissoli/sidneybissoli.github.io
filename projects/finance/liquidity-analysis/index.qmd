@@ -2,9 +2,10 @@
 title: "Liquidity Ratios Analysis - Brazilian Stock Market (B3)"
 subtitle: "Balance Sheet Analysis for Investment Decision Support"
 author: "Sidney Bissoli"
-date: "2025-08-05"
-categories: [Financial Market, B3, Liquidity Analysis, R]
+date: "2025-01-05"
+categories: [Finance, R]
 image: "liquidity_preview.png"
+lang: en
 ---
 
 ## Overview

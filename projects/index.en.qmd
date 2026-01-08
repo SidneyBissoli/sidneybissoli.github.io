@@ -1,0 +1,24 @@
+---
+title: "Projects"
+subtitle: "R Analysis for Psychology, Public Health and Financial Markets"
+listing:
+  contents:
+    - "**/*.qmd"
+    - "!index.qmd"
+    - "!index.en.qmd"
+  sort: "date desc"
+  type: grid
+  categories: true
+  fields: [image, title, subtitle, categories, date]
+  grid-columns: 3
+  page-size: 9
+page-layout: full
+toc: false
+---
+
+Explore my data analysis projects organized by theme and programming language. Each project includes reproducible code, interactive visualizations, and actionable insights.
+
+::: {.callout-tip}
+## Filtering projects
+Use the categories on the right to filter by theme (Finance, Public Health, Machine Learning) or language (R, Python).
+:::

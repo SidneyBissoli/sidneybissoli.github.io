@@ -1,0 +1,39 @@
+---
+title: "About me"
+page-layout: article
+toc: true
+---
+
+## Who I am
+
+I'm a psychologist with a master's degree, experienced in **public health research** and **financial markets analysis**. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior.
+
+My background in psychology, with emphasis on psychoanalysis, has given me a unique perspective on human decision-making — something I apply to both health data analysis and financial market studies.
+
+## Areas of work
+
+### Public Health
+Analysis of population health patterns, epidemiological research, and health policy evaluation. I work with data from the Brazilian public health system (SUS) and other sources to understand trends and inform decisions.
+
+### Financial Markets
+Investment analysis, market behavior, and economic indicators. Special focus on Brazilian companies listed on B3, using balance sheet and financial statement data.
+
+### Data Science
+Statistical modeling, data visualization, and predictive analytics. I use the R tidyverse ecosystem to transform raw data into actionable insights.
+
+## Technical skills
+
+- **Programming:** R (tidyverse, ggplot2, tidymodels, Shiny)
+- **Analysis:** Statistical modeling, data visualization, predictive analytics
+- **Tools:** Quarto, Git/GitHub, RStudio
+- **Data:** API extraction, web scraping, large dataset manipulation
+
+## Outside of work
+
+When I'm not analyzing data or studying markets, I enjoy reading about philosophy and history, watching documentaries, and spending time with family. I believe a balanced life contributes to more creative thinking and sharper analysis.
+
+---
+
+::: {.cv-download}
+[Download CV (PDF)](#){.btn .btn-primary}
+:::

@@ -14,11 +14,11 @@ css: styles.css
 # Sidney Bissoli, MSc
 
 ::: {.hero-tagline}
-Psicólogo explorando **saúde pública**, **finanças** e **ciência de dados** através da programação em R
+Psychologist exploring **public health**, **finance** and **data science** through R programming
 :::
 
 ::: {.hero-links}
-[Sobre mim →](about.qmd){.hero-btn}
+[About me →](about.qmd){.hero-btn}
 :::
 
 :::

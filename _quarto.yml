@@ -1,38 +1,58 @@
 project:
   type: website
+  output-dir: _site
+
+# Babelquarto multilingual configuration
+babelquarto:
+  languagecodes:
+    - name: pt
+      text: "Português"
+    - name: en
+      text: "English"
+  mainlanguage: "pt"
+  languages: ["en"]
+  title-pt: "Sidney Bissoli"
+  title-en: "Sidney Bissoli"
+  description-pt: "Psicólogo | Pesquisador em Saúde Pública | Analista de Mercados Financeiros | Cientista de Dados"
+  description-en: "Psychologist | Public Health Researcher | Financial Markets Analyst | Data Scientist"
 
 website:
   title: "Sidney Bissoli"
-  description: "Psychologist, Public Health Researcher, and Financial Markets Analyst"
+  site-url: "https://sidneybissoli.github.io"
   navbar:
     background: light
     left:
       - href: index.qmd
         text: Home
       - href: about.qmd
-        text: About
+        text: Sobre
       - href: projects/index.qmd
-        text: Projects
+        text: Projetos
       - href: blog/index.qmd
         text: Blog
-      - href: publications/index.qmd
-        text: Publications
+      - href: research/index.qmd
+        text: Pesquisa
     right:
-      - href: "https://linkedin.com/in/sidneybissoli/"
-        icon: linkedin
-      - href: "mailto:sbissoli76@gmail.com"
-        icon: envelope
+      - icon: linkedin
+        href: "https://linkedin.com/in/sidneybissoli/"
+        aria-label: LinkedIn
+      - icon: github
+        href: "https://github.com/SidneyBissoli"
+        aria-label: GitHub
+      - icon: envelope
+        href: "mailto:sbissoli76@gmail.com"
+        aria-label: Email
   page-footer:
     center: |
-      Made with [Quarto](https://quarto.org/) by Sidney Bissoli
+      © 2025 Sidney Bissoli · Feito com [Quarto](https://quarto.org/)
     background: light
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo
     fontsize: 1.1em
     linestretch: 1.6
-    toc: true
-    toc-location: right
-    page-layout: article
+    toc: false
+    page-layout: full
     css: styles.css
