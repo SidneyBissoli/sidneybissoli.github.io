@@ -21,17 +21,17 @@ website:
   site-url: "https://sidneybissoli.github.io"
   navbar:
     background: light
+    pinned: true
+    collapse: false
     left:
-      - href: index.qmd
-        text: Home
       - href: about.qmd
-        text: Sobre
+        text: Sobre mim
       - href: projects/index.qmd
         text: Projetos
       - href: blog/index.qmd
         text: Blog
       - href: research/index.qmd
-        text: Pesquisa
+        text: Artigos
     right:
       - icon: linkedin
         href: "https://linkedin.com/in/sidneybissoli/"

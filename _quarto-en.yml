@@ -2,16 +2,14 @@ website:
   title: "Sidney Bissoli"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
       - href: about.qmd
-        text: About
+        text: About me
       - href: projects/index.qmd
         text: Projects
       - href: blog/index.qmd
         text: Blog
       - href: research/index.qmd
-        text: Research
+        text: Articles
   page-footer:
     center: |
       © 2025 Sidney Bissoli · Made with [Quarto](https://quarto.org/)
