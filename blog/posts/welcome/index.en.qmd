@@ -1,0 +1,10 @@
+---
+title: "Welcome to the Blog"
+subtitle: "First post coming soon"
+author: "Sidney Bissoli"
+date: "2025-01-08"
+categories: [General]
+draft: true
+---
+
+Soon I'll be sharing insights on psychology, public health, and financial markets.

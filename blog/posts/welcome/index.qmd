@@ -1,0 +1,10 @@
+---
+title: "Bem-vindo ao Blog"
+subtitle: "Primeiro post em breve"
+author: "Sidney Bissoli"
+date: "2025-01-08"
+categories: [Geral]
+draft: true
+---
+
+Em breve compartilharei insights sobre psicologia, saúde pública e mercados financeiros.
