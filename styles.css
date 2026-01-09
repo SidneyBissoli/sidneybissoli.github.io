@@ -53,22 +53,29 @@ h3 { font-size: 1.4rem; color: var(--secondary-color); }
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 2rem;
+  padding: 4rem 2rem;
   background: linear-gradient(180deg, var(--white) 0%, var(--light-gray) 100%);
 }
 
-.hero-content {
-  max-width: 600px;
+.hero-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  max-width: 900px;
+  width: 100%;
+}
+
+.hero-image-col {
+  flex-shrink: 0;
 }
 
 .hero-image {
-  width: 180px;
-  height: 180px;
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  margin-bottom: 1.5rem;
   transition: transform 0.3s ease;
 }
 
@@ -76,43 +83,34 @@ h3 { font-size: 1.4rem; color: var(--secondary-color); }
   transform: scale(1.02);
 }
 
+.hero-text-col {
+  text-align: left;
+}
+
 .hero-section h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  margin: 0 0 0.5rem 0;
   font-weight: 700;
 }
 
-.hero-tagline {
-  font-size: 1.2rem;
+.hero-subtitle {
+  font-size: 1.3rem;
   color: var(--secondary-color);
-  line-height: 1.7;
   margin-bottom: 2rem;
+  font-weight: 400;
 }
 
-.hero-tagline strong {
-  color: var(--accent-color);
-  font-weight: 600;
+.hero-quote {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1.15rem;
+  color: var(--secondary-color);
+  line-height: 1.8;
+  max-width: 400px;
 }
 
-.hero-links {
-  margin-top: 2rem;
-}
-
-.hero-btn {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  background-color: var(--accent-color);
-  color: var(--white) !important;
-  border-radius: 30px;
-  font-weight: 500;
-  text-decoration: none !important;
-  transition: all 0.3s ease;
-}
-
-.hero-btn:hover {
-  background-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+.hero-quote em {
+  font-style: italic;
+  color: var(--text-color);
 }
 
 /* ============================================
@@ -353,17 +351,31 @@ hr {
     padding: 3rem 1.5rem;
   }
 
-  .hero-section h1 {
-    font-size: 2rem;
+  .hero-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
   }
 
-  .hero-tagline {
+  .hero-text-col {
+    text-align: center;
+  }
+
+  .hero-section h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-subtitle {
     font-size: 1.1rem;
   }
 
+  .hero-quote {
+    max-width: 100%;
+  }
+
   .hero-image {
-    width: 150px;
-    height: 150px;
+    width: 180px;
+    height: 180px;
   }
 
   h1 { font-size: 2rem; }

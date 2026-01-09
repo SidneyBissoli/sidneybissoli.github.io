@@ -1,5 +1,5 @@
 ---
-pagetitle: "Sidney Bissoli, MSc"
+pagetitle: "Sidney Bissoli"
 page-layout: custom
 toc: false
 css: styles.css
@@ -7,18 +7,26 @@ css: styles.css
 
 ::: {.hero-section}
 
-::: {.hero-content}
+::: {.hero-container}
 
+::: {.hero-image-col}
 ![](profile.jpg){.hero-image}
-
-# Sidney Bissoli, MSc
-
-::: {.hero-tagline}
-Psychologist exploring **public health**, **finance** and **data science** through R programming
 :::
 
-::: {.hero-links}
-[About me →](about.qmd){.hero-btn}
+::: {.hero-text-col}
+
+# Sidney Bissoli
+
+::: {.hero-subtitle}
+Data scientist & psychologist
+:::
+
+::: {.hero-quote}
+*"Somewhere, something incredible is waiting to be known."*
+
+— Sharon Begley
+:::
+
 :::
 
 :::
