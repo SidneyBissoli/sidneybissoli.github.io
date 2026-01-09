@@ -1,191 +1,212 @@
 [
   {
-    "objectID": "publications/index.html",
-    "href": "publications/index.html",
-    "title": "Publications",
+    "objectID": "research/index.html",
+    "href": "research/index.html",
+    "title": "Pesquisa",
     "section": "",
-    "text": "[The notion of transference in “Studies on histeria” (Breuer & Freud, 1895)]\n[Paidéia]\n[Link to paper]\nThis article is part of a larger project, in which it intends to examine how the concept of transference is dealt in Freudian’s psychoanalysis. As the notion of transference appears by the first time in chapter 4 of “Estudos sobre a histeria”, this work acquires the status of the starting point to the examination of that. It verifies that the notion of transference can’t ever be understood as the whole relationship that a patient establishes with his psychoanalyst. It can’t either be understood as the total perturbation in this type of relationship, as it was further interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient’s past."
+    "text": "A noção de transferência nos “Estudos sobre a histeria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nEste artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos “Estudos sobre a histeria”, este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.\nArtigo"
   },
   {
-    "objectID": "publications/index.html#academic-publications",
-    "href": "publications/index.html#academic-publications",
-    "title": "Publications",
+    "objectID": "research/index.html#publicações-acadêmicas",
+    "href": "research/index.html#publicações-acadêmicas",
+    "title": "Pesquisa",
     "section": "",
-    "text": "[The notion of transference in “Studies on histeria” (Breuer & Freud, 1895)]\n[Paidéia]\n[Link to paper]\nThis article is part of a larger project, in which it intends to examine how the concept of transference is dealt in Freudian’s psychoanalysis. As the notion of transference appears by the first time in chapter 4 of “Estudos sobre a histeria”, this work acquires the status of the starting point to the examination of that. It verifies that the notion of transference can’t ever be understood as the whole relationship that a patient establishes with his psychoanalyst. It can’t either be understood as the total perturbation in this type of relationship, as it was further interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient’s past."
+    "text": "A noção de transferência nos “Estudos sobre a histeria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nEste artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos “Estudos sobre a histeria”, este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.\nArtigo"
   },
   {
-    "objectID": "publications/index.html#r-projects-analysis",
-    "href": "publications/index.html#r-projects-analysis",
-    "title": "Publications",
-    "section": "R Projects & Analysis",
-    "text": "R Projects & Analysis\n\nFeatured Work\nVisit my Projects page to see detailed R analysis in:\n- Psychology and behavioral research\n- Public Health data analysis\n- Financial markets research\n- Predictive modeling applications\n\n\nRPubs Portfolio\nYou can also explore my complete portfolio at RPubs.com/Bissoli.\n\nThis page will be updated as new publications and projects are completed."
+    "objectID": "research/index.html#projetos-de-análise-em-r",
+    "href": "research/index.html#projetos-de-análise-em-r",
+    "title": "Pesquisa",
+    "section": "Projetos de Análise em R",
+    "text": "Projetos de Análise em R\nVisite minha página de Projetos para ver análises detalhadas em R sobre:\n\nPesquisa psicológica e comportamental\nAnálise de dados em saúde pública\nPesquisa em mercados financeiros\nAplicações de modelagem preditiva\n\n\nPortfólio no RPubs\nVocê também pode explorar meu portfólio completo no RPubs.com/Bissoli.\n\nEsta página será atualizada conforme novas publicações e projetos forem concluídos."
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html",
-    "href": "projects/financial-market/liquidity-analysis/index.html",
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Projetos",
+    "section": "",
+    "text": "Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.\n\n\n\n\n\n\nTipFiltrando projetos\n\n\n\nUse as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).\n\n\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/finance/liquidity-analysis/index.html",
+    "href": "projects/finance/liquidity-analysis/index.html",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "",
     "text": "This project demonstrates how to extract annual balance sheets from publicly traded companies listed on B3 (Brazilian stock exchange), and to calculate liquidity ratios (current, quick, immediate, and general) from this data, in order to inform investment decisions."
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#overview",
-    "href": "projects/financial-market/liquidity-analysis/index.html#overview",
+    "objectID": "projects/finance/liquidity-analysis/index.html#overview",
+    "href": "projects/finance/liquidity-analysis/index.html#overview",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "",
     "text": "This project demonstrates how to extract annual balance sheets from publicly traded companies listed on B3 (Brazilian stock exchange), and to calculate liquidity ratios (current, quick, immediate, and general) from this data, in order to inform investment decisions."
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#methodology",
-    "href": "projects/financial-market/liquidity-analysis/index.html#methodology",
+    "objectID": "projects/finance/liquidity-analysis/index.html#methodology",
+    "href": "projects/finance/liquidity-analysis/index.html#methodology",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Methodology",
     "text": "Methodology\nUsing R programming and financial data analysis techniques, this study focuses on four key liquidity ratios:\n\nCurrent Ratio: Current assets / Current liabilities\nQuick Ratio: (Current assets - Inventory) / Current liabilities\nImmediate Ratio: Cash and equivalents / Current liabilities\nGeneral Ratio: (Current assets + Long-term assets) / (Current + Non-current liabilities)"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#data-extraction-and-preparation",
-    "href": "projects/financial-market/liquidity-analysis/index.html#data-extraction-and-preparation",
+    "objectID": "projects/finance/liquidity-analysis/index.html#data-extraction-and-preparation",
+    "href": "projects/finance/liquidity-analysis/index.html#data-extraction-and-preparation",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Data Extraction and Preparation",
     "text": "Data Extraction and Preparation\n\n# install pacman if it is not installed\nif (!require(\"pacman\")) install.packages(\"pacman\")\n\nCarregando pacotes exigidos: pacman\n\n# install packages if they are not installed and load them\npacman::p_load(\n  tidyverse,\n  GetDFPData2,\n  janitor,\n  here,\n  scales,\n  ggthemes,\n  plotly,\n  DT,\n  crosstalk,\n  htmltools\n  )\n\n\n# store company name\ncia_name &lt;- \"anima\"\n\n# get data\ndata_info &lt;- get_info_companies()\n\n# subset companies currently traded on B3\ninfo_cleaned &lt;- \n  data_info |&gt;\n  clean_names() |&gt;\n  rename(\n    name_social     = denom_social,\n    name_commercial = denom_comerc,\n    registro        = sit_reg,\n    code_cvm        = cd_cvm,\n    sector          = setor_ativ,\n    tipo            = tp_merc\n    ) |&gt;\n  mutate(across(c(registro, tipo, sector), str_to_lower)) |&gt;\n  filter(registro == \"ativo\") |&gt;\n  filter(tipo == \"bolsa\") |&gt;\n  mutate(sector = str_remove_all(sector, \".*- \"))\n\n# store company sector\ncia_sector &lt;- \n  info_cleaned |&gt;\n  filter(str_detect(name_social, str_to_upper(cia_name))) |&gt;\n  pull(sector)\n\n# store company codes from the same economic sector of company chosen\ncvm_codes &lt;- \n  info_cleaned |&gt;\n  filter(sector == cia_sector) |&gt;\n  pull(code_cvm)\n\n# download balance sheet data\nlist_bp  &lt;- \n  get_dfp_data(\n    companies_cvm_codes = cvm_codes,\n    type_docs           = c(\"BPA\",\"BPP\"),\n    type_format         = \"con\",\n    clean_data          = TRUE,\n    use_memoise         = FALSE,\n    cache_folder        = \"gdfpd2_cache\"\n)"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#data-processing-and-liquidity-calculations",
-    "href": "projects/financial-market/liquidity-analysis/index.html#data-processing-and-liquidity-calculations",
+    "objectID": "projects/finance/liquidity-analysis/index.html#data-processing-and-liquidity-calculations",
+    "href": "projects/finance/liquidity-analysis/index.html#data-processing-and-liquidity-calculations",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Data Processing and Liquidity Calculations",
     "text": "Data Processing and Liquidity Calculations\n\n# convert list into data set and provide basic manipulations\ndata_bp &lt;-\n  list_bp |&gt;\n  bind_rows() |&gt;\n  clean_names() |&gt;\n  rename(\n    cnpj        = cnpj_cia, \n    date        = dt_refer,\n    name        = denom_cia,\n    escala      = escala_moeda,\n    value       = vl_conta,\n    index       = cd_conta,\n    description = ds_conta\n    ) |&gt;\n  mutate(across(c(escala, description), str_to_lower)) |&gt;\n  mutate(value = case_when(\n    escala == \"mil\" ~ value * 1000,\n    TRUE            ~ value\n  ))\n\n# store company complete name\ncia_name_complete &lt;- \n  data_bp |&gt;\n  filter(str_detect(name, str_to_upper(cia_name))) |&gt;\n  distinct(name) |&gt;\n  pull(name)\n\n# store variables of interest\nvariables_chosen &lt;- c(\n  \"ativo circulante\",\n  \"passivo circulante\",\n  \"caixa e equivalentes de caixa\",\n  \"ativo realizável a longo prazo\",\n  \"passivo não circulante\"\n)\n\n# store index for inventory (estoques)\nindex_chosen &lt;- \"1.01.04\"\n\n# convert data to wide format\ndata_wide &lt;-\n  data_bp |&gt;\n  filter(description %in% variables_chosen | index %in% index_chosen) |&gt;\n  select(date, name, description, value) |&gt;\n  mutate(description = case_when(\n    str_detect(description, \"caixa\")              ~ \"caixa\",\n    str_detect(description, \"realizável\")         ~ \"at_realizavel\",\n    str_detect(description, \"não circulante\")     ~ \"pa_nao_circ\",\n    str_detect(description, \"ativo circulante\")   ~ \"at_circ\",\n    str_detect(description, \"passivo circulante\") ~ \"pa_circ\",\n    TRUE                                          ~ description\n  )) |&gt;\n  pivot_wider(names_from = description, values_from = value) |&gt;\n  group_by(date) |&gt;\n  mutate(n = n()) |&gt;\n  ungroup()\n\n# store abbreviated variables\nvariables_abbreviated &lt;- c(\n  \"at_circ\",\n  \"pa_circ\",\n  \"caixa\",\n  \"at_realizavel\",\n  \"pa_nao_circ\",\n  \"estoques\"\n)\n\n# calculate sector totals\ndata_total &lt;- \n  data_wide |&gt;\n  select(-name) |&gt;\n  group_by(date) |&gt;\n  mutate(across(any_of(variables_abbreviated), sum, na.rm = TRUE)) |&gt;\n  ungroup() |&gt;\n  mutate(name = str_to_upper(\"total\"), .after = date) |&gt;\n  distinct()\n\n# combine company data with sector averages\ndata_subset &lt;-\n  data_wide |&gt;\n  bind_rows(data_total) |&gt;\n  mutate(name = str_to_lower(name)) |&gt;\n  filter(str_detect(name, cia_name) | name == \"total\") |&gt;\n  mutate(name = str_to_upper(name))\n\n# calculate liquidity ratios\ndata_multiplos &lt;- \n  data_subset |&gt; \n  mutate(\n    liq_corrente = at_circ / pa_circ,\n    liq_seca     = (at_circ - coalesce(estoques, 0)) / pa_circ,\n    liq_imediata = caixa / pa_circ,\n    liq_geral    = (at_circ + at_realizavel) / (pa_circ + pa_nao_circ)\n  ) |&gt;\n  select(date, name, starts_with(\"liq\"), n)\n\n\n# order levels for classification\nlevels &lt;- c(\n  \"adequate\", \n  \"regular\", \n  \"concerning\", \n  \"critical\"\n  )\n\n# prepare data for visualization with classification\ndata_classification &lt;- \n  data_multiplos |&gt;\n  group_by(date) |&gt;\n  filter(n() == 2) |&gt;\n  ungroup() |&gt;\n  arrange(date) |&gt;\n  pivot_longer(cols = starts_with(\"liq\"), names_to = \"variable\") |&gt;\n  mutate(classification = case_when(\n    variable == \"liq_corrente\" & value &lt; 1                   ~ \"critical\",\n    variable == \"liq_corrente\" & value &gt;= 1   & value &lt; 1.2  ~ \"concerning\",\n    variable == \"liq_corrente\" & value &gt;= 1.2 & value &lt; 1.5  ~ \"regular\",\n    variable == \"liq_corrente\" & value &gt;= 1.5                ~ \"adequate\",\n    variable == \"liq_seca\"     & value &lt; .8                  ~ \"critical\",\n    variable == \"liq_seca\"     & value &gt;= .8  & value &lt;=1    ~ \"concerning\",\n    variable == \"liq_seca\"     & value &gt; 1                   ~ \"adequate\",\n    variable == \"liq_imediata\" & value &lt; .15                 ~ \"critical\",\n    variable == \"liq_imediata\" & value &gt;= .15 & value &lt;=.3   ~ \"concerning\",\n    variable == \"liq_imediata\" & value &gt; .3                  ~ \"adequate\",\n    variable == \"liq_geral\"    & value &lt; 1                   ~ \"critical\",\n    variable == \"liq_geral\"    & value &gt;= 1   & value &lt; 1.2  ~ \"concerning\",\n    variable == \"liq_geral\"    & value &gt;= 1.2 & value &lt; 1.5  ~ \"regular\",\n    variable == \"liq_geral\"    & value &gt;= 1.5                ~ \"adequate\",\n  )) |&gt;\n  mutate(classification = str_to_title(classification)) |&gt;\n  mutate(classification = factor(classification, levels = str_to_title(levels))) |&gt;\n  mutate(year = year(date), .after = date)\n\n# nest data by liquidity type\ndata_nested &lt;- \n  data_classification |&gt;\n  nest(data = -variable)"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#interactive-liquidity-analysis-dashboard",
-    "href": "projects/financial-market/liquidity-analysis/index.html#interactive-liquidity-analysis-dashboard",
+    "objectID": "projects/finance/liquidity-analysis/index.html#interactive-liquidity-analysis-dashboard",
+    "href": "projects/finance/liquidity-analysis/index.html#interactive-liquidity-analysis-dashboard",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Interactive Liquidity Analysis Dashboard",
     "text": "Interactive Liquidity Analysis Dashboard\n\nCurrent RatioQuick RatioImmediate RatioGeneral Ratio"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#summary-table",
-    "href": "projects/financial-market/liquidity-analysis/index.html#summary-table",
+    "objectID": "projects/finance/liquidity-analysis/index.html#summary-table",
+    "href": "projects/finance/liquidity-analysis/index.html#summary-table",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Summary Table",
     "text": "Summary Table"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#key-findings",
-    "href": "projects/financial-market/liquidity-analysis/index.html#key-findings",
+    "objectID": "projects/finance/liquidity-analysis/index.html#key-findings",
+    "href": "projects/finance/liquidity-analysis/index.html#key-findings",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Key Findings",
     "text": "Key Findings\n\nCompany Performance vs. Sector Average\nThe analysis reveals important insights about ANIMA HOLDING S.A. liquidity position:\n\nCurrent Ratio Trends: Shows the company’s ability to meet short-term obligations\nQuick Ratio Analysis: Excludes inventory to provide a more conservative liquidity measure\nImmediate Ratio: Reveals cash position strength for urgent obligations\nGeneral Ratio: Provides comprehensive liquidity assessment including long-term assets\n\n\n\nClassification System\nThe visualizations use a color-coded classification system:\n\n🟢 Adequate (green): Strong liquidity position\n🔵 Regular (blue): Acceptable liquidity levels\n🟠 Concerning (orange): Attention required\n🔴 Critical (red): Immediate attention needed"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#investment-implications",
-    "href": "projects/financial-market/liquidity-analysis/index.html#investment-implications",
+    "objectID": "projects/finance/liquidity-analysis/index.html#investment-implications",
+    "href": "projects/finance/liquidity-analysis/index.html#investment-implications",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Investment Implications",
     "text": "Investment Implications\nThis liquidity analysis provides valuable insights for:\n\nPortfolio managers seeking companies with solid financial foundations\nIndividual investors evaluating investment safety and company stability\nFinancial analysts comparing companies within the same economic sector\nRisk managers assessing short-term financial risk exposure"
   },
   {
-    "objectID": "projects/financial-market/liquidity-analysis/index.html#technical-implementation",
-    "href": "projects/financial-market/liquidity-analysis/index.html#technical-implementation",
+    "objectID": "projects/finance/liquidity-analysis/index.html#technical-implementation",
+    "href": "projects/finance/liquidity-analysis/index.html#technical-implementation",
     "title": "Liquidity Ratios Analysis - Brazilian Stock Market (B3)",
     "section": "Technical Implementation",
     "text": "Technical Implementation\nData Sources: B3 (Brazilian Stock Exchange) official financial reports\nAnalysis Tools: R (tidyverse, GetDFPData2, ggplot2, plotly)\nMethodology: Balance sheet analysis with sector benchmarking\nInteractivity: Dynamic plots with hover information and classification tooltips\n_____________________________________________________________________________________________________________\nThis analysis demonstrates the integration of financial data extraction, statistical analysis, and interactive visualization techniques using R programming. The complete methodology can be adapted for analyzing any publicly traded company on B3."
   },
   {
-    "objectID": "index.en.html",
-    "href": "index.en.html",
-    "title": "Sidney Bissoli",
+    "objectID": "blog/index.en.html",
+    "href": "blog/index.en.html",
+    "title": "Blog",
     "section": "",
-    "text": "I am a psychologist with expertise in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior."
+    "text": "Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets, always with a focus on data analysis and R programming.\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.en.html#welcome",
-    "href": "index.en.html#welcome",
-    "title": "Sidney Bissoli",
+    "objectID": "about.en.html",
+    "href": "about.en.html",
+    "title": "About me",
     "section": "",
-    "text": "I am a psychologist with expertise in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior."
+    "text": "I’m a psychologist with a master’s degree, experienced in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior.\nMy background in psychology, with emphasis on psychoanalysis, has given me a unique perspective on human decision-making — something I apply to both health data analysis and financial market studies."
   },
   {
-    "objectID": "index.en.html#research-interests",
-    "href": "index.en.html#research-interests",
-    "title": "Sidney Bissoli",
-    "section": "Research Interests",
-    "text": "Research Interests\n\nPsychology: Psychoanalysis, behavioral economics, decision-making processes\nPublic Health: Population health patterns, epidemiological analysis, health policy research\nFinancial Markets: Investment analysis, market behavior, economic indicators"
+    "objectID": "about.en.html#who-i-am",
+    "href": "about.en.html#who-i-am",
+    "title": "About me",
+    "section": "",
+    "text": "I’m a psychologist with a master’s degree, experienced in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior.\nMy background in psychology, with emphasis on psychoanalysis, has given me a unique perspective on human decision-making — something I apply to both health data analysis and financial market studies."
   },
   {
-    "objectID": "index.en.html#skills-tools",
-    "href": "index.en.html#skills-tools",
-    "title": "Sidney Bissoli",
-    "section": "Skills & Tools",
-    "text": "Skills & Tools\n\nProgramming: R (tidyverse, ggplot2, tidymodels)\nAnalysis: Statistical modeling, data visualization, predictive analytics\nDomains: Psychological research, public health data, financial market analysis\n\n\nExplore my projects to see R analysis in psychology, health, and finance, or read my blog for insights on these interconnected fields."
+    "objectID": "about.en.html#areas-of-work",
+    "href": "about.en.html#areas-of-work",
+    "title": "About me",
+    "section": "Areas of work",
+    "text": "Areas of work\n\nPublic Health\nAnalysis of population health patterns, epidemiological research, and health policy evaluation. I work with data from the Brazilian public health system (SUS) and other sources to understand trends and inform decisions.\n\n\nFinancial Markets\nInvestment analysis, market behavior, and economic indicators. Special focus on Brazilian companies listed on B3, using balance sheet and financial statement data.\n\n\nData Science\nStatistical modeling, data visualization, and predictive analytics. I use the R tidyverse ecosystem to transform raw data into actionable insights."
+  },
+  {
+    "objectID": "about.en.html#technical-skills",
+    "href": "about.en.html#technical-skills",
+    "title": "About me",
+    "section": "Technical skills",
+    "text": "Technical skills\n\nProgramming: R (tidyverse, ggplot2, tidymodels, Shiny)\nAnalysis: Statistical modeling, data visualization, predictive analytics\nTools: Quarto, Git/GitHub, RStudio\nData: API extraction, web scraping, large dataset manipulation"
+  },
+  {
+    "objectID": "about.en.html#outside-of-work",
+    "href": "about.en.html#outside-of-work",
+    "title": "About me",
+    "section": "Outside of work",
+    "text": "Outside of work\nWhen I’m not analyzing data or studying markets, I enjoy reading about philosophy and history, watching documentaries, and spending time with family. I believe a balanced life contributes to more creative thinking and sharper analysis.\n\n\nDownload CV (PDF)"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "Sobre mim",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "Sou psicólogo com mestrado, com experiência em pesquisa em saúde pública e análise de mercados financeiros. Utilizo a programação em R para explorar dados complexos e descobrir insights que conectam psicologia, políticas de saúde e comportamento econômico.\nMinha formação em psicologia, com ênfase em psicanálise, me proporcionou uma perspectiva única sobre tomada de decisão humana — algo que aplico tanto na análise de dados de saúde quanto no estudo de mercados financeiros."
+  },
+  {
+    "objectID": "about.html#quem-sou-eu",
+    "href": "about.html#quem-sou-eu",
+    "title": "Sobre mim",
+    "section": "",
+    "text": "Sou psicólogo com mestrado, com experiência em pesquisa em saúde pública e análise de mercados financeiros. Utilizo a programação em R para explorar dados complexos e descobrir insights que conectam psicologia, políticas de saúde e comportamento econômico.\nMinha formação em psicologia, com ênfase em psicanálise, me proporcionou uma perspectiva única sobre tomada de decisão humana — algo que aplico tanto na análise de dados de saúde quanto no estudo de mercados financeiros."
+  },
+  {
+    "objectID": "about.html#áreas-de-atuação",
+    "href": "about.html#áreas-de-atuação",
+    "title": "Sobre mim",
+    "section": "Áreas de atuação",
+    "text": "Áreas de atuação\n\nSaúde Pública\nAnálise de padrões de saúde populacional, pesquisa epidemiológica e avaliação de políticas de saúde. Trabalho com dados do SUS e outras fontes para entender tendências e informar decisões.\n\n\nMercados Financeiros\nAnálise de investimentos, comportamento de mercado e indicadores econômicos. Foco especial em empresas brasileiras listadas na B3, utilizando dados de balanços e demonstrações financeiras.\n\n\nCiência de Dados\nModelagem estatística, visualização de dados e análise preditiva. Utilizo o ecossistema tidyverse do R para transformar dados brutos em insights acionáveis."
+  },
+  {
+    "objectID": "about.html#habilidades-técnicas",
+    "href": "about.html#habilidades-técnicas",
+    "title": "Sobre mim",
+    "section": "Habilidades técnicas",
+    "text": "Habilidades técnicas\n\nProgramação: R (tidyverse, ggplot2, tidymodels, Shiny)\nAnálise: Modelagem estatística, visualização de dados, análise preditiva\nFerramentas: Quarto, Git/GitHub, RStudio\nDados: Extração de APIs, web scraping, manipulação de grandes conjuntos de dados"
+  },
+  {
+    "objectID": "about.html#fora-do-trabalho",
+    "href": "about.html#fora-do-trabalho",
+    "title": "Sobre mim",
+    "section": "Fora do trabalho",
+    "text": "Fora do trabalho\nQuando não estou analisando dados ou estudando mercados, gosto de ler sobre filosofia e história, assistir documentários e passar tempo com a família. Acredito que uma vida equilibrada contribui para um pensamento mais criativo e uma análise mais perspicaz.\n\n\nBaixar CV (PDF)"
   },
   {
     "objectID": "blog/index.html",
     "href": "blog/index.html",
     "title": "Blog",
     "section": "",
-    "text": "Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets.\n\n\n\n\n\n\n\n\nNenhum item correspondente"
+    "text": "Bem-vindo ao meu blog! Aqui compartilho insights, tutoriais e reflexões sobre psicologia, saúde pública e mercados financeiros, sempre com foco em análise de dados e programação em R.\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Sidney Bissoli",
-    "section": "",
-    "text": "Sou psicólogo, com experiência em pesquisa na área de saúde pública e análise do mercado financeiro. Uso a linguagem de programação R para explorar dados complexos e obter insights vaIiosos que conectam Psicologia, políticas públicas de saúde e comportamento econômico."
-  },
-  {
-    "objectID": "index.html#bem-vindo",
-    "href": "index.html#bem-vindo",
-    "title": "Sidney Bissoli",
-    "section": "",
-    "text": "Sou psicólogo, com experiência em pesquisa na área de saúde pública e análise do mercado financeiro. Uso a linguagem de programação R para explorar dados complexos e obter insights vaIiosos que conectam Psicologia, políticas públicas de saúde e comportamento econômico."
-  },
-  {
-    "objectID": "index.html#interesses-de-pesquisa",
-    "href": "index.html#interesses-de-pesquisa",
-    "title": "Sidney Bissoli",
-    "section": "Interesses de pesquisa",
-    "text": "Interesses de pesquisa\n\nPsicologia: Psicanálise, comportamento econômico, processo de tomada de decisão\nSaúde pública: padrões de saúde/doença da população, análise epidemiológica, políticas públicas de saúde\nMercado financeiro: análise de investimento, comportamento do mercado, indicadores econômicos"
-  },
-  {
-    "objectID": "index.html#habilidades-ferramentas",
-    "href": "index.html#habilidades-ferramentas",
-    "title": "Sidney Bissoli",
-    "section": "Habilidades & Ferramentas",
-    "text": "Habilidades & Ferramentas\n\nProgramação: R (tidyverse, ggplot2, tidymodels)\nAnálise: modelagem estatística, visualização de dados, análise preditiva\nDomínios: pesquisa em Psicologia, dados de saúde pública, análise do mercado financeiro\n\n\nExplore meus projetos e veja análises baseadas em R nas áreas de Psicologia, saúde e finanças."
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
+    "objectID": "projects/index.en.html",
+    "href": "projects/index.en.html",
     "title": "Projects",
     "section": "",
-    "text": "Welcome to my projects showcase! Here you’ll find my data analysis work using R, organized into three main areas:"
+    "text": "Explore my data analysis projects organized by theme and programming language. Each project includes reproducible code, interactive visualizations, and actionable insights.\n\n\n\n\n\n\nTipFiltering projects\n\n\n\nUse the categories on the right to filter by theme (Finance, Public Health, Machine Learning) or language (R, Python).\n\n\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "projects/index.html#psychology",
-    "href": "projects/index.html#psychology",
-    "title": "Projects",
-    "section": "🧠 Psychology",
-    "text": "🧠 Psychology\nResearch and analysis in psychological sciences."
+    "objectID": "research/index.en.html",
+    "href": "research/index.en.html",
+    "title": "Research",
+    "section": "",
+    "text": "The notion of transference in “Studies on hysteria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nThis article is part of a larger project examining how the concept of transference is dealt with in Freudian psychoanalysis. As the notion of transference appears for the first time in chapter 4 of “Studies on hysteria”, this work acquires the status of the starting point for that examination. It verifies that the notion of transference cannot be understood as the whole relationship that a patient establishes with their psychoanalyst. It cannot either be understood as the total perturbation in this type of relationship, as it was later interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient’s past.\nPaper"
   },
   {
-    "objectID": "projects/index.html#public-health-studies",
-    "href": "projects/index.html#public-health-studies",
-    "title": "Projects",
-    "section": "🏥 Public Health Studies",
-    "text": "🏥 Public Health Studies\nAnalyzing health data to understand patterns, trends, and public health implications."
+    "objectID": "research/index.en.html#academic-publications",
+    "href": "research/index.en.html#academic-publications",
+    "title": "Research",
+    "section": "",
+    "text": "The notion of transference in “Studies on hysteria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nThis article is part of a larger project examining how the concept of transference is dealt with in Freudian psychoanalysis. As the notion of transference appears for the first time in chapter 4 of “Studies on hysteria”, this work acquires the status of the starting point for that examination. It verifies that the notion of transference cannot be understood as the whole relationship that a patient establishes with their psychoanalyst. It cannot either be understood as the total perturbation in this type of relationship, as it was later interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient’s past.\nPaper"
   },
   {
-    "objectID": "projects/index.html#financial-markets-research",
-    "href": "projects/index.html#financial-markets-research",
-    "title": "Projects",
-    "section": "📈 Financial Markets Research",
-    "text": "📈 Financial Markets Research\nExploring financial data, market analysis, and investment strategies using R.\n\nFeatured Analysis:\n\nLiquidity Ratios Analysis - Balance sheet analysis of Brazilian companies (B3) with interactive visualizations comparing company performance against sector averages.\n\n\nMore projects coming soon as we migrate from RPubs."
+    "objectID": "research/index.en.html#r-analysis-projects",
+    "href": "research/index.en.html#r-analysis-projects",
+    "title": "Research",
+    "section": "R Analysis Projects",
+    "text": "R Analysis Projects\nVisit my Projects page to see detailed R analysis on:\n\nPsychological and behavioral research\nPublic health data analysis\nFinancial markets research\nPredictive modeling applications\n\n\nRPubs Portfolio\nYou can also explore my complete portfolio at RPubs.com/Bissoli.\n\nThis page will be updated as new publications and projects are completed."
   }
 ]
