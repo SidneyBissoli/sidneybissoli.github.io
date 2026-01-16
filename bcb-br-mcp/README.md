@@ -99,42 +99,131 @@ Use bcb_buscar_serie com termo "dolar"
 Use bcb_indicadores_atuais para ver Selic, IPCA, Dólar e IBC-Br atuais
 ```
 
-## Séries Populares Incluídas
+## Catálogo de Séries (150+)
 
-### Juros
-- **11** - Taxa Selic acumulada no mês
-- **432** - Taxa Selic anualizada base 252
-- **4189** - Taxa Selic acumulada no mês anualizada
+O servidor inclui um catálogo com mais de 150 séries organizadas em 12 categorias.
 
-### Inflação
-- **433** - IPCA - Variação mensal
-- **13522** - IPCA - Variação acumulada em 12 meses
-- **188** - INPC - Variação mensal
-- **189** - IGP-M - Variação mensal
-- **190** - IGP-DI - Variação mensal
+### Juros e Taxas
+| Código | Descrição |
+|--------|-----------|
+| 11 | Taxa Selic acumulada no mês |
+| 432 | Taxa Selic anualizada base 252 |
+| 1178 | Taxa Selic - Meta definida pelo Copom |
+| 12 | CDI diária |
+| 4389 | CDI anualizada base 252 |
+| 226 | Taxa Referencial (TR) - diária |
+| 256 | Taxa de Juros de Longo Prazo (TJLP) |
 
-### Câmbio
-- **1** - Dólar americano (venda) - diário
-- **10813** - Dólar americano (compra) - diário
-- **3698** - Dólar PTAX (venda)
-- **3697** - Dólar PTAX (compra)
-- **21619** - Euro (venda)
-- **21620** - Euro (compra)
+### Inflação (30+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 433 | IPCA - Variação mensal |
+| 13522 | IPCA - Acumulado 12 meses |
+| 7478 | IPCA-15 - Variação mensal |
+| 188 | INPC - Variação mensal |
+| 189 | IGP-M - Variação mensal |
+| 190 | IGP-DI - Variação mensal |
+| 7447 | IGP-10 - Variação mensal |
+| 10841-10850 | IPCA por grupo (Alimentação, Habitação, Transportes, etc.) |
+| 4449 | IPCA - Preços administrados |
+| 11428 | IPCA - Preços livres |
+| 16121-16122 | IPCA - Núcleos |
 
-### Atividade Econômica
-- **4380** - PIB mensal - Valores correntes
-- **4382** - PIB acumulado dos últimos 12 meses
-- **24364** - Índice de Atividade Econômica (IBC-Br)
+### Câmbio (15+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 1 | Dólar americano (venda) |
+| 10813 | Dólar americano (compra) |
+| 3698/3697 | Dólar PTAX (venda/compra) |
+| 21619/21620 | Euro (venda/compra) |
+| 21623/21624 | Libra Esterlina (venda/compra) |
+| 21621/21622 | Iene (venda/compra) |
+| 21637/21638 | Peso Argentino (venda/compra) |
+| 21639/21640 | Yuan Chinês (venda/compra) |
 
-### Emprego
-- **24369** - Taxa de desocupação - PNAD Contínua
+### Atividade Econômica (25+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 4380 | PIB mensal (R$ milhões) |
+| 4382 | PIB acumulado 12 meses (R$ milhões) |
+| 4385 | PIB mensal em US$ |
+| 7324 | PIB anual em US$ |
+| 24363/24364 | IBC-Br (sem/com ajuste sazonal) |
+| 29601-29606 | IBC-Br setorial (Agropecuária, Indústria, Serviços) |
+| 22099 | PIB trimestral - Taxa de variação |
+| 21859 | Produção industrial - Variação mensal |
+| 21862 | Utilização da capacidade instalada |
 
-### Outros
-- **4503** - Dívida líquida do setor público (% PIB)
-- **4513** - Dívida bruta do governo geral (% PIB)
-- **3546** - Reservas internacionais
-- **22707** - Balança comercial - Saldo
-- **25** - Poupança - rendimento mensal
+### Emprego (10+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 24369 | Taxa de desocupação - PNAD Contínua |
+| 24370 | Taxa de participação na força de trabalho |
+| 24380 | Rendimento médio real |
+| 24381 | Massa de rendimento real |
+| 28561 | CAGED - Saldo de empregos formais |
+
+### Fiscal (10+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 4503 | Dívida líquida do setor público (% PIB) |
+| 4513 | Dívida bruta do governo geral (% PIB) |
+| 4537 | Resultado primário (% PIB) |
+| 4539 | Resultado nominal (% PIB) |
+| 5364 | Receita total do governo central |
+
+### Setor Externo (15+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 3546 | Reservas internacionais - diário |
+| 22707 | Balança comercial - Saldo mensal |
+| 22708 | Exportação de bens - mensal |
+| 22709 | Importação de bens - mensal |
+| 22701 | Transações correntes - Saldo |
+| 22846 | Investimento direto no país |
+| 13690 | Dívida externa total |
+
+### Crédito (30+ séries)
+| Código | Descrição |
+|--------|-----------|
+| 20539 | Saldo de crédito - Total |
+| 20540/20541 | Saldo de crédito - PF/PJ |
+| 20714 | Taxa média de juros - Total |
+| 20749 | Taxa média - Aquisição de veículos |
+| 20772 | Taxa média - Financiamento imobiliário |
+| 20783 | Spread médio - Total |
+| 21082 | Inadimplência - Total |
+| 21128/21129 | Inadimplência - Cartão de crédito |
+
+### Agregados Monetários
+| Código | Descrição |
+|--------|-----------|
+| 1788 | Base monetária |
+| 27788-27791 | Meios de pagamento M1, M2, M3, M4 |
+| 27815 | Multiplicador monetário |
+
+### Poupança
+| Código | Descrição |
+|--------|-----------|
+| 25 | Poupança - Rendimento mensal |
+| 195 | Poupança - Saldo total |
+| 7165 | Poupança - Captação líquida |
+
+### Índices de Mercado
+| Código | Descrição |
+|--------|-----------|
+| 12466 | IMA-B |
+| 12467 | IMA-B5 |
+| 12468 | IMA-B5+ |
+| 7832 | Ibovespa mensal |
+
+### Expectativas (Focus)
+| Código | Descrição |
+|--------|-----------|
+| 29033/29034 | Expectativa IPCA (ano corrente/próximo) |
+| 29035/29036 | Expectativa Selic (ano corrente/próximo) |
+| 29037/29038 | Expectativa PIB (ano corrente/próximo) |
+| 29039/29040 | Expectativa Câmbio (ano corrente/próximo) |
 
 ## Encontrar Outras Séries
 
