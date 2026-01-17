@@ -6,14 +6,35 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 
 ## Ferramentas Disponíveis
 
+### Localidades
 | Ferramenta | Descrição |
 |:-----------|:----------|
 | `ibge_estados` | Lista estados brasileiros com filtro por região |
 | `ibge_municipios` | Lista municípios por UF ou busca por nome |
 | `ibge_localidade` | Detalhes de uma localidade pelo código IBGE |
-| `ibge_populacao` | Projeção da população brasileira em tempo real |
+
+### Dados Estatísticos (SIDRA)
+| Ferramenta | Descrição |
+|:-----------|:----------|
 | `ibge_sidra` | Consulta tabelas do SIDRA (Censo, PNAD, PIB, etc.) |
+| `ibge_sidra_tabelas` | Lista e busca tabelas disponíveis no SIDRA |
+| `ibge_sidra_metadados` | Metadados de uma tabela (variáveis, períodos, níveis) |
+| `ibge_pesquisas` | Lista pesquisas do IBGE e suas tabelas |
+
+### Demografia e População
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `ibge_populacao` | Projeção da população brasileira em tempo real |
 | `ibge_nomes` | Frequência e ranking de nomes no Brasil |
+
+### Mapas e Geolocalização
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `ibge_malhas` | Malhas geográficas (GeoJSON, TopoJSON, SVG) |
+
+### Informações
+| Ferramenta | Descrição |
+|:-----------|:----------|
 | `ibge_noticias` | Notícias e releases do IBGE |
 
 ## Instalação
@@ -242,6 +263,114 @@ ibge_noticias(de="01-01-2024", ate="12-31-2024")
 ibge_noticias(tipo="release")
 ```
 
+### ibge_sidra_tabelas
+
+Lista e busca tabelas disponíveis no SIDRA.
+
+**Parâmetros:**
+- `busca` (opcional): Termo para buscar no nome das tabelas
+- `pesquisa` (opcional): Filtrar por pesquisa (ex: "censo", "pnad")
+- `limite` (opcional): Número máximo de resultados (padrão: 20)
+
+**Exemplos:**
+```
+# Listar tabelas
+ibge_sidra_tabelas()
+
+# Buscar tabelas de população
+ibge_sidra_tabelas(busca="população")
+
+# Tabelas do Censo
+ibge_sidra_tabelas(pesquisa="censo")
+```
+
+### ibge_sidra_metadados
+
+Retorna os metadados de uma tabela SIDRA específica.
+
+**Parâmetros:**
+- `tabela` (obrigatório): Código da tabela SIDRA
+- `incluir_periodos` (opcional): Incluir períodos disponíveis (padrão: true)
+- `incluir_localidades` (opcional): Incluir níveis territoriais (padrão: false)
+
+**Exemplos:**
+```
+# Metadados da tabela de população
+ibge_sidra_metadados(tabela="6579")
+
+# Metadados do Censo 2022
+ibge_sidra_metadados(tabela="9514")
+
+# Sem períodos
+ibge_sidra_metadados(tabela="6579", incluir_periodos=false)
+```
+
+**Retorna:**
+- Informações gerais (nome, pesquisa, periodicidade)
+- Níveis territoriais disponíveis
+- Lista de variáveis com unidades
+- Classificações e categorias
+- Períodos disponíveis
+
+### ibge_malhas
+
+Obtém malhas geográficas (mapas) do IBGE.
+
+**Parâmetros:**
+- `localidade` (obrigatório): Código IBGE ou sigla ("BR", "SP", "35", "3550308")
+- `tipo` (opcional): Tipo de divisão territorial
+- `formato` (opcional): "geojson", "topojson" ou "svg" (padrão: geojson)
+- `resolucao` (opcional): Divisões internas (0-5)
+- `qualidade` (opcional): Qualidade do traçado (1-4, padrão: 4)
+
+**Resolução:**
+| Valor | Divisões Internas |
+|:-----:|:------------------|
+| 0 | Sem divisões (apenas contorno) |
+| 1 | Macrorregiões |
+| 2 | Unidades da Federação |
+| 3 | Mesorregiões |
+| 4 | Microrregiões |
+| 5 | Municípios |
+
+**Exemplos:**
+```
+# Brasil com estados
+ibge_malhas(localidade="BR", resolucao="2")
+
+# São Paulo com municípios
+ibge_malhas(localidade="SP", resolucao="5")
+
+# Município específico
+ibge_malhas(localidade="3550308")
+
+# Em formato SVG
+ibge_malhas(localidade="BR", formato="svg")
+```
+
+### ibge_pesquisas
+
+Lista as pesquisas disponíveis no IBGE.
+
+**Parâmetros:**
+- `busca` (opcional): Termo para buscar no nome da pesquisa
+- `detalhes` (opcional): Código da pesquisa para ver detalhes e tabelas
+
+**Exemplos:**
+```
+# Listar todas as pesquisas
+ibge_pesquisas()
+
+# Buscar pesquisas de população
+ibge_pesquisas(busca="população")
+
+# Detalhes da PNAD
+ibge_pesquisas(detalhes="pnad")
+
+# Detalhes do Censo
+ibge_pesquisas(detalhes="CD")
+```
+
 ## APIs do IBGE Utilizadas
 
 Este MCP Server utiliza as seguintes APIs públicas do IBGE:
@@ -250,6 +379,7 @@ Este MCP Server utiliza as seguintes APIs públicas do IBGE:
 - **Nomes**: `https://servicodados.ibge.gov.br/api/v2/censos/nomes`
 - **Agregados/SIDRA**: `https://servicodados.ibge.gov.br/api/v3/agregados`
 - **SIDRA API**: `https://apisidra.ibge.gov.br/values`
+- **Malhas**: `https://servicodados.ibge.gov.br/api/v3/malhas`
 - **Notícias**: `https://servicodados.ibge.gov.br/api/v3/noticias`
 - **População**: `https://servicodados.ibge.gov.br/api/v1/projecoes/populacao`
 
@@ -268,18 +398,22 @@ npm run inspector
 ```
 ibge-br-mcp/
 ├── src/
-│   ├── index.ts          # Servidor MCP principal
-│   ├── types.ts          # Tipos TypeScript
+│   ├── index.ts              # Servidor MCP principal
+│   ├── types.ts              # Tipos TypeScript
 │   └── tools/
-│       ├── index.ts      # Exportação das ferramentas
-│       ├── estados.ts    # Tool: ibge_estados
-│       ├── municipios.ts # Tool: ibge_municipios
-│       ├── localidade.ts # Tool: ibge_localidade
-│       ├── populacao.ts  # Tool: ibge_populacao
-│       ├── sidra.ts      # Tool: ibge_sidra
-│       ├── nomes.ts      # Tool: ibge_nomes
-│       └── noticias.ts   # Tool: ibge_noticias
-├── dist/                 # Arquivos compilados
+│       ├── index.ts          # Exportação das ferramentas
+│       ├── estados.ts        # Tool: ibge_estados
+│       ├── municipios.ts     # Tool: ibge_municipios
+│       ├── localidade.ts     # Tool: ibge_localidade
+│       ├── populacao.ts      # Tool: ibge_populacao
+│       ├── sidra.ts          # Tool: ibge_sidra
+│       ├── sidra-tabelas.ts  # Tool: ibge_sidra_tabelas
+│       ├── sidra-metadados.ts# Tool: ibge_sidra_metadados
+│       ├── malhas.ts         # Tool: ibge_malhas
+│       ├── pesquisas.ts      # Tool: ibge_pesquisas
+│       ├── nomes.ts          # Tool: ibge_nomes
+│       └── noticias.ts       # Tool: ibge_noticias
+├── dist/                     # Arquivos compilados
 ├── package.json
 ├── tsconfig.json
 └── README.md

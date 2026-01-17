@@ -18,11 +18,19 @@ import {
   ibgeNomes,
   noticiasSchema,
   ibgeNoticias,
+  sidraTabelasSchema,
+  ibgeSidraTabelas,
+  sidraMetadadosSchema,
+  ibgeSidraMetadados,
+  malhasSchema,
+  ibgeMalhas,
+  pesquisasSchema,
+  ibgePesquisas,
 } from "./tools/index.js";
 
 // Server metadata
 const SERVER_NAME = "ibge-br-mcp";
-const SERVER_VERSION = "1.0.0";
+const SERVER_VERSION = "1.1.0";
 
 /**
  * IBGE MCP Server
@@ -220,6 +228,136 @@ Exemplos de uso:
     noticiasSchema.shape,
     async (args) => {
       const result = await ibgeNoticias(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_sidra_tabelas tool
+  server.tool(
+    "ibge_sidra_tabelas",
+    `Lista e busca tabelas disponíveis no SIDRA (Sistema IBGE de Recuperação Automática).
+
+Funcionalidades:
+- Lista todas as tabelas (agregados) do SIDRA
+- Busca por termo no nome da tabela
+- Filtra por pesquisa (Censo, PNAD, PIB, etc.)
+- Mostra o código e nome de cada tabela
+
+O SIDRA contém dados de diversas pesquisas:
+- Censo Demográfico
+- PNAD Contínua (emprego, renda)
+- Contas Nacionais (PIB)
+- Pesquisa Industrial
+- Pesquisa Agrícola
+- E muitas outras
+
+Exemplos de uso:
+- Listar tabelas: (sem parâmetros)
+- Buscar tabelas de população: busca="população"
+- Tabelas do Censo: pesquisa="censo"
+- Tabelas de emprego: busca="desocupação"`,
+    sidraTabelasSchema.shape,
+    async (args) => {
+      const result = await ibgeSidraTabelas(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_sidra_metadados tool
+  server.tool(
+    "ibge_sidra_metadados",
+    `Retorna os metadados de uma tabela SIDRA específica.
+
+Funcionalidades:
+- Informações gerais (nome, pesquisa, assunto, periodicidade)
+- Níveis territoriais disponíveis (Brasil, UF, município, etc.)
+- Lista de variáveis com unidades
+- Classificações e categorias de cada variável
+- Períodos disponíveis
+
+Use esta ferramenta para entender a estrutura de uma tabela
+ANTES de consultar os dados com ibge_sidra.
+
+Exemplos de uso:
+- Metadados da tabela de população: tabela="6579"
+- Metadados do Censo 2022: tabela="9514"
+- Metadados da PNAD (desocupação): tabela="4714"
+- Sem períodos: tabela="6579", incluir_periodos=false`,
+    sidraMetadadosSchema.shape,
+    async (args) => {
+      const result = await ibgeSidraMetadados(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_malhas tool
+  server.tool(
+    "ibge_malhas",
+    `Obtém malhas geográficas (mapas) do IBGE em formato GeoJSON, TopoJSON ou SVG.
+
+Funcionalidades:
+- Malhas do Brasil, regiões, estados, municípios, etc.
+- Diferentes níveis de resolução (divisões internas)
+- Diferentes níveis de qualidade do traçado
+- Formatos: GeoJSON (dados), TopoJSON (compacto), SVG (imagem)
+
+Tipos de localidade:
+- "BR" ou "1" = Brasil inteiro
+- Sigla do estado (ex: "SP", "RJ", "MG")
+- Código do estado (ex: "35" para SP)
+- Código do município (7 dígitos, ex: "3550308" para São Paulo)
+
+Resolução (divisões internas):
+- 0 = Apenas o contorno
+- 1 = Macrorregiões (só para BR)
+- 2 = Unidades da Federação
+- 3 = Mesorregiões
+- 4 = Microrregiões
+- 5 = Municípios
+
+Qualidade:
+- 1 = Mínima (menor arquivo)
+- 4 = Máxima (mais detalhado)
+
+Exemplos de uso:
+- Brasil com estados: localidade="BR", resolucao="2"
+- São Paulo com municípios: localidade="SP", resolucao="5"
+- Município específico: localidade="3550308"
+- Em formato SVG: localidade="BR", formato="svg"`,
+    malhasSchema.shape,
+    async (args) => {
+      const result = await ibgeMalhas(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_pesquisas tool
+  server.tool(
+    "ibge_pesquisas",
+    `Lista as pesquisas disponíveis no IBGE e suas tabelas.
+
+Funcionalidades:
+- Lista todas as pesquisas do IBGE (Censos, PNAD, PIB, etc.)
+- Busca por nome ou código da pesquisa
+- Mostra detalhes e tabelas de uma pesquisa específica
+- Categoriza pesquisas por tema
+
+Principais pesquisas:
+- **Censos**: Demográfico, Agropecuário, MUNIC
+- **PNAD Contínua**: Trabalho, renda, educação
+- **Contas Nacionais**: PIB, investimentos
+- **Pesquisas Econômicas**: Indústria, Comércio, Serviços
+- **Pesquisas Agropecuárias**: Produção, safras, abate
+- **Índices de Preços**: IPCA, INPC, custos
+
+Exemplos de uso:
+- Listar todas as pesquisas: (sem parâmetros)
+- Buscar pesquisas de população: busca="população"
+- Detalhes da PNAD: detalhes="pnad"
+- Detalhes do Censo: detalhes="CD"`,
+    pesquisasSchema.shape,
+    async (args) => {
+      const result = await ibgePesquisas(args);
       return { content: [{ type: "text", text: result }] };
     }
   );

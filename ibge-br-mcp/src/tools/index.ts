@@ -7,6 +7,12 @@ export { sidraTool, ibgeSidra, sidraSchema } from "./sidra.js";
 export { nomesTool, ibgeNomes, nomesSchema } from "./nomes.js";
 export { noticiasTool, ibgeNoticias, noticiasSchema } from "./noticias.js";
 
+// New tools
+export { sidraTabelasTool, ibgeSidraTabelas, sidraTabelasSchema } from "./sidra-tabelas.js";
+export { sidraMetadadosTool, ibgeSidraMetadados, sidraMetadadosSchema } from "./sidra-metadados.js";
+export { malhasTool, ibgeMalhas, malhasSchema } from "./malhas.js";
+export { pesquisasTool, ibgePesquisas, pesquisasSchema } from "./pesquisas.js";
+
 // Tool definitions array for registration
 export const tools = [
   {
@@ -142,5 +148,65 @@ Exemplos de uso:
 - Apenas releases: tipo="release"
 - Apenas destaques: destaque=true
 - Segunda página: pagina=2`,
+  },
+  {
+    name: "ibge_sidra_tabelas",
+    description: `Lista e busca tabelas disponíveis no SIDRA (Sistema IBGE de Recuperação Automática).
+
+Funcionalidades:
+- Lista todas as tabelas (agregados) do SIDRA
+- Busca por termo no nome da tabela
+- Filtra por pesquisa (Censo, PNAD, PIB, etc.)
+- Mostra o código e nome de cada tabela
+
+Exemplos de uso:
+- Listar tabelas: (sem parâmetros)
+- Buscar tabelas de população: busca="população"
+- Tabelas do Censo: pesquisa="censo"`,
+  },
+  {
+    name: "ibge_sidra_metadados",
+    description: `Retorna os metadados de uma tabela SIDRA específica.
+
+Funcionalidades:
+- Informações gerais (nome, pesquisa, assunto, periodicidade)
+- Níveis territoriais disponíveis (Brasil, UF, município, etc.)
+- Lista de variáveis com unidades
+- Classificações e categorias de cada variável
+- Períodos disponíveis
+
+Exemplos de uso:
+- Metadados da tabela de população: tabela="6579"
+- Metadados do Censo 2022: tabela="9514"`,
+  },
+  {
+    name: "ibge_malhas",
+    description: `Obtém malhas geográficas (mapas) do IBGE em formato GeoJSON, TopoJSON ou SVG.
+
+Funcionalidades:
+- Malhas do Brasil, regiões, estados, municípios
+- Diferentes níveis de resolução (divisões internas)
+- Diferentes níveis de qualidade do traçado
+- Formatos: GeoJSON, TopoJSON, SVG
+
+Exemplos de uso:
+- Brasil com estados: localidade="BR", resolucao="2"
+- São Paulo com municípios: localidade="SP", resolucao="5"
+- Município específico: localidade="3550308"`,
+  },
+  {
+    name: "ibge_pesquisas",
+    description: `Lista as pesquisas disponíveis no IBGE e suas tabelas.
+
+Funcionalidades:
+- Lista todas as pesquisas do IBGE (Censos, PNAD, PIB, etc.)
+- Busca por nome ou código da pesquisa
+- Mostra detalhes e tabelas de uma pesquisa específica
+- Categoriza pesquisas por tema
+
+Exemplos de uso:
+- Listar todas as pesquisas: (sem parâmetros)
+- Buscar pesquisas de população: busca="população"
+- Detalhes da PNAD: detalhes="pnad"`,
   },
 ];
