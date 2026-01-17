@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, truncate } from "../utils/index.js";
 
 // Schema for the tool input
 export const pesquisasSchema = z.object({
@@ -94,15 +95,17 @@ function formatPesquisasLista(
 
   output += `**Total:** ${pesquisas.length} pesquisas\n\n`;
 
-  // Summary table
-  output += "| Código | Pesquisa | Tabelas |\n";
-  output += "|:-------|:---------|--------:|\n";
+  // Summary table using createMarkdownTable
+  const headers = ["Código", "Pesquisa", "Tabelas"];
+  const rows = pesquisas.map((p) => [
+    p.id,
+    truncate(p.nome, 60),
+    p.agregados.length,
+  ]);
 
-  for (const p of pesquisas) {
-    // Truncate nome if too long
-    const nome = p.nome.length > 60 ? p.nome.substring(0, 57) + "..." : p.nome;
-    output += `| ${p.id} | ${nome} | ${p.agregados.length} |\n`;
-  }
+  output += createMarkdownTable(headers, rows, {
+    alignment: ["left", "left", "right"],
+  });
 
   output += "\n---\n\n";
 
@@ -128,16 +131,18 @@ function formatPesquisaDetalhes(pesquisa: PesquisaCompleta): string {
   output += `**Código:** ${pesquisa.id}\n`;
   output += `**Total de tabelas:** ${pesquisa.agregados.length}\n\n`;
 
-  // List all tables
+  // List all tables using createMarkdownTable
   output += "### Tabelas Disponíveis\n\n";
-  output += "| Código | Nome da Tabela |\n";
-  output += "|-------:|:---------------|\n";
 
-  for (const ag of pesquisa.agregados) {
-    // Truncate nome if too long
-    const nome = ag.nome.length > 70 ? ag.nome.substring(0, 67) + "..." : ag.nome;
-    output += `| ${ag.id} | ${nome} |\n`;
-  }
+  const headers = ["Código", "Nome da Tabela"];
+  const rows = pesquisa.agregados.map((ag) => [
+    ag.id,
+    truncate(ag.nome, 70),
+  ]);
+
+  output += createMarkdownTable(headers, rows, {
+    alignment: ["right", "left"],
+  });
 
   output += "\n---\n\n";
   output += "_Use `ibge_sidra_metadados(tabela=\"CODIGO\")` para ver detalhes de uma tabela._\n";

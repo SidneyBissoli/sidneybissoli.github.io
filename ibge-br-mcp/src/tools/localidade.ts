@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type Municipio, type UF, type Distrito } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createKeyValueTable } from "../utils/index.js";
 
 // Schema for the tool input
 export const localidadeSchema = z.object({
@@ -98,63 +99,70 @@ export async function ibgeLocalidade(input: LocalidadeInput): Promise<string> {
 
 function formatEstado(estado: UF): string {
   let output = `## Estado: ${estado.nome}\n\n`;
-  output += "| Campo | Valor |\n";
-  output += "|:------|:------|\n";
-  output += `| **Código IBGE** | ${estado.id} |\n`;
-  output += `| **Sigla** | ${estado.sigla} |\n`;
-  output += `| **Nome** | ${estado.nome} |\n`;
-  output += `| **Região** | ${estado.regiao.nome} (${estado.regiao.sigla}) |\n`;
+
+  output += createKeyValueTable({
+    "**Código IBGE**": estado.id,
+    "**Sigla**": estado.sigla,
+    "**Nome**": estado.nome,
+    "**Região**": `${estado.regiao.nome} (${estado.regiao.sigla})`,
+  });
 
   return output;
 }
 
 function formatMunicipio(municipio: Municipio): string {
   let output = `## Município: ${municipio.nome}\n\n`;
-  output += "| Campo | Valor |\n";
-  output += "|:------|:------|\n";
-  output += `| **Código IBGE** | ${municipio.id} |\n`;
-  output += `| **Nome** | ${municipio.nome} |\n`;
+
+  const data: Record<string, string | number | undefined> = {
+    "**Código IBGE**": municipio.id,
+    "**Nome**": municipio.nome,
+  };
 
   if (municipio.microrregiao) {
-    output += `| **Microrregião** | ${municipio.microrregiao.nome} |\n`;
+    data["**Microrregião**"] = municipio.microrregiao.nome;
 
     if (municipio.microrregiao.mesorregiao) {
-      output += `| **Mesorregião** | ${municipio.microrregiao.mesorregiao.nome} |\n`;
+      data["**Mesorregião**"] = municipio.microrregiao.mesorregiao.nome;
 
       if (municipio.microrregiao.mesorregiao.UF) {
         const uf = municipio.microrregiao.mesorregiao.UF;
-        output += `| **Estado** | ${uf.nome} (${uf.sigla}) |\n`;
-        output += `| **Região** | ${uf.regiao.nome} |\n`;
+        data["**Estado**"] = `${uf.nome} (${uf.sigla})`;
+        data["**Região**"] = uf.regiao.nome;
       }
     }
   }
 
   if (municipio["regiao-imediata"]) {
-    output += `| **Região Imediata** | ${municipio["regiao-imediata"].nome} |\n`;
+    data["**Região Imediata**"] = municipio["regiao-imediata"].nome;
 
     if (municipio["regiao-imediata"]["regiao-intermediaria"]) {
-      output += `| **Região Intermediária** | ${municipio["regiao-imediata"]["regiao-intermediaria"].nome} |\n`;
+      data["**Região Intermediária**"] = municipio["regiao-imediata"]["regiao-intermediaria"].nome;
     }
   }
+
+  output += createKeyValueTable(data);
 
   return output;
 }
 
 function formatDistrito(distrito: Distrito): string {
   let output = `## Distrito: ${distrito.nome}\n\n`;
-  output += "| Campo | Valor |\n";
-  output += "|:------|:------|\n";
-  output += `| **Código IBGE** | ${distrito.id} |\n`;
-  output += `| **Nome** | ${distrito.nome} |\n`;
+
+  const data: Record<string, string | number | undefined> = {
+    "**Código IBGE**": distrito.id,
+    "**Nome**": distrito.nome,
+  };
 
   if (distrito.municipio) {
-    output += `| **Município** | ${distrito.municipio.nome} |\n`;
+    data["**Município**"] = distrito.municipio.nome;
 
     if (distrito.municipio.microrregiao?.mesorregiao?.UF) {
       const uf = distrito.municipio.microrregiao.mesorregiao.UF;
-      output += `| **Estado** | ${uf.nome} (${uf.sigla}) |\n`;
+      data["**Estado**"] = `${uf.nome} (${uf.sigla})`;
     }
   }
+
+  output += createKeyValueTable(data);
 
   return output;
 }

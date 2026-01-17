@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type Municipio, type MunicipioSimples } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable } from "../utils/index.js";
 
 // Schema for the tool input
 export const municipiosSchema = z.object({
@@ -83,7 +84,7 @@ export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
           : "Nenhum município encontrado.";
       }
 
-      // Format the response
+      // Format the response using createMarkdownTable
       let output = `## Municípios${input.uf ? ` - ${input.uf.toUpperCase()}` : " do Brasil"}\n\n`;
 
       if (input.busca) {
@@ -91,12 +92,13 @@ export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
       }
 
       output += `Mostrando: ${municipios.length} de ${total} municípios\n\n`;
-      output += "| Código IBGE | Nome |\n";
-      output += "|------------:|:-----|\n";
 
-      for (const municipio of municipios) {
-        output += `| ${municipio.id} | ${municipio.nome} |\n`;
-      }
+      const headers = ["Código IBGE", "Nome"];
+      const rows = municipios.map((m) => [m.id, m.nome]);
+
+      output += createMarkdownTable(headers, rows, {
+        alignment: ["right", "left"],
+      });
 
       if (municipios.length < total) {
         output += `\n_Resultados limitados a ${input.limite}. Use o parâmetro 'limite' para ver mais._\n`;

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Schema for the tool input
 export const sidraSchema = z.object({
@@ -125,41 +126,40 @@ function formatSidraResponse(data: SidraRecord[], tabela: string): string {
   }
 
   // First row contains headers
-  const headers = data[0];
-  const rows = data.slice(1);
+  const headerRow = data[0];
+  const dataRows = data.slice(1);
 
   const tabelaNome = TABELAS_COMUNS[tabela] || `Tabela ${tabela}`;
   let output = `## SIDRA - ${tabelaNome}\n\n`;
-  output += `Total de registros: ${rows.length}\n\n`;
+  output += `Total de registros: ${dataRows.length}\n\n`;
 
-  if (rows.length === 0) {
+  if (dataRows.length === 0) {
     return output + "Nenhum dado encontrado para os filtros aplicados.";
   }
 
   // Get column names from headers
-  const columns = Object.keys(headers);
+  const columns = Object.keys(headerRow);
+  const headers = columns.map((col) => headerRow[col] || col);
 
-  // Create markdown table
-  output += "| " + columns.map((col) => headers[col] || col).join(" | ") + " |\n";
-  output += "|" + columns.map(() => "---").join("|") + "|\n";
-
-  // Limit to first 50 rows for readability
-  const displayRows = rows.slice(0, 50);
-
-  for (const row of displayRows) {
-    const values = columns.map((col) => {
+  // Build rows with formatted values
+  const rows = dataRows.map((row) =>
+    columns.map((col) => {
       const value = row[col];
       // Format numbers with thousand separators
       if (value && !isNaN(Number(value)) && value.length > 3) {
-        return Number(value).toLocaleString("pt-BR");
+        return formatNumber(Number(value));
       }
       return value || "-";
-    });
-    output += "| " + values.join(" | ") + " |\n";
-  }
+    })
+  );
 
-  if (rows.length > 50) {
-    output += `\n_Mostrando 50 de ${rows.length} registros. Use formato 'json' para dados completos._\n`;
+  output += createMarkdownTable(headers, rows, {
+    maxRows: 50,
+    showRowCount: true,
+  });
+
+  if (dataRows.length > 50) {
+    output += `_Use formato 'json' para dados completos._\n`;
   }
 
   return output;

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type NoticiasResponse, type Noticia } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { decodeHtmlEntities, formatDate as formatDateUtil } from "../utils/index.js";
 
 // Schema for the tool input
 export const noticiasSchema = z.object({
@@ -129,7 +130,7 @@ function formatNoticia(noticia: Noticia): string {
   output += `### ${tipoBadge} ${noticia.titulo}\n\n`;
 
   // Publication date
-  output += `**Data:** ${formatDate(noticia.data_publicacao)}\n`;
+  output += `**Data:** ${formatDateUtil(noticia.data_publicacao, { format: "long" })}\n`;
 
   // Category/editorias
   if (noticia.editorias) {
@@ -150,16 +151,8 @@ function formatNoticia(noticia: Noticia): string {
 
   // Introduction/summary
   if (noticia.introducao) {
-    // Clean HTML tags from introduction
-    const intro = noticia.introducao
-      .replace(/<[^>]*>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .replace(/&amp;/g, "&")
-      .replace(/&lt;/g, "<")
-      .replace(/&gt;/g, ">")
-      .replace(/&quot;/g, '"')
-      .trim();
-
+    // Clean HTML tags and entities using centralized utility
+    const intro = decodeHtmlEntities(noticia.introducao);
     output += `${intro}\n\n`;
   }
 
@@ -167,29 +160,6 @@ function formatNoticia(noticia: Noticia): string {
   output += `🔗 [Leia mais](${noticia.link})\n`;
 
   return output;
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    // IBGE format: "DD/MM/YYYY HH:MM:SS"
-    const parts = dateStr.split(" ");
-    const dateParts = parts[0].split("/");
-    const timeParts = parts[1] ? parts[1].split(":") : ["00", "00"];
-
-    const day = dateParts[0];
-    const month = dateParts[1];
-    const year = dateParts[2];
-
-    const months = [
-      "", "janeiro", "fevereiro", "março", "abril", "maio", "junho",
-      "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-    ];
-
-    const monthName = months[parseInt(month, 10)] || month;
-    return `${day} de ${monthName} de ${year}, ${timeParts[0]}:${timeParts[1]}`;
-  } catch {
-    return dateStr;
-  }
 }
 
 // Tool definition for MCP

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type UF } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable } from "../utils/index.js";
 
 // Schema for the tool input
 export const estadosSchema = z.object({
@@ -62,15 +63,16 @@ export async function ibgeEstados(input: EstadosInput): Promise<string> {
         regiao: estado.regiao.nome,
       }));
 
-      // Create a formatted table
+      // Create a formatted table using createMarkdownTable
       let output = `## Estados Brasileiros${input.regiao ? ` - Região ${getRegiaoNome(input.regiao)}` : ""}\n\n`;
       output += `Total: ${estados.length} estados\n\n`;
-      output += "| ID | Sigla | Nome | Região |\n";
-      output += "|----:|:-----:|:-----|:-------|\n";
 
-      for (const estado of resultado) {
-        output += `| ${estado.id} | ${estado.sigla} | ${estado.nome} | ${estado.regiao} |\n`;
-      }
+      const headers = ["ID", "Sigla", "Nome", "Região"];
+      const rows = resultado.map((e) => [e.id, e.sigla, e.nome, e.regiao]);
+
+      output += createMarkdownTable(headers, rows, {
+        alignment: ["right", "center", "left", "left"],
+      });
 
       return output;
     } catch (error) {
