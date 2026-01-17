@@ -2,7 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-import { createMarkdownTable } from "../utils/index.js";
+import { createMarkdownTable, truncate } from "../utils/index.js";
 
 // Schema for the tool input
 export const sidraTabelasSchema = z.object({
@@ -142,7 +142,7 @@ function formatTabelasResponse(
     output += `### ${pesquisa}\n\n`;
 
     const headers = ["Código", "Nome da Tabela"];
-    const rows = tabs.map((t) => [t.id, t.nome]);
+    const rows = tabs.map((t) => [t.id, truncate(t.nome, 70)]);
 
     output += createMarkdownTable(headers, rows, {
       alignment: ["right", "left"],

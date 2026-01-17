@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, createKeyValueTable, truncate } from "../utils/index.js";
 
 // Schema for the tool input
 export const sidraMetadadosSchema = z.object({
@@ -119,15 +120,16 @@ function formatMetadadosResponse(
 
   // Basic info
   output += `### Informações Gerais\n\n`;
-  output += `| Campo | Valor |\n`;
-  output += `|:------|:------|\n`;
-  output += `| **Código** | ${meta.id} |\n`;
-  output += `| **Nome** | ${meta.nome} |\n`;
-  output += `| **Pesquisa** | ${meta.pesquisa} |\n`;
-  output += `| **Assunto** | ${meta.assunto} |\n`;
-  output += `| **Periodicidade** | ${meta.periodicidade.frequencia} |\n`;
-  output += `| **Período** | ${meta.periodicidade.inicio} a ${meta.periodicidade.fim} |\n`;
-  output += `| **URL** | ${meta.URL} |\n\n`;
+  output += createKeyValueTable({
+    "**Código**": meta.id,
+    "**Nome**": truncate(meta.nome, 80),
+    "**Pesquisa**": meta.pesquisa,
+    "**Assunto**": meta.assunto,
+    "**Periodicidade**": meta.periodicidade.frequencia,
+    "**Período**": `${meta.periodicidade.inicio} a ${meta.periodicidade.fim}`,
+    "**URL**": meta.URL,
+  });
+  output += "\n";
 
   // Territorial levels
   output += `### Níveis Territoriais Disponíveis\n\n`;
@@ -164,12 +166,10 @@ function formatMetadadosResponse(
   ];
 
   if (allNiveis.length > 0) {
-    output += "| Código | Nível |\n";
-    output += "|:-------|:------|\n";
-    for (const nivel of allNiveis) {
-      const descricao = niveis[nivel] || nivel;
-      output += `| ${nivel} | ${descricao} |\n`;
-    }
+    const rows = allNiveis.map((nivel) => [nivel, niveis[nivel] || nivel]);
+    output += createMarkdownTable(["Código", "Nível"], rows, {
+      alignment: ["left", "left"],
+    });
     output += "\n";
   } else {
     output += "_Informação não disponível_\n\n";
@@ -178,33 +178,40 @@ function formatMetadadosResponse(
   // Variables
   output += `### Variáveis\n\n`;
   if (meta.variaveis && meta.variaveis.length > 0) {
-    output += "| ID | Nome | Unidade |\n";
-    output += "|---:|:-----|:--------|\n";
-    for (const v of meta.variaveis) {
-      output += `| ${v.id} | ${v.nome} | ${v.unidade || "-"} |\n`;
-    }
+    const variaveisRows = meta.variaveis.map((v) => [
+      String(v.id),
+      truncate(v.nome, 60),
+      v.unidade || "-",
+    ]);
+    output += createMarkdownTable(["ID", "Nome", "Unidade"], variaveisRows, {
+      alignment: ["right", "left", "left"],
+    });
     output += "\n";
 
     // Classifications for each variable
     for (const v of meta.variaveis) {
       if (v.classificacoes && v.classificacoes.length > 0) {
-        output += `#### Classificações da Variável ${v.id} (${v.nome})\n\n`;
+        output += `#### Classificações da Variável ${v.id} (${truncate(v.nome, 40)})\n\n`;
         for (const c of v.classificacoes) {
           output += `**${c.id} - ${c.nome}:**\n`;
           if (c.categorias.length <= 20) {
-            output += "| ID | Categoria |\n";
-            output += "|---:|:----------|\n";
-            for (const cat of c.categorias) {
-              output += `| ${cat.id} | ${cat.nome} |\n`;
-            }
+            const catRows = c.categorias.map((cat) => [
+              String(cat.id),
+              truncate(cat.nome, 60),
+            ]);
+            output += createMarkdownTable(["ID", "Categoria"], catRows, {
+              alignment: ["right", "left"],
+            });
           } else {
             output += `_${c.categorias.length} categorias disponíveis. Primeiras 10:_\n`;
-            output += "| ID | Categoria |\n";
-            output += "|---:|:----------|\n";
-            for (const cat of c.categorias.slice(0, 10)) {
-              output += `| ${cat.id} | ${cat.nome} |\n`;
-            }
-            output += `| ... | _e mais ${c.categorias.length - 10} categorias_ |\n`;
+            const catRows = c.categorias.slice(0, 10).map((cat) => [
+              String(cat.id),
+              truncate(cat.nome, 60),
+            ]);
+            catRows.push(["...", `_e mais ${c.categorias.length - 10} categorias_`]);
+            output += createMarkdownTable(["ID", "Categoria"], catRows, {
+              alignment: ["right", "left"],
+            });
           }
           output += "\n";
         }
