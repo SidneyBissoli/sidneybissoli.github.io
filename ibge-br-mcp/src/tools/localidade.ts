@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, type Municipio, type UF, type Distrito } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const localidadeSchema = z.object({
@@ -19,78 +20,80 @@ export type LocalidadeInput = z.infer<typeof localidadeSchema>;
  * Fetches details of a specific location from IBGE API
  */
 export async function ibgeLocalidade(input: LocalidadeInput): Promise<string> {
-  try {
-    const codigoStr = input.codigo.toString();
-    let tipo = input.tipo;
-
-    // Infer type from code length if not provided
-    if (!tipo) {
-      if (codigoStr.length <= 2) {
-        tipo = "estado";
-      } else if (codigoStr.length <= 7) {
-        tipo = "municipio";
-      } else {
-        tipo = "distrito";
-      }
-    }
-
-    let url: string;
-    switch (tipo) {
-      case "estado":
-        url = `${IBGE_API.LOCALIDADES}/estados/${input.codigo}`;
-        break;
-      case "municipio":
-        url = `${IBGE_API.LOCALIDADES}/municipios/${input.codigo}`;
-        break;
-      case "distrito":
-        url = `${IBGE_API.LOCALIDADES}/distritos/${input.codigo}`;
-        break;
-      default:
-        return "Tipo de localidade inválido.";
-    }
-
-    // Use cache for static location data (24 hours TTL)
-    const key = cacheKey(url);
-    let data: unknown;
-
+  return withMetrics("ibge_localidade", "localidades", async () => {
     try {
-      data = await cachedFetch<unknown>(url, key, CACHE_TTL.STATIC);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("404")) {
+      const codigoStr = input.codigo.toString();
+      let tipo = input.tipo;
+
+      // Infer type from code length if not provided
+      if (!tipo) {
+        if (codigoStr.length <= 2) {
+          tipo = "estado";
+        } else if (codigoStr.length <= 7) {
+          tipo = "municipio";
+        } else {
+          tipo = "distrito";
+        }
+      }
+
+      let url: string;
+      switch (tipo) {
+        case "estado":
+          url = `${IBGE_API.LOCALIDADES}/estados/${input.codigo}`;
+          break;
+        case "municipio":
+          url = `${IBGE_API.LOCALIDADES}/municipios/${input.codigo}`;
+          break;
+        case "distrito":
+          url = `${IBGE_API.LOCALIDADES}/distritos/${input.codigo}`;
+          break;
+        default:
+          return "Tipo de localidade inválido.";
+      }
+
+      // Use cache for static location data (24 hours TTL)
+      const key = cacheKey(url);
+      let data: unknown;
+
+      try {
+        data = await cachedFetch<unknown>(url, key, CACHE_TTL.STATIC);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
+          return `Localidade não encontrada com o código ${input.codigo}.`;
+        }
+        throw error;
+      }
+
+      // Check if empty response
+      if (!data || (Array.isArray(data) && data.length === 0)) {
         return `Localidade não encontrada com o código ${input.codigo}.`;
       }
-      throw error;
-    }
 
-    // Check if empty response
-    if (!data || (Array.isArray(data) && data.length === 0)) {
-      return `Localidade não encontrada com o código ${input.codigo}.`;
-    }
+      // Handle array response (some endpoints return arrays)
+      const localidade = Array.isArray(data) ? data[0] : data;
 
-    // Handle array response (some endpoints return arrays)
-    const localidade = Array.isArray(data) ? data[0] : data;
+      if (!localidade) {
+        return `Localidade não encontrada com o código ${input.codigo}.`;
+      }
 
-    if (!localidade) {
-      return `Localidade não encontrada com o código ${input.codigo}.`;
+      // Format response based on type
+      switch (tipo) {
+        case "estado":
+          return formatEstado(localidade as UF);
+        case "municipio":
+          return formatMunicipio(localidade as Municipio);
+        case "distrito":
+          return formatDistrito(localidade as Distrito);
+        default:
+          return "Tipo de localidade não suportado.";
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar localidade: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar localidade.";
     }
-
-    // Format response based on type
-    switch (tipo) {
-      case "estado":
-        return formatEstado(localidade as UF);
-      case "municipio":
-        return formatMunicipio(localidade as Municipio);
-      case "distrito":
-        return formatDistrito(localidade as Distrito);
-      default:
-        return "Tipo de localidade não suportado.";
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar localidade: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar localidade.";
-  }
+  });
 }
 
 function formatEstado(estado: UF): string {

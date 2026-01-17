@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const sidraMetadadosSchema = z.object({
@@ -71,40 +72,42 @@ interface Periodo {
  * Fetches metadata for a SIDRA table
  */
 export async function ibgeSidraMetadados(input: SidraMetadadosInput): Promise<string> {
-  try {
-    // Fetch main metadata with cache (24 hours TTL - static data)
-    const metadadosUrl = `${IBGE_API.AGREGADOS}/${input.tabela}/metadados`;
-    const metadadosKey = cacheKey(metadadosUrl);
-    let metadados: Metadados;
-
+  return withMetrics("ibge_sidra_metadados", "agregados", async () => {
     try {
-      metadados = await cachedFetch<Metadados>(metadadosUrl, metadadosKey, CACHE_TTL.STATIC);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("404")) {
-        return `Tabela ${input.tabela} não encontrada. Use ibge_sidra_tabelas para listar tabelas disponíveis.`;
-      }
-      throw error;
-    }
+      // Fetch main metadata with cache (24 hours TTL - static data)
+      const metadadosUrl = `${IBGE_API.AGREGADOS}/${input.tabela}/metadados`;
+      const metadadosKey = cacheKey(metadadosUrl);
+      let metadados: Metadados;
 
-    // Fetch periods if requested with cache
-    let periodos: Periodo[] = [];
-    if (input.incluir_periodos) {
       try {
-        const periodosUrl = `${IBGE_API.AGREGADOS}/${input.tabela}/periodos`;
-        const periodosKey = cacheKey(periodosUrl);
-        periodos = await cachedFetch<Periodo[]>(periodosUrl, periodosKey, CACHE_TTL.STATIC);
-      } catch {
-        // Ignore period fetch errors
+        metadados = await cachedFetch<Metadados>(metadadosUrl, metadadosKey, CACHE_TTL.STATIC);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
+          return `Tabela ${input.tabela} não encontrada. Use ibge_sidra_tabelas para listar tabelas disponíveis.`;
+        }
+        throw error;
       }
-    }
 
-    return formatMetadadosResponse(metadados, periodos, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar metadados: ${error.message}`;
+      // Fetch periods if requested with cache
+      let periodos: Periodo[] = [];
+      if (input.incluir_periodos) {
+        try {
+          const periodosUrl = `${IBGE_API.AGREGADOS}/${input.tabela}/periodos`;
+          const periodosKey = cacheKey(periodosUrl);
+          periodos = await cachedFetch<Periodo[]>(periodosUrl, periodosKey, CACHE_TTL.STATIC);
+        } catch {
+          // Ignore period fetch errors
+        }
+      }
+
+      return formatMetadadosResponse(metadados, periodos, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar metadados: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar metadados.";
     }
-    return "Erro desconhecido ao buscar metadados.";
-  }
+  });
 }
 
 function formatMetadadosResponse(

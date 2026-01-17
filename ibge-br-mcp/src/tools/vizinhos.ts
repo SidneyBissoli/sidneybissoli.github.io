@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, Municipio } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const vizinhosSchema = z.object({
@@ -28,74 +29,76 @@ export type VizinhosInput = z.infer<typeof vizinhosSchema>;
  * Gets neighboring municipalities
  */
 export async function ibgeVizinhos(input: VizinhosInput): Promise<string> {
-  try {
-    // Get municipality code
-    let municipioId: string;
-    let municipioNome: string;
+  return withMetrics("ibge_vizinhos", "localidades", async () => {
+    try {
+      // Get municipality code
+      let municipioId: string;
+      let municipioNome: string;
 
-    if (/^\d{7}$/.test(input.municipio)) {
-      municipioId = input.municipio;
-      // Get municipality name
-      const munInfo = await getMunicipioInfo(municipioId);
-      if (!munInfo) {
-        return `Município com código ${municipioId} não encontrado.`;
+      if (/^\d{7}$/.test(input.municipio)) {
+        municipioId = input.municipio;
+        // Get municipality name
+        const munInfo = await getMunicipioInfo(municipioId);
+        if (!munInfo) {
+          return `Município com código ${municipioId} não encontrado.`;
+        }
+        municipioNome = munInfo.nome;
+      } else {
+        // Search by name
+        if (!input.uf) {
+          return "Para buscar por nome, informe também a UF (sigla do estado).";
+        }
+        const munInfo = await findMunicipioByName(input.municipio, input.uf);
+        if (!munInfo) {
+          return `Município "${input.municipio}" não encontrado em ${input.uf.toUpperCase()}.`;
+        }
+        municipioId = String(munInfo.id);
+        municipioNome = munInfo.nome;
       }
-      municipioNome = munInfo.nome;
-    } else {
-      // Search by name
-      if (!input.uf) {
-        return "Para buscar por nome, informe também a UF (sigla do estado).";
+
+      // Get state code from municipality
+      const ufCode = municipioId.substring(0, 2);
+
+      // Get all municipalities from the same state
+      const allMunicipios = await getMunicipiosByUf(ufCode);
+
+      if (!allMunicipios || allMunicipios.length === 0) {
+        return "Não foi possível obter a lista de municípios do estado.";
       }
-      const munInfo = await findMunicipioByName(input.municipio, input.uf);
-      if (!munInfo) {
-        return `Município "${input.municipio}" não encontrado em ${input.uf.toUpperCase()}.`;
+
+      // Get neighboring municipalities using mesh data
+      const vizinhos = await getVizinhosFromMalha(municipioId);
+
+      if (vizinhos.length === 0) {
+        // Fallback: try to find municipalities that might be neighbors based on code proximity
+        return formatNoNeighborsFound(municipioNome, municipioId);
       }
-      municipioId = String(munInfo.id);
-      municipioNome = munInfo.nome;
+
+      // If radius specified, filter by distance
+      if (input.raio) {
+        // This would require centroid data which we don't have directly
+        // For now, we'll note this limitation
+      }
+
+      // Get additional data if requested
+      let vizinhosData: VizinhoInfo[] = vizinhos.map((v) => ({
+        codigo: v.codigo,
+        nome: v.nome,
+        uf: v.uf,
+      }));
+
+      if (input.incluir_dados) {
+        vizinhosData = await enrichVizinhosData(vizinhosData);
+      }
+
+      return formatResponse(municipioNome, municipioId, vizinhosData, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar vizinhos: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar municípios vizinhos.";
     }
-
-    // Get state code from municipality
-    const ufCode = municipioId.substring(0, 2);
-
-    // Get all municipalities from the same state
-    const allMunicipios = await getMunicipiosByUf(ufCode);
-
-    if (!allMunicipios || allMunicipios.length === 0) {
-      return "Não foi possível obter a lista de municípios do estado.";
-    }
-
-    // Get neighboring municipalities using mesh data
-    const vizinhos = await getVizinhosFromMalha(municipioId);
-
-    if (vizinhos.length === 0) {
-      // Fallback: try to find municipalities that might be neighbors based on code proximity
-      return formatNoNeighborsFound(municipioNome, municipioId);
-    }
-
-    // If radius specified, filter by distance
-    if (input.raio) {
-      // This would require centroid data which we don't have directly
-      // For now, we'll note this limitation
-    }
-
-    // Get additional data if requested
-    let vizinhosData: VizinhoInfo[] = vizinhos.map((v) => ({
-      codigo: v.codigo,
-      nome: v.nome,
-      uf: v.uf,
-    }));
-
-    if (input.incluir_dados) {
-      vizinhosData = await enrichVizinhosData(vizinhosData);
-    }
-
-    return formatResponse(municipioNome, municipioId, vizinhosData, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar vizinhos: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar municípios vizinhos.";
-  }
+  });
 }
 
 interface VizinhoInfo {

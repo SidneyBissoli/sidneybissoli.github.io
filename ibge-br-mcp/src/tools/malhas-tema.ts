@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { withMetrics } from "../metrics.js";
 
 const MALHAS_API = "https://servicodados.ibge.gov.br/api/v3/malhas";
 
@@ -76,59 +77,61 @@ export type MalhasTemaInput = z.infer<typeof malhasTemaSchema>;
  * Fetches thematic geographic meshes from IBGE API
  */
 export async function ibgeMalhasTema(input: MalhasTemaInput): Promise<string> {
-  // List available themes
-  if (input.tema === "listar") {
-    return listThemes();
-  }
-
-  try {
-    // Build URL based on theme
-    const urlPath = getThemeUrl(input.tema, input.codigo);
-
-    if (!urlPath) {
-      return `Tema "${input.tema}" não suportado ou código inválido.`;
+  return withMetrics("ibge_malhas_tema", "malhas", async () => {
+    // List available themes
+    if (input.tema === "listar") {
+      return listThemes();
     }
 
-    // Build query parameters
-    const params = new URLSearchParams();
+    try {
+      // Build URL based on theme
+      const urlPath = getThemeUrl(input.tema, input.codigo);
 
-    const formatMap: Record<string, string> = {
-      geojson: "application/vnd.geo+json",
-      topojson: "application/json",
-      svg: "image/svg+xml",
-    };
-    params.append("formato", formatMap[input.formato || "geojson"]);
-
-    if (input.resolucao && input.resolucao !== "0") {
-      params.append("resolucao", input.resolucao);
-    }
-
-    params.append("qualidade", input.qualidade || "4");
-
-    const fullUrl = `${urlPath}?${params.toString()}`;
-
-    // For SVG, return URL only
-    if (input.formato === "svg") {
-      return formatSvgResponse(fullUrl, input);
-    }
-
-    const response = await fetch(fullUrl);
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return `Malha temática não encontrada para: ${input.tema}${input.codigo ? ` (código: ${input.codigo})` : ""}`;
+      if (!urlPath) {
+        return `Tema "${input.tema}" não suportado ou código inválido.`;
       }
-      throw new Error(`Erro na API: ${response.status}`);
-    }
 
-    const data = await response.json();
-    return formatResponse(data, fullUrl, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar malha temática: ${error.message}`;
+      // Build query parameters
+      const params = new URLSearchParams();
+
+      const formatMap: Record<string, string> = {
+        geojson: "application/vnd.geo+json",
+        topojson: "application/json",
+        svg: "image/svg+xml",
+      };
+      params.append("formato", formatMap[input.formato || "geojson"]);
+
+      if (input.resolucao && input.resolucao !== "0") {
+        params.append("resolucao", input.resolucao);
+      }
+
+      params.append("qualidade", input.qualidade || "4");
+
+      const fullUrl = `${urlPath}?${params.toString()}`;
+
+      // For SVG, return URL only
+      if (input.formato === "svg") {
+        return formatSvgResponse(fullUrl, input);
+      }
+
+      const response = await fetch(fullUrl);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return `Malha temática não encontrada para: ${input.tema}${input.codigo ? ` (código: ${input.codigo})` : ""}`;
+        }
+        throw new Error(`Erro na API: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return formatResponse(data, fullUrl, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar malha temática: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar malha temática.";
     }
-    return "Erro desconhecido ao buscar malha temática.";
-  }
+  });
 }
 
 function getThemeUrl(tema: string, codigo?: string): string | null {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const pesquisasSchema = z.object({
@@ -31,52 +32,54 @@ interface PesquisaCompleta {
  * Lists IBGE surveys (pesquisas)
  */
 export async function ibgePesquisas(input: PesquisasInput): Promise<string> {
-  try {
-    const url = IBGE_API.AGREGADOS;
+  return withMetrics("ibge_pesquisas", "agregados", async () => {
+    try {
+      const url = IBGE_API.AGREGADOS;
 
-    // Use cache for surveys data (24 hours TTL - static data)
-    const key = cacheKey(url);
-    const data = await cachedFetch<PesquisaCompleta[]>(url, key, CACHE_TTL.STATIC);
+      // Use cache for surveys data (24 hours TTL - static data)
+      const key = cacheKey(url);
+      const data = await cachedFetch<PesquisaCompleta[]>(url, key, CACHE_TTL.STATIC);
 
-    // If detalhes is specified, show details of a specific pesquisa
-    if (input.detalhes) {
-      const pesquisa = data.find(
-        (p) =>
-          p.id.toLowerCase() === input.detalhes!.toLowerCase() ||
-          p.nome.toLowerCase().includes(input.detalhes!.toLowerCase())
-      );
+      // If detalhes is specified, show details of a specific pesquisa
+      if (input.detalhes) {
+        const pesquisa = data.find(
+          (p) =>
+            p.id.toLowerCase() === input.detalhes!.toLowerCase() ||
+            p.nome.toLowerCase().includes(input.detalhes!.toLowerCase())
+        );
 
-      if (!pesquisa) {
-        return `Pesquisa "${input.detalhes}" não encontrada. Use ibge_pesquisas() sem parâmetros para listar todas.`;
+        if (!pesquisa) {
+          return `Pesquisa "${input.detalhes}" não encontrada. Use ibge_pesquisas() sem parâmetros para listar todas.`;
+        }
+
+        return formatPesquisaDetalhes(pesquisa);
       }
 
-      return formatPesquisaDetalhes(pesquisa);
-    }
+      // Filter by busca if specified
+      let filtered = data;
+      if (input.busca) {
+        const searchTerm = input.busca.toLowerCase();
+        filtered = data.filter(
+          (p) =>
+            p.id.toLowerCase().includes(searchTerm) ||
+            p.nome.toLowerCase().includes(searchTerm)
+        );
+      }
 
-    // Filter by busca if specified
-    let filtered = data;
-    if (input.busca) {
-      const searchTerm = input.busca.toLowerCase();
-      filtered = data.filter(
-        (p) =>
-          p.id.toLowerCase().includes(searchTerm) ||
-          p.nome.toLowerCase().includes(searchTerm)
-      );
-    }
+      if (filtered.length === 0) {
+        return input.busca
+          ? `Nenhuma pesquisa encontrada para: "${input.busca}"`
+          : "Nenhuma pesquisa encontrada.";
+      }
 
-    if (filtered.length === 0) {
-      return input.busca
-        ? `Nenhuma pesquisa encontrada para: "${input.busca}"`
-        : "Nenhuma pesquisa encontrada.";
+      return formatPesquisasLista(filtered, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar pesquisas: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar pesquisas.";
     }
-
-    return formatPesquisasLista(filtered, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar pesquisas: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar pesquisas.";
-  }
+  });
 }
 
 function formatPesquisasLista(

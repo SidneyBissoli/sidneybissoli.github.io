@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Mapping of census data themes to SIDRA tables
 const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: string }>> = {
@@ -188,94 +189,96 @@ export type CensoInput = z.infer<typeof censoSchema>;
  * Fetches census data from IBGE SIDRA API
  */
 export async function ibgeCenso(input: CensoInput): Promise<string> {
-  // If tema is "listar", show available tables
-  if (input.tema === "listar") {
-    return listAvailableTables(input.ano);
-  }
-
-  // Get the appropriate table
-  const tema = input.tema || "populacao";
-  const temaTabelas = CENSO_TABELAS[tema];
-
-  if (!temaTabelas) {
-    return `Tema "${tema}" não encontrado. Temas disponíveis: ${TEMAS_CENSO.join(", ")}`;
-  }
-
-  // Determine which table to use based on year
-  let tabelaInfo: { tabela: string; descricao: string } | undefined;
-  let periodos = "last";
-
-  if (input.ano === "todos" || !input.ano) {
-    // Try to find a table with historical series
-    tabelaInfo = temaTabelas["1970-2010"] || temaTabelas["1991-2010"];
-    periodos = "all";
-
-    if (!tabelaInfo) {
-      // No historical series, get most recent
-      tabelaInfo = temaTabelas["2022"] || temaTabelas["2010"] || temaTabelas["2000"];
+  return withMetrics("ibge_censo", "sidra", async () => {
+    // If tema is "listar", show available tables
+    if (input.tema === "listar") {
+      return listAvailableTables(input.ano);
     }
-  } else {
-    // Specific year requested
-    tabelaInfo = temaTabelas[input.ano];
 
-    // If not found for specific year, try ranges
-    if (!tabelaInfo) {
-      if (["1970", "1980", "1991", "2000", "2010"].includes(input.ano)) {
-        tabelaInfo = temaTabelas["1970-2010"] || temaTabelas["1991-2010"];
+    // Get the appropriate table
+    const tema = input.tema || "populacao";
+    const temaTabelas = CENSO_TABELAS[tema];
+
+    if (!temaTabelas) {
+      return `Tema "${tema}" não encontrado. Temas disponíveis: ${TEMAS_CENSO.join(", ")}`;
+    }
+
+    // Determine which table to use based on year
+    let tabelaInfo: { tabela: string; descricao: string } | undefined;
+    let periodos = "last";
+
+    if (input.ano === "todos" || !input.ano) {
+      // Try to find a table with historical series
+      tabelaInfo = temaTabelas["1970-2010"] || temaTabelas["1991-2010"];
+      periodos = "all";
+
+      if (!tabelaInfo) {
+        // No historical series, get most recent
+        tabelaInfo = temaTabelas["2022"] || temaTabelas["2010"] || temaTabelas["2000"];
       }
+    } else {
+      // Specific year requested
+      tabelaInfo = temaTabelas[input.ano];
+
+      // If not found for specific year, try ranges
+      if (!tabelaInfo) {
+        if (["1970", "1980", "1991", "2000", "2010"].includes(input.ano)) {
+          tabelaInfo = temaTabelas["1970-2010"] || temaTabelas["1991-2010"];
+        }
+      }
+
+      periodos = input.ano;
     }
 
-    periodos = input.ano;
-  }
+    if (!tabelaInfo) {
+      return `Dados de "${tema}" não disponíveis para o ano ${input.ano || "solicitado"}.\n\n` +
+             `Use ibge_censo(tema="listar") para ver tabelas disponíveis.`;
+    }
 
-  if (!tabelaInfo) {
-    return `Dados de "${tema}" não disponíveis para o ano ${input.ano || "solicitado"}.\n\n` +
-           `Use ibge_censo(tema="listar") para ver tabelas disponíveis.`;
-  }
-
-  // Build SIDRA query
-  try {
-    const url = buildSidraUrl(tabelaInfo.tabela, input.nivel_territorial!, input.localidades!, periodos);
-
-    // Use cache for census data (1 hour TTL - data doesn't change often but queries vary)
-    const key = cacheKey(url);
-    let data: Record<string, string>[];
-
+    // Build SIDRA query
     try {
-      data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.MEDIUM);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("400")) {
-        return `Erro na consulta: Parâmetros inválidos para a tabela ${tabelaInfo.tabela}.\n` +
-               `Descrição: ${tabelaInfo.descricao}\n\n` +
-               `Use ibge_sidra_metadados(tabela="${tabelaInfo.tabela}") para ver a estrutura da tabela.`;
+      const url = buildSidraUrl(tabelaInfo.tabela, input.nivel_territorial!, input.localidades!, periodos);
+
+      // Use cache for census data (1 hour TTL - data doesn't change often but queries vary)
+      const key = cacheKey(url);
+      let data: Record<string, string>[];
+
+      try {
+        data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.MEDIUM);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("400")) {
+          return `Erro na consulta: Parâmetros inválidos para a tabela ${tabelaInfo.tabela}.\n` +
+                 `Descrição: ${tabelaInfo.descricao}\n\n` +
+                 `Use ibge_sidra_metadados(tabela="${tabelaInfo.tabela}") para ver a estrutura da tabela.`;
+        }
+        throw error;
       }
-      throw error;
+
+      if (!data || data.length === 0) {
+        return "Nenhum dado encontrado para os parâmetros informados.";
+      }
+
+      // Format output
+      let output = `## Censo Demográfico - ${tema.charAt(0).toUpperCase() + tema.slice(1).replace("_", " ")}\n\n`;
+      output += `**Tabela SIDRA:** ${tabelaInfo.tabela}\n`;
+      output += `**Descrição:** ${tabelaInfo.descricao}\n`;
+      output += `**Ano(s):** ${input.ano || "Série histórica"}\n\n`;
+
+      if (input.formato === "json") {
+        return output + "```json\n" + JSON.stringify(data, null, 2) + "\n```";
+      }
+
+      // Format as table
+      output += formatCensoTable(data);
+
+      return output;
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao consultar dados do censo: ${error.message}`;
+      }
+      return "Erro desconhecido ao consultar dados do censo.";
     }
-
-    if (!data || data.length === 0) {
-      return "Nenhum dado encontrado para os parâmetros informados.";
-    }
-
-    // Format output
-    let output = `## Censo Demográfico - ${tema.charAt(0).toUpperCase() + tema.slice(1).replace("_", " ")}\n\n`;
-    output += `**Tabela SIDRA:** ${tabelaInfo.tabela}\n`;
-    output += `**Descrição:** ${tabelaInfo.descricao}\n`;
-    output += `**Ano(s):** ${input.ano || "Série histórica"}\n\n`;
-
-    if (input.formato === "json") {
-      return output + "```json\n" + JSON.stringify(data, null, 2) + "\n```";
-    }
-
-    // Format as table
-    output += formatCensoTable(data);
-
-    return output;
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao consultar dados do censo: ${error.message}`;
-    }
-    return "Erro desconhecido ao consultar dados do censo.";
-  }
+  });
 }
 
 function buildSidraUrl(tabela: string, nivel: string, localidades: string, periodos: string): string {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, type NomeFrequencia, type NomeRanking } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for frequency search
 export const nomesFrequenciaSchema = z.object({
@@ -47,88 +48,92 @@ export type NomesRankingInput = z.infer<typeof nomesRankingSchema>;
  * Fetches name frequency from IBGE API
  */
 export async function ibgeNomesFrequencia(input: NomesFrequenciaInput): Promise<string> {
-  try {
-    // Build URL with names
-    const nomes = input.nomes.replace(/\s+/g, "").toUpperCase();
-    let url = `${IBGE_API.NOMES}/${encodeURIComponent(nomes)}`;
-
-    // Add query parameters
-    const params = new URLSearchParams();
-    if (input.sexo) {
-      params.append("sexo", input.sexo);
-    }
-    if (input.localidade) {
-      params.append("localidade", input.localidade);
-    }
-
-    if (params.toString()) {
-      url += `?${params.toString()}`;
-    }
-
-    // Use cache for name frequency data (1 hour TTL)
-    const key = cacheKey(url);
-    let data: NomeFrequencia[];
-
+  return withMetrics("ibge_nomes_frequencia", "nomes", async () => {
     try {
-      data = await cachedFetch<NomeFrequencia[]>(url, key, CACHE_TTL.MEDIUM);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("404")) {
+      // Build URL with names
+      const nomes = input.nomes.replace(/\s+/g, "").toUpperCase();
+      let url = `${IBGE_API.NOMES}/${encodeURIComponent(nomes)}`;
+
+      // Add query parameters
+      const params = new URLSearchParams();
+      if (input.sexo) {
+        params.append("sexo", input.sexo);
+      }
+      if (input.localidade) {
+        params.append("localidade", input.localidade);
+      }
+
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      // Use cache for name frequency data (1 hour TTL)
+      const key = cacheKey(url);
+      let data: NomeFrequencia[];
+
+      try {
+        data = await cachedFetch<NomeFrequencia[]>(url, key, CACHE_TTL.MEDIUM);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
+          return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
+        }
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
         return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
       }
-      throw error;
-    }
 
-    if (!data || data.length === 0) {
-      return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
+      return formatFrequenciaResponse(data);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar frequência de nomes: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar frequência de nomes.";
     }
-
-    return formatFrequenciaResponse(data);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar frequência de nomes: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar frequência de nomes.";
-  }
+  });
 }
 
 /**
  * Fetches name ranking from IBGE API
  */
 export async function ibgeNomesRanking(input: NomesRankingInput): Promise<string> {
-  try {
-    let url = `${IBGE_API.NOMES}/ranking`;
+  return withMetrics("ibge_nomes_ranking", "nomes", async () => {
+    try {
+      let url = `${IBGE_API.NOMES}/ranking`;
 
-    // Add query parameters
-    const params = new URLSearchParams();
-    if (input.decada) {
-      params.append("decada", input.decada.toString());
-    }
-    if (input.sexo) {
-      params.append("sexo", input.sexo);
-    }
-    if (input.localidade) {
-      params.append("localidade", input.localidade);
-    }
+      // Add query parameters
+      const params = new URLSearchParams();
+      if (input.decada) {
+        params.append("decada", input.decada.toString());
+      }
+      if (input.sexo) {
+        params.append("sexo", input.sexo);
+      }
+      if (input.localidade) {
+        params.append("localidade", input.localidade);
+      }
 
-    if (params.toString()) {
-      url += `?${params.toString()}`;
-    }
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
 
-    // Use cache for name ranking data (1 hour TTL)
-    const key = cacheKey(url);
-    const data = await cachedFetch<NomeRanking[]>(url, key, CACHE_TTL.MEDIUM);
+      // Use cache for name ranking data (1 hour TTL)
+      const key = cacheKey(url);
+      const data = await cachedFetch<NomeRanking[]>(url, key, CACHE_TTL.MEDIUM);
 
-    if (!data || data.length === 0) {
-      return "Nenhum dado encontrado para o ranking.";
-    }
+      if (!data || data.length === 0) {
+        return "Nenhum dado encontrado para o ranking.";
+      }
 
-    return formatRankingResponse(data, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar ranking de nomes: ${error.message}`;
+      return formatRankingResponse(data, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar ranking de nomes: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar ranking de nomes.";
     }
-    return "Erro desconhecido ao buscar ranking de nomes.";
-  }
+  });
 }
 
 function formatFrequenciaResponse(data: NomeFrequencia[]): string {

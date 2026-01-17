@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // CNAE API base URL
 const CNAE_API = "https://servicodados.ibge.gov.br/api/v2/cnae";
@@ -71,31 +72,33 @@ export type CnaeInput = z.infer<typeof cnaeSchema>;
  * Fetches CNAE data from IBGE API
  */
 export async function ibgeCnae(input: CnaeInput): Promise<string> {
-  try {
-    // Search by term
-    if (input.busca) {
-      return await searchCnae(input.busca, input.nivel, input.limite || 20);
-    }
+  return withMetrics("ibge_cnae", "cnae", async () => {
+    try {
+      // Search by term
+      if (input.busca) {
+        return await searchCnae(input.busca, input.nivel, input.limite || 20);
+      }
 
-    // Get specific code
-    if (input.codigo) {
-      return await getCnaeByCode(input.codigo);
-    }
+      // Get specific code
+      if (input.codigo) {
+        return await getCnaeByCode(input.codigo);
+      }
 
-    // List by level
-    if (input.nivel) {
-      return await listCnaeByLevel(input.nivel, input.limite || 20);
-    }
+      // List by level
+      if (input.nivel) {
+        return await listCnaeByLevel(input.nivel, input.limite || 20);
+      }
 
-    // Default: show structure overview
-    return showCnaeStructure();
+      // Default: show structure overview
+      return showCnaeStructure();
 
-  } catch (error) {
-    if (error instanceof Error) {
-      return formatCnaeError(error.message, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return formatCnaeError(error.message, input);
+      }
+      return "Erro desconhecido ao consultar CNAE.";
     }
-    return "Erro desconhecido ao consultar CNAE.";
-  }
+  });
 }
 
 async function getCnaeByCode(codigo: string): Promise<string> {

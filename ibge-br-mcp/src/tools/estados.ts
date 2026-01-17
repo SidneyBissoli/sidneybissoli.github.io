@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, type UF } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const estadosSchema = z.object({
@@ -30,53 +31,55 @@ const REGIAO_IDS: Record<string, number> = {
  * Fetches all Brazilian states from IBGE API
  */
 export async function ibgeEstados(input: EstadosInput): Promise<string> {
-  try {
-    let url = `${IBGE_API.LOCALIDADES}/estados`;
+  return withMetrics("ibge_estados", "localidades", async () => {
+    try {
+      let url = `${IBGE_API.LOCALIDADES}/estados`;
 
-    // If filtering by region
-    if (input.regiao) {
-      const regiaoId = REGIAO_IDS[input.regiao];
-      url = `${IBGE_API.LOCALIDADES}/regioes/${regiaoId}/estados`;
+      // If filtering by region
+      if (input.regiao) {
+        const regiaoId = REGIAO_IDS[input.regiao];
+        url = `${IBGE_API.LOCALIDADES}/regioes/${regiaoId}/estados`;
+      }
+
+      // Add ordering parameter
+      if (input.ordenar) {
+        url += `?orderBy=${input.ordenar}`;
+      }
+
+      // Use cache for static state data (24 hours TTL)
+      const key = cacheKey(url);
+      const estados = await cachedFetch<UF[]>(url, key, CACHE_TTL.STATIC);
+
+      if (estados.length === 0) {
+        return "Nenhum estado encontrado.";
+      }
+
+      // Format the response
+      const resultado = estados.map((estado) => ({
+        id: estado.id,
+        sigla: estado.sigla,
+        nome: estado.nome,
+        regiao: estado.regiao.nome,
+      }));
+
+      // Create a formatted table
+      let output = `## Estados Brasileiros${input.regiao ? ` - Região ${getRegiaoNome(input.regiao)}` : ""}\n\n`;
+      output += `Total: ${estados.length} estados\n\n`;
+      output += "| ID | Sigla | Nome | Região |\n";
+      output += "|----:|:-----:|:-----|:-------|\n";
+
+      for (const estado of resultado) {
+        output += `| ${estado.id} | ${estado.sigla} | ${estado.nome} | ${estado.regiao} |\n`;
+      }
+
+      return output;
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar estados: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar estados.";
     }
-
-    // Add ordering parameter
-    if (input.ordenar) {
-      url += `?orderBy=${input.ordenar}`;
-    }
-
-    // Use cache for static state data (24 hours TTL)
-    const key = cacheKey(url);
-    const estados = await cachedFetch<UF[]>(url, key, CACHE_TTL.STATIC);
-
-    if (estados.length === 0) {
-      return "Nenhum estado encontrado.";
-    }
-
-    // Format the response
-    const resultado = estados.map((estado) => ({
-      id: estado.id,
-      sigla: estado.sigla,
-      nome: estado.nome,
-      regiao: estado.regiao.nome,
-    }));
-
-    // Create a formatted table
-    let output = `## Estados Brasileiros${input.regiao ? ` - Região ${getRegiaoNome(input.regiao)}` : ""}\n\n`;
-    output += `Total: ${estados.length} estados\n\n`;
-    output += "| ID | Sigla | Nome | Região |\n";
-    output += "|----:|:-----:|:-----|:-------|\n";
-
-    for (const estado of resultado) {
-      output += `| ${estado.id} | ${estado.sigla} | ${estado.nome} | ${estado.regiao} |\n`;
-    }
-
-    return output;
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar estados: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar estados.";
-  }
+  });
 }
 
 function getRegiaoNome(sigla: string): string {

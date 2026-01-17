@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // OpenDataSUS and IBGE APIs for health data
 const API_URLS = {
@@ -122,53 +123,55 @@ export type DatasaudeInput = z.infer<typeof datasaudeSchema>;
  * Fetches health data from IBGE and DataSUS
  */
 export async function ibgeDatasaude(input: DatasaudeInput): Promise<string> {
-  // List indicators
-  if (input.indicador === "listar") {
-    return listHealthIndicators();
-  }
+  return withMetrics("ibge_datasaude", "sidra", async () => {
+    // List indicators
+    if (input.indicador === "listar") {
+      return listHealthIndicators();
+    }
 
-  const indicadorInfo = INDICADORES_SAUDE[input.indicador.toLowerCase()];
+    const indicadorInfo = INDICADORES_SAUDE[input.indicador.toLowerCase()];
 
-  if (!indicadorInfo) {
-    return `Indicador "${input.indicador}" não encontrado.\n\n` +
-           `Use indicador="listar" para ver indicadores disponíveis.`;
-  }
+    if (!indicadorInfo) {
+      return `Indicador "${input.indicador}" não encontrado.\n\n` +
+             `Use indicador="listar" para ver indicadores disponíveis.`;
+    }
 
-  try {
-    // Build SIDRA query
-    const url = buildSidraUrl(
-      indicadorInfo.tabela,
-      input.nivel_territorial!,
-      input.localidade!,
-      input.periodo!
-    );
-
-    const key = cacheKey(url);
-
-    // Try to fetch with cache (shorter TTL for health data)
-    let data: SidraData[];
     try {
-      data = await cachedFetch<SidraData[]>(url, key, CACHE_TTL.SHORT);
-    } catch {
-      // Fallback without cache
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`Erro na API SIDRA: ${response.status}`);
+      // Build SIDRA query
+      const url = buildSidraUrl(
+        indicadorInfo.tabela,
+        input.nivel_territorial!,
+        input.localidade!,
+        input.periodo!
+      );
+
+      const key = cacheKey(url);
+
+      // Try to fetch with cache (shorter TTL for health data)
+      let data: SidraData[];
+      try {
+        data = await cachedFetch<SidraData[]>(url, key, CACHE_TTL.SHORT);
+      } catch {
+        // Fallback without cache
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Erro na API SIDRA: ${response.status}`);
+        }
+        data = await response.json();
       }
-      data = await response.json();
-    }
 
-    if (!data || data.length === 0) {
-      return `Nenhum dado encontrado para ${indicadorInfo.nome}.`;
-    }
+      if (!data || data.length === 0) {
+        return `Nenhum dado encontrado para ${indicadorInfo.nome}.`;
+      }
 
-    return formatResponse(data, indicadorInfo, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao consultar dados de saúde: ${error.message}`;
+      return formatResponse(data, indicadorInfo, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao consultar dados de saúde: ${error.message}`;
+      }
+      return "Erro desconhecido ao consultar dados de saúde.";
     }
-    return "Erro desconhecido ao consultar dados de saúde.";
-  }
+  });
 }
 
 interface SidraData {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const sidraTabelasSchema = z.object({
@@ -38,69 +39,71 @@ interface PesquisaComAgregados {
  * Lists and searches SIDRA tables (agregados)
  */
 export async function ibgeSidraTabelas(input: SidraTabelasInput): Promise<string> {
-  try {
-    const url = IBGE_API.AGREGADOS;
+  return withMetrics("ibge_sidra_tabelas", "agregados", async () => {
+    try {
+      const url = IBGE_API.AGREGADOS;
 
-    // Use cache for SIDRA tables (24 hours TTL - static data)
-    const key = cacheKey(url);
-    const data = await cachedFetch<PesquisaComAgregados[]>(url, key, CACHE_TTL.STATIC);
+      // Use cache for SIDRA tables (24 hours TTL - static data)
+      const key = cacheKey(url);
+      const data = await cachedFetch<PesquisaComAgregados[]>(url, key, CACHE_TTL.STATIC);
 
-    // Filter by pesquisa if specified
-    let filteredData = data;
-    if (input.pesquisa) {
-      const searchTerm = input.pesquisa.toLowerCase();
-      filteredData = data.filter(
-        (p) =>
-          p.id.toLowerCase().includes(searchTerm) ||
-          p.nome.toLowerCase().includes(searchTerm)
-      );
-    }
-
-    // Collect all agregados with their pesquisa info
-    let allAgregados: Array<{
-      id: string;
-      nome: string;
-      pesquisaId: string;
-      pesquisaNome: string;
-    }> = [];
-
-    for (const pesquisa of filteredData) {
-      for (const agregado of pesquisa.agregados) {
-        allAgregados.push({
-          id: agregado.id,
-          nome: agregado.nome,
-          pesquisaId: pesquisa.id,
-          pesquisaNome: pesquisa.nome,
-        });
+      // Filter by pesquisa if specified
+      let filteredData = data;
+      if (input.pesquisa) {
+        const searchTerm = input.pesquisa.toLowerCase();
+        filteredData = data.filter(
+          (p) =>
+            p.id.toLowerCase().includes(searchTerm) ||
+            p.nome.toLowerCase().includes(searchTerm)
+        );
       }
-    }
 
-    // Filter by busca term if specified
-    if (input.busca) {
-      const searchTerm = input.busca.toLowerCase();
-      allAgregados = allAgregados.filter(
-        (a) =>
-          a.id.includes(searchTerm) ||
-          a.nome.toLowerCase().includes(searchTerm)
-      );
-    }
+      // Collect all agregados with their pesquisa info
+      let allAgregados: Array<{
+        id: string;
+        nome: string;
+        pesquisaId: string;
+        pesquisaNome: string;
+      }> = [];
 
-    // Apply limit
-    const limited = allAgregados.slice(0, input.limite);
+      for (const pesquisa of filteredData) {
+        for (const agregado of pesquisa.agregados) {
+          allAgregados.push({
+            id: agregado.id,
+            nome: agregado.nome,
+            pesquisaId: pesquisa.id,
+            pesquisaNome: pesquisa.nome,
+          });
+        }
+      }
 
-    if (limited.length === 0) {
-      return input.busca || input.pesquisa
-        ? `Nenhuma tabela encontrada para os critérios especificados.`
-        : "Nenhuma tabela encontrada.";
-    }
+      // Filter by busca term if specified
+      if (input.busca) {
+        const searchTerm = input.busca.toLowerCase();
+        allAgregados = allAgregados.filter(
+          (a) =>
+            a.id.includes(searchTerm) ||
+            a.nome.toLowerCase().includes(searchTerm)
+        );
+      }
 
-    return formatTabelasResponse(limited, allAgregados.length, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar tabelas SIDRA: ${error.message}`;
+      // Apply limit
+      const limited = allAgregados.slice(0, input.limite);
+
+      if (limited.length === 0) {
+        return input.busca || input.pesquisa
+          ? `Nenhuma tabela encontrada para os critérios especificados.`
+          : "Nenhuma tabela encontrada.";
+      }
+
+      return formatTabelasResponse(limited, allAgregados.length, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar tabelas SIDRA: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar tabelas SIDRA.";
     }
-    return "Erro desconhecido ao buscar tabelas SIDRA.";
-  }
+  });
 }
 
 function formatTabelasResponse(

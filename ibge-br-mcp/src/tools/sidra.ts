@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const sidraSchema = z.object({
@@ -63,53 +64,55 @@ const TABELAS_COMUNS: Record<string, string> = {
  * Fetches data from IBGE SIDRA API
  */
 export async function ibgeSidra(input: SidraInput): Promise<string> {
-  try {
-    // Build the SIDRA API URL
-    // Format: /t/{tabela}/n{nivel}/{localidade}/v/{variaveis}/p/{periodos}/c{classificacao}/{categorias}
-    let path = `/t/${input.tabela}`;
-    path += `/n${input.nivel_territorial}/${input.localidades}`;
-    path += `/v/${input.variaveis}`;
-    path += `/p/${input.periodos}`;
-
-    if (input.classificacoes) {
-      // Parse classifications like "2[6794]" or "2[6794,6795]"
-      const classMatch = input.classificacoes.match(/(\d+)\[([^\]]+)\]/);
-      if (classMatch) {
-        path += `/c${classMatch[1]}/${classMatch[2]}`;
-      }
-    }
-
-    const url = `${IBGE_API.SIDRA}${path}`;
-
-    // Use cache for SIDRA data (5 minutes TTL - data updates frequently)
-    const key = cacheKey(url);
-    let data: SidraRecord[];
-
+  return withMetrics("ibge_sidra", "sidra", async () => {
     try {
-      data = await cachedFetch<SidraRecord[]>(url, key, CACHE_TTL.SHORT);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("400")) {
-        return `Erro na consulta SIDRA: Parâmetros inválidos. Verifique se a tabela ${input.tabela} existe e se os parâmetros estão corretos.`;
+      // Build the SIDRA API URL
+      // Format: /t/{tabela}/n{nivel}/{localidade}/v/{variaveis}/p/{periodos}/c{classificacao}/{categorias}
+      let path = `/t/${input.tabela}`;
+      path += `/n${input.nivel_territorial}/${input.localidades}`;
+      path += `/v/${input.variaveis}`;
+      path += `/p/${input.periodos}`;
+
+      if (input.classificacoes) {
+        // Parse classifications like "2[6794]" or "2[6794,6795]"
+        const classMatch = input.classificacoes.match(/(\d+)\[([^\]]+)\]/);
+        if (classMatch) {
+          path += `/c${classMatch[1]}/${classMatch[2]}`;
+        }
       }
-      throw error;
-    }
 
-    if (!data || data.length === 0) {
-      return "Nenhum dado encontrado para os parâmetros informados.";
-    }
+      const url = `${IBGE_API.SIDRA}${path}`;
 
-    // Return based on format
-    if (input.formato === "json") {
-      return JSON.stringify(data, null, 2);
-    }
+      // Use cache for SIDRA data (5 minutes TTL - data updates frequently)
+      const key = cacheKey(url);
+      let data: SidraRecord[];
 
-    return formatSidraResponse(data, input.tabela);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao consultar SIDRA: ${error.message}`;
+      try {
+        data = await cachedFetch<SidraRecord[]>(url, key, CACHE_TTL.SHORT);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("400")) {
+          return `Erro na consulta SIDRA: Parâmetros inválidos. Verifique se a tabela ${input.tabela} existe e se os parâmetros estão corretos.`;
+        }
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        return "Nenhum dado encontrado para os parâmetros informados.";
+      }
+
+      // Return based on format
+      if (input.formato === "json") {
+        return JSON.stringify(data, null, 2);
+      }
+
+      return formatSidraResponse(data, input.tabela);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao consultar SIDRA: ${error.message}`;
+      }
+      return "Erro desconhecido ao consultar SIDRA.";
     }
-    return "Erro desconhecido ao consultar SIDRA.";
-  }
+  });
 }
 
 interface SidraRecord {

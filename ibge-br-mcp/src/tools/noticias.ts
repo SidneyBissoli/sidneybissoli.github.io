@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, type NoticiasResponse, type Noticia } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const noticiasSchema = z.object({
@@ -45,47 +46,49 @@ export type NoticiasInput = z.infer<typeof noticiasSchema>;
  * Fetches news from IBGE API
  */
 export async function ibgeNoticias(input: NoticiasInput): Promise<string> {
-  try {
-    const params = new URLSearchParams();
+  return withMetrics("ibge_noticias", "noticias", async () => {
+    try {
+      const params = new URLSearchParams();
 
-    params.append("qtd", input.quantidade?.toString() || "10");
-    params.append("page", input.pagina?.toString() || "1");
+      params.append("qtd", input.quantidade?.toString() || "10");
+      params.append("page", input.pagina?.toString() || "1");
 
-    if (input.busca) {
-      params.append("busca", input.busca);
-    }
-    if (input.de) {
-      params.append("de", input.de);
-    }
-    if (input.ate) {
-      params.append("ate", input.ate);
-    }
-    if (input.tipo) {
-      params.append("tipo", input.tipo);
-    }
-    if (input.destaque !== undefined) {
-      params.append("destaque", input.destaque ? "1" : "0");
-    }
+      if (input.busca) {
+        params.append("busca", input.busca);
+      }
+      if (input.de) {
+        params.append("de", input.de);
+      }
+      if (input.ate) {
+        params.append("ate", input.ate);
+      }
+      if (input.tipo) {
+        params.append("tipo", input.tipo);
+      }
+      if (input.destaque !== undefined) {
+        params.append("destaque", input.destaque ? "1" : "0");
+      }
 
-    const url = `${IBGE_API.NOTICIAS}?${params.toString()}`;
+      const url = `${IBGE_API.NOTICIAS}?${params.toString()}`;
 
-    // Use cache for news data (5 minutes TTL - news updates frequently)
-    const key = cacheKey(url);
-    const data = await cachedFetch<NoticiasResponse>(url, key, CACHE_TTL.SHORT);
+      // Use cache for news data (5 minutes TTL - news updates frequently)
+      const key = cacheKey(url);
+      const data = await cachedFetch<NoticiasResponse>(url, key, CACHE_TTL.SHORT);
 
-    if (!data.items || data.items.length === 0) {
-      return input.busca
-        ? `Nenhuma notícia encontrada para: "${input.busca}"`
-        : "Nenhuma notícia encontrada.";
+      if (!data.items || data.items.length === 0) {
+        return input.busca
+          ? `Nenhuma notícia encontrada para: "${input.busca}"`
+          : "Nenhuma notícia encontrada.";
+      }
+
+      return formatNoticiasResponse(data, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar notícias: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar notícias.";
     }
-
-    return formatNoticiasResponse(data, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar notícias: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar notícias.";
-  }
+  });
 }
 
 function formatNoticiasResponse(data: NoticiasResponse, input: NoticiasInput): string {

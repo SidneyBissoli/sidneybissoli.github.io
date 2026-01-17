@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // BCB API base URLs
 const BCB_API = {
@@ -145,66 +146,68 @@ export type BcbInput = z.infer<typeof bcbSchema>;
  * Fetches data from BCB (Banco Central do Brasil) APIs
  */
 export async function ibgeBcb(input: BcbInput): Promise<string> {
-  // List available indicators
-  if (input.indicador === "listar") {
-    return listIndicators();
-  }
-
-  try {
-    // Get series code
-    const serieInfo = SERIES_CONHECIDAS[input.indicador.toLowerCase()];
-    let codigo: number;
-    let nome: string;
-    let unidade: string;
-
-    if (serieInfo) {
-      codigo = serieInfo.codigo;
-      nome = serieInfo.nome;
-      unidade = serieInfo.unidade;
-    } else if (/^\d+$/.test(input.indicador)) {
-      codigo = parseInt(input.indicador);
-      nome = `Série ${codigo}`;
-      unidade = "";
-    } else {
-      return `Indicador "${input.indicador}" não encontrado.\n\n` +
-             `Use indicador="listar" para ver indicadores disponíveis ou informe o código numérico da série SGS.`;
+  return withMetrics("ibge_bcb", "bcb", async () => {
+    // List available indicators
+    if (input.indicador === "listar") {
+      return listIndicators();
     }
 
-    // Build URL
-    let url = `${BCB_API.SGS}.${codigo}/dados`;
-    const params: string[] = [];
+    try {
+      // Get series code
+      const serieInfo = SERIES_CONHECIDAS[input.indicador.toLowerCase()];
+      let codigo: number;
+      let nome: string;
+      let unidade: string;
 
-    if (input.dataInicio) {
-      params.push(`dataInicial=${encodeURIComponent(input.dataInicio)}`);
-    }
-    if (input.dataFim) {
-      params.push(`dataFinal=${encodeURIComponent(input.dataFim)}`);
-    }
-    if (input.ultimos) {
-      params.push(`ultimos=${input.ultimos}`);
-    }
+      if (serieInfo) {
+        codigo = serieInfo.codigo;
+        nome = serieInfo.nome;
+        unidade = serieInfo.unidade;
+      } else if (/^\d+$/.test(input.indicador)) {
+        codigo = parseInt(input.indicador);
+        nome = `Série ${codigo}`;
+        unidade = "";
+      } else {
+        return `Indicador "${input.indicador}" não encontrado.\n\n` +
+               `Use indicador="listar" para ver indicadores disponíveis ou informe o código numérico da série SGS.`;
+      }
 
-    params.push("formato=json");
+      // Build URL
+      let url = `${BCB_API.SGS}.${codigo}/dados`;
+      const params: string[] = [];
 
-    if (params.length > 0) {
-      url += "?" + params.join("&");
+      if (input.dataInicio) {
+        params.push(`dataInicial=${encodeURIComponent(input.dataInicio)}`);
+      }
+      if (input.dataFim) {
+        params.push(`dataFinal=${encodeURIComponent(input.dataFim)}`);
+      }
+      if (input.ultimos) {
+        params.push(`ultimos=${input.ultimos}`);
+      }
+
+      params.push("formato=json");
+
+      if (params.length > 0) {
+        url += "?" + params.join("&");
+      }
+
+      // Fetch data
+      const key = cacheKey(url);
+      const data = await cachedFetch<BcbSgsData[]>(url, key, CACHE_TTL.SHORT);
+
+      if (!data || data.length === 0) {
+        return `Nenhum dado encontrado para ${nome}.`;
+      }
+
+      return formatResponse(data, nome, unidade, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao consultar BCB: ${error.message}`;
+      }
+      return "Erro desconhecido ao consultar dados do Banco Central.";
     }
-
-    // Fetch data
-    const key = cacheKey(url);
-    const data = await cachedFetch<BcbSgsData[]>(url, key, CACHE_TTL.SHORT);
-
-    if (!data || data.length === 0) {
-      return `Nenhum dado encontrado para ${nome}.`;
-    }
-
-    return formatResponse(data, nome, unidade, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao consultar BCB: ${error.message}`;
-    }
-    return "Erro desconhecido ao consultar dados do Banco Central.";
-  }
+  });
 }
 
 interface BcbSgsData {

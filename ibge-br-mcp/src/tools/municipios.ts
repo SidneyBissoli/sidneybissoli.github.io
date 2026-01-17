@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, type Municipio, type MunicipioSimples } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // Schema for the tool input
 export const municipiosSchema = z.object({
@@ -37,76 +38,78 @@ const UF_IDS: Record<string, number> = {
  * Fetches municipalities from IBGE API
  */
 export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
-  try {
-    let url: string;
+  return withMetrics("ibge_municipios", "localidades", async () => {
+    try {
+      let url: string;
 
-    if (input.uf) {
-      const ufUpper = input.uf.toUpperCase();
-      const ufId = UF_IDS[ufUpper];
+      if (input.uf) {
+        const ufUpper = input.uf.toUpperCase();
+        const ufId = UF_IDS[ufUpper];
 
-      if (!ufId) {
-        return `UF inválida: ${input.uf}. Use a sigla do estado (ex: SP, RJ, MG).`;
+        if (!ufId) {
+          return `UF inválida: ${input.uf}. Use a sigla do estado (ex: SP, RJ, MG).`;
+        }
+
+        url = `${IBGE_API.LOCALIDADES}/estados/${ufId}/municipios`;
+      } else {
+        url = `${IBGE_API.LOCALIDADES}/municipios`;
       }
 
-      url = `${IBGE_API.LOCALIDADES}/estados/${ufId}/municipios`;
-    } else {
-      url = `${IBGE_API.LOCALIDADES}/municipios`;
+      url += "?orderBy=nome";
+
+      // Use cache for static municipality data (24 hours TTL)
+      const key = cacheKey(url);
+      let municipios = await cachedFetch<(Municipio | MunicipioSimples)[]>(url, key, CACHE_TTL.STATIC);
+
+      // Filter by search term if provided
+      if (input.busca) {
+        const busca = input.busca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        municipios = municipios.filter((m) => {
+          const nome = m.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          return nome.includes(busca);
+        });
+      }
+
+      const total = municipios.length;
+
+      // Apply limit
+      if (input.limite && input.limite < municipios.length) {
+        municipios = municipios.slice(0, input.limite);
+      }
+
+      if (municipios.length === 0) {
+        return input.busca
+          ? `Nenhum município encontrado com o termo "${input.busca}"${input.uf ? ` em ${input.uf.toUpperCase()}` : ""}.`
+          : "Nenhum município encontrado.";
+      }
+
+      // Format the response
+      let output = `## Municípios${input.uf ? ` - ${input.uf.toUpperCase()}` : " do Brasil"}\n\n`;
+
+      if (input.busca) {
+        output += `Busca: "${input.busca}"\n`;
+      }
+
+      output += `Mostrando: ${municipios.length} de ${total} municípios\n\n`;
+      output += "| Código IBGE | Nome |\n";
+      output += "|------------:|:-----|\n";
+
+      for (const municipio of municipios) {
+        output += `| ${municipio.id} | ${municipio.nome} |\n`;
+      }
+
+      if (municipios.length < total) {
+        output += `\n_Resultados limitados a ${input.limite}. Use o parâmetro 'limite' para ver mais._\n`;
+      }
+
+      return output;
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar municípios: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar municípios.";
     }
-
-    url += "?orderBy=nome";
-
-    // Use cache for static municipality data (24 hours TTL)
-    const key = cacheKey(url);
-    let municipios = await cachedFetch<(Municipio | MunicipioSimples)[]>(url, key, CACHE_TTL.STATIC);
-
-    // Filter by search term if provided
-    if (input.busca) {
-      const busca = input.busca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      municipios = municipios.filter((m) => {
-        const nome = m.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        return nome.includes(busca);
-      });
-    }
-
-    const total = municipios.length;
-
-    // Apply limit
-    if (input.limite && input.limite < municipios.length) {
-      municipios = municipios.slice(0, input.limite);
-    }
-
-    if (municipios.length === 0) {
-      return input.busca
-        ? `Nenhum município encontrado com o termo "${input.busca}"${input.uf ? ` em ${input.uf.toUpperCase()}` : ""}.`
-        : "Nenhum município encontrado.";
-    }
-
-    // Format the response
-    let output = `## Municípios${input.uf ? ` - ${input.uf.toUpperCase()}` : " do Brasil"}\n\n`;
-
-    if (input.busca) {
-      output += `Busca: "${input.busca}"\n`;
-    }
-
-    output += `Mostrando: ${municipios.length} de ${total} municípios\n\n`;
-    output += "| Código IBGE | Nome |\n";
-    output += "|------------:|:-----|\n";
-
-    for (const municipio of municipios) {
-      output += `| ${municipio.id} | ${municipio.nome} |\n`;
-    }
-
-    if (municipios.length < total) {
-      output += `\n_Resultados limitados a ${input.limite}. Use o parâmetro 'limite' para ver mais._\n`;
-    }
-
-    return output;
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar municípios: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar municípios.";
-  }
+  });
 }
 
 // Tool definition for MCP

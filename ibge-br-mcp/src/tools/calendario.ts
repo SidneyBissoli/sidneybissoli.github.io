@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 // IBGE Calendar API
 const CALENDARIO_API = "https://servicodados.ibge.gov.br/api/v3/calendario";
@@ -63,48 +64,50 @@ export type CalendarioInput = z.infer<typeof calendarioSchema>;
  * Fetches IBGE release calendar
  */
 export async function ibgeCalendario(input: CalendarioInput): Promise<string> {
-  try {
-    // Build URL with query parameters
-    const params = new URLSearchParams();
+  return withMetrics("ibge_calendario", "calendario", async () => {
+    try {
+      // Build URL with query parameters
+      const params = new URLSearchParams();
 
-    if (input.de) {
-      params.append("de", input.de);
-    }
-    if (input.ate) {
-      params.append("ate", input.ate);
-    }
-    if (input.produto) {
-      params.append("busca", input.produto);
-    }
-    if (input.tipo && input.tipo !== "todos") {
-      // tipo_id: 1 = divulgação, 2 = coleta
-      params.append("tipo", input.tipo === "divulgacao" ? "1" : "2");
-    }
-    params.append("page", String(input.pagina || 1));
-    params.append("qtd", String(input.quantidade || 20));
+      if (input.de) {
+        params.append("de", input.de);
+      }
+      if (input.ate) {
+        params.append("ate", input.ate);
+      }
+      if (input.produto) {
+        params.append("busca", input.produto);
+      }
+      if (input.tipo && input.tipo !== "todos") {
+        // tipo_id: 1 = divulgação, 2 = coleta
+        params.append("tipo", input.tipo === "divulgacao" ? "1" : "2");
+      }
+      params.append("page", String(input.pagina || 1));
+      params.append("qtd", String(input.quantidade || 20));
 
-    const url = `${CALENDARIO_API}?${params.toString()}`;
-    const key = cacheKey("calendario", {
-      de: input.de,
-      ate: input.ate,
-      produto: input.produto,
-      tipo: input.tipo,
-      pagina: input.pagina,
-    });
+      const url = `${CALENDARIO_API}?${params.toString()}`;
+      const key = cacheKey("calendario", {
+        de: input.de,
+        ate: input.ate,
+        produto: input.produto,
+        tipo: input.tipo,
+        pagina: input.pagina,
+      });
 
-    const data = await cachedFetch<CalendarioResponse>(url, key, CACHE_TTL.SHORT);
+      const data = await cachedFetch<CalendarioResponse>(url, key, CACHE_TTL.SHORT);
 
-    if (!data.items || data.items.length === 0) {
-      return formatNoResults(input);
+      if (!data.items || data.items.length === 0) {
+        return formatNoResults(input);
+      }
+
+      return formatCalendarioResponse(data, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return formatCalendarioError(error.message, input);
+      }
+      return "Erro desconhecido ao consultar calendário do IBGE.";
     }
-
-    return formatCalendarioResponse(data, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return formatCalendarioError(error.message, input);
-    }
-    return "Erro desconhecido ao consultar calendário do IBGE.";
-  }
+  });
 }
 
 function formatCalendarioResponse(data: CalendarioResponse, input: CalendarioInput): string {

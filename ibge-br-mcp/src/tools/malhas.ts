@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 
 const MALHAS_API = "https://servicodados.ibge.gov.br/api/v3/malhas";
 
@@ -45,58 +46,59 @@ export type MalhasInput = z.infer<typeof malhasSchema>;
  * Fetches geographic meshes from IBGE API
  */
 export async function ibgeMalhas(input: MalhasInput): Promise<string> {
-  try {
-    // Build the URL
-    let url: string;
+  return withMetrics("ibge_malhas", "malhas", async () => {
+    try {
+      // Build the URL
+      let url: string;
 
-    // Determine the endpoint based on tipo or localidade
-    if (input.tipo) {
-      url = `${MALHAS_API}/${input.tipo}/${input.localidade}`;
-    } else {
-      // Auto-detect based on localidade
-      const loc = input.localidade.toUpperCase();
-      if (loc === "BR") {
-        url = `${MALHAS_API}/paises/BR`;
-      } else if (loc.length === 2 && isNaN(Number(loc))) {
-        // State abbreviation
-        url = `${MALHAS_API}/estados/${loc}`;
-      } else if (input.localidade.length === 2) {
-        // State code
-        url = `${MALHAS_API}/estados/${input.localidade}`;
-      } else if (input.localidade.length === 7) {
-        // Municipality code
-        url = `${MALHAS_API}/municipios/${input.localidade}`;
+      // Determine the endpoint based on tipo or localidade
+      if (input.tipo) {
+        url = `${MALHAS_API}/${input.tipo}/${input.localidade}`;
       } else {
-        // Default to estados
-        url = `${MALHAS_API}/estados/${input.localidade}`;
+        // Auto-detect based on localidade
+        const loc = input.localidade.toUpperCase();
+        if (loc === "BR") {
+          url = `${MALHAS_API}/paises/BR`;
+        } else if (loc.length === 2 && isNaN(Number(loc))) {
+          // State abbreviation
+          url = `${MALHAS_API}/estados/${loc}`;
+        } else if (input.localidade.length === 2) {
+          // State code
+          url = `${MALHAS_API}/estados/${input.localidade}`;
+        } else if (input.localidade.length === 7) {
+          // Municipality code
+          url = `${MALHAS_API}/municipios/${input.localidade}`;
+        } else {
+          // Default to estados
+          url = `${MALHAS_API}/estados/${input.localidade}`;
+        }
       }
-    }
 
-    // Add query parameters
-    const params = new URLSearchParams();
+      // Add query parameters
+      const params = new URLSearchParams();
 
-    // Format
-    const formatMap = {
-      geojson: "application/vnd.geo+json",
-      topojson: "application/json",
-      svg: "image/svg+xml",
-    };
-    params.append("formato", formatMap[input.formato || "geojson"]);
+      // Format
+      const formatMap = {
+        geojson: "application/vnd.geo+json",
+        topojson: "application/json",
+        svg: "image/svg+xml",
+      };
+      params.append("formato", formatMap[input.formato || "geojson"]);
 
-    // Resolution
-    if (input.resolucao && input.resolucao !== "0") {
-      params.append("resolucao", input.resolucao);
-    }
+      // Resolution
+      if (input.resolucao && input.resolucao !== "0") {
+        params.append("resolucao", input.resolucao);
+      }
 
-    // Quality
-    params.append("qualidade", input.qualidade || "4");
+      // Quality
+      params.append("qualidade", input.qualidade || "4");
 
-    // Intraregion filter
-    if (input.intrarregiao) {
-      params.append("intrarregiao", input.intrarregiao);
-    }
+      // Intraregion filter
+      if (input.intrarregiao) {
+        params.append("intrarregiao", input.intrarregiao);
+      }
 
-    const fullUrl = `${url}?${params.toString()}`;
+      const fullUrl = `${url}?${params.toString()}`;
 
     // For SVG format, return the URL (as SVG content would be too large)
     if (input.formato === "svg") {
@@ -116,13 +118,14 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
       throw error;
     }
 
-    return formatMalhasResponse(data, fullUrl, input);
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar malhas: ${error.message}`;
+      return formatMalhasResponse(data, fullUrl, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar malhas: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar malhas.";
     }
-    return "Erro desconhecido ao buscar malhas.";
-  }
+  });
 }
 
 function formatMalhasResponse(
