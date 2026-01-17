@@ -198,17 +198,31 @@ export interface PopulacaoEstimativa {
 }
 
 // ============================================================================
-// API Base URLs
+// API Base URLs (re-exported from config.ts for backward compatibility)
 // ============================================================================
 
+import { API_ENDPOINTS } from "./config.js";
+
+/**
+ * IBGE API endpoints - unified source from config.ts
+ * @deprecated Import from config.ts directly for new code
+ */
 export const IBGE_API = {
-  LOCALIDADES: "https://servicodados.ibge.gov.br/api/v1/localidades",
-  NOMES: "https://servicodados.ibge.gov.br/api/v2/censos/nomes",
-  AGREGADOS: "https://servicodados.ibge.gov.br/api/v3/agregados",
-  SIDRA: "https://apisidra.ibge.gov.br/values",
-  NOTICIAS: "https://servicodados.ibge.gov.br/api/v3/noticias",
-  POPULACAO: "https://servicodados.ibge.gov.br/api/v1/projecoes/populacao",
+  // Core IBGE APIs
+  LOCALIDADES: API_ENDPOINTS.IBGE.LOCALIDADES,
+  NOMES: API_ENDPOINTS.IBGE.NOMES,
+  AGREGADOS: API_ENDPOINTS.IBGE.AGREGADOS,
+  NOTICIAS: API_ENDPOINTS.IBGE.NOTICIAS,
+  POPULACAO: API_ENDPOINTS.IBGE.POPULACAO,
+  MALHAS: API_ENDPOINTS.IBGE.MALHAS,
+  CNAE: API_ENDPOINTS.IBGE.CNAE,
+  CALENDARIO: API_ENDPOINTS.IBGE.CALENDARIO,
+  // SIDRA (external)
+  SIDRA: API_ENDPOINTS.SIDRA,
 } as const;
+
+// Re-export BCB API for convenience
+export const BCB_API = API_ENDPOINTS.BCB;
 
 // ============================================================================
 // Helper Types

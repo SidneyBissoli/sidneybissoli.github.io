@@ -1,13 +1,7 @@
 import { z } from "zod";
+import { BCB_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-
-// BCB API base URLs
-const BCB_API = {
-  SGS: "https://api.bcb.gov.br/dados/serie/bcdata.sgs",
-  PTAX: "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata",
-  EXPECTATIVAS: "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata",
-};
 
 // Known series codes
 const SERIES_CONHECIDAS: Record<string, { codigo: number; nome: string; descricao: string; unidade: string }> = {

@@ -24,6 +24,7 @@ export const API_ENDPOINTS = {
   BCB: {
     SGS: "https://api.bcb.gov.br/dados/serie/bcdata.sgs",
     PTAX: "https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata",
+    EXPECTATIVAS: "https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata",
   },
 } as const;
 

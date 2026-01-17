@@ -1,8 +1,7 @@
 import { z } from "zod";
+import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-
-const MALHAS_API = "https://servicodados.ibge.gov.br/api/v3/malhas";
 
 // Schema for the tool input
 export const malhasSchema = z.object({
@@ -53,24 +52,24 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
 
       // Determine the endpoint based on tipo or localidade
       if (input.tipo) {
-        url = `${MALHAS_API}/${input.tipo}/${input.localidade}`;
+        url = `${IBGE_API.MALHAS}/${input.tipo}/${input.localidade}`;
       } else {
         // Auto-detect based on localidade
         const loc = input.localidade.toUpperCase();
         if (loc === "BR") {
-          url = `${MALHAS_API}/paises/BR`;
+          url = `${IBGE_API.MALHAS}/paises/BR`;
         } else if (loc.length === 2 && isNaN(Number(loc))) {
           // State abbreviation
-          url = `${MALHAS_API}/estados/${loc}`;
+          url = `${IBGE_API.MALHAS}/estados/${loc}`;
         } else if (input.localidade.length === 2) {
           // State code
-          url = `${MALHAS_API}/estados/${input.localidade}`;
+          url = `${IBGE_API.MALHAS}/estados/${input.localidade}`;
         } else if (input.localidade.length === 7) {
           // Municipality code
-          url = `${MALHAS_API}/municipios/${input.localidade}`;
+          url = `${IBGE_API.MALHAS}/municipios/${input.localidade}`;
         } else {
           // Default to estados
-          url = `${MALHAS_API}/estados/${input.localidade}`;
+          url = `${IBGE_API.MALHAS}/estados/${input.localidade}`;
         }
       }
 

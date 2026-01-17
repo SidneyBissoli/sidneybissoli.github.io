@@ -168,7 +168,7 @@ async function getVizinhosFromMalha(municipioId: string): Promise<VizinhoBasico[
 
   try {
     // Get municipality mesh with neighbors info if available
-    const malhaUrl = `https://servicodados.ibge.gov.br/api/v3/malhas/municipios/${municipioId}?formato=application/json`;
+    const malhaUrl = `${IBGE_API.MALHAS}/municipios/${municipioId}?formato=application/json`;
 
     const response = await fetch(malhaUrl);
     if (!response.ok) {
@@ -207,7 +207,7 @@ async function enrichVizinhosData(vizinhos: VizinhoInfo[]): Promise<VizinhoInfo[
   for (const v of vizinhos) {
     try {
       // Try to get population from SIDRA
-      const popUrl = `https://apisidra.ibge.gov.br/values/t/4709/n6/${v.codigo}/v/93/p/last/f/n`;
+      const popUrl = `${IBGE_API.SIDRA}/t/4709/n6/${v.codigo}/v/93/p/last/f/n`;
 
       const response = await fetch(popUrl);
       if (response.ok) {

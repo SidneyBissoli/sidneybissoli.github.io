@@ -1,9 +1,7 @@
 import { z } from "zod";
+import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-
-// IBGE Calendar API
-const CALENDARIO_API = "https://servicodados.ibge.gov.br/api/v3/calendario";
 
 // Types for calendar data
 interface CalendarioItem {
@@ -85,7 +83,7 @@ export async function ibgeCalendario(input: CalendarioInput): Promise<string> {
       params.append("page", String(input.pagina || 1));
       params.append("qtd", String(input.quantidade || 20));
 
-      const url = `${CALENDARIO_API}?${params.toString()}`;
+      const url = `${IBGE_API.CALENDARIO}?${params.toString()}`;
       const key = cacheKey("calendario", {
         de: input.de,
         ate: input.ate,

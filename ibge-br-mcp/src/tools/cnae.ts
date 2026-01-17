@@ -1,9 +1,7 @@
 import { z } from "zod";
+import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-
-// CNAE API base URL
-const CNAE_API = "https://servicodados.ibge.gov.br/api/v2/cnae";
 
 // Types for CNAE data
 interface CnaeSecao {
@@ -110,22 +108,22 @@ async function getCnaeByCode(codigo: string): Promise<string> {
   let level: string;
 
   if (/^[A-U]$/.test(normalized)) {
-    endpoint = `${CNAE_API}/secoes/${normalized}`;
+    endpoint = `${IBGE_API.CNAE}/secoes/${normalized}`;
     level = "secao";
   } else if (/^\d{2}$/.test(normalized)) {
-    endpoint = `${CNAE_API}/divisoes/${normalized}`;
+    endpoint = `${IBGE_API.CNAE}/divisoes/${normalized}`;
     level = "divisao";
   } else if (/^\d{3}$/.test(normalized)) {
-    endpoint = `${CNAE_API}/grupos/${normalized}`;
+    endpoint = `${IBGE_API.CNAE}/grupos/${normalized}`;
     level = "grupo";
   } else if (/^\d{4,5}$/.test(normalized)) {
     // Class can be 4 or 5 digits (with check digit)
     const classCode = normalized.slice(0, 4);
-    endpoint = `${CNAE_API}/classes/${classCode}`;
+    endpoint = `${IBGE_API.CNAE}/classes/${classCode}`;
     level = "classe";
   } else if (/^\d{7}$/.test(normalized)) {
     // Subclass is 7 digits
-    endpoint = `${CNAE_API}/subclasses/${normalized}`;
+    endpoint = `${IBGE_API.CNAE}/subclasses/${normalized}`;
     level = "subclasse";
   } else {
     return `Código CNAE inválido: "${codigo}"\n\n` +
@@ -150,7 +148,7 @@ async function getCnaeByCode(codigo: string): Promise<string> {
 async function searchCnae(termo: string, nivel?: string, limite: number = 20): Promise<string> {
   // Determine which endpoint to use
   const searchLevel = nivel || "subclasses";
-  const endpoint = `${CNAE_API}/${searchLevel}`;
+  const endpoint = `${IBGE_API.CNAE}/${searchLevel}`;
 
   const key = cacheKey("cnae-list", { nivel: searchLevel });
   const allData = await cachedFetch<CnaeSubclasse[] | CnaeClasse[] | CnaeGrupo[] | CnaeDivisao[] | CnaeSecao[]>(
@@ -193,7 +191,7 @@ async function searchCnae(termo: string, nivel?: string, limite: number = 20): P
 }
 
 async function listCnaeByLevel(nivel: string, limite: number): Promise<string> {
-  const endpoint = `${CNAE_API}/${nivel}`;
+  const endpoint = `${IBGE_API.CNAE}/${nivel}`;
   const key = cacheKey("cnae-list", { nivel });
 
   const data = await cachedFetch<Array<{ id: string; descricao: string }>>(

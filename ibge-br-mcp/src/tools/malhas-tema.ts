@@ -1,7 +1,6 @@
 import { z } from "zod";
+import { IBGE_API } from "../types.js";
 import { withMetrics } from "../metrics.js";
-
-const MALHAS_API = "https://servicodados.ibge.gov.br/api/v3/malhas";
 
 // Available thematic meshes
 const TEMAS_DISPONIVEIS = {
@@ -139,33 +138,33 @@ function getThemeUrl(tema: string, codigo?: string): string | null {
     case "biomas":
       // Biomas: 1=Amazônia, 2=Cerrado, 3=Mata Atlântica, 4=Caatinga, 5=Pampa, 6=Pantanal
       if (codigo) {
-        return `${MALHAS_API}/biomas/${codigo}`;
+        return `${IBGE_API.MALHAS}/biomas/${codigo}`;
       }
-      return `${MALHAS_API}/biomas`;
+      return `${IBGE_API.MALHAS}/biomas`;
 
     case "amazonia_legal":
-      return `${MALHAS_API}/amazonia-legal`;
+      return `${IBGE_API.MALHAS}/amazonia-legal`;
 
     case "semiarido":
-      return `${MALHAS_API}/semiarido`;
+      return `${IBGE_API.MALHAS}/semiarido`;
 
     case "costeiro":
-      return `${MALHAS_API}/municipios-costeiros`;
+      return `${IBGE_API.MALHAS}/municipios-costeiros`;
 
     case "fronteira":
-      return `${MALHAS_API}/faixa-de-fronteira`;
+      return `${IBGE_API.MALHAS}/faixa-de-fronteira`;
 
     case "metropolitana":
       if (codigo) {
-        return `${MALHAS_API}/regioes-metropolitanas/${codigo}`;
+        return `${IBGE_API.MALHAS}/regioes-metropolitanas/${codigo}`;
       }
-      return `${MALHAS_API}/regioes-metropolitanas`;
+      return `${IBGE_API.MALHAS}/regioes-metropolitanas`;
 
     case "ride":
       if (codigo) {
-        return `${MALHAS_API}/RIDEs/${codigo}`;
+        return `${IBGE_API.MALHAS}/RIDEs/${codigo}`;
       }
-      return `${MALHAS_API}/RIDEs`;
+      return `${IBGE_API.MALHAS}/RIDEs`;
 
     default:
       return null;

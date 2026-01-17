@@ -1,14 +1,7 @@
 import { z } from "zod";
+import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-
-// OpenDataSUS and IBGE APIs for health data
-const API_URLS = {
-  // IBGE health indicators via SIDRA
-  SIDRA: "https://apisidra.ibge.gov.br/values",
-  // Direct health data sources
-  VACINACAO: "https://imunizacao-es.saude.gov.br/_search",
-};
 
 // Health indicators available via IBGE SIDRA
 const INDICADORES_SAUDE: Record<string, {
@@ -189,7 +182,7 @@ function buildSidraUrl(
   path += `/v/allxp`;
   path += `/p/${periodo}`;
 
-  return `${API_URLS.SIDRA}${path}`;
+  return `${IBGE_API.SIDRA}${path}`;
 }
 
 function listHealthIndicators(): string {
