@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API, Municipio } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { formatNumber } from "../utils/index.js";
 
 // Schema for the tool input
 export const vizinhosSchema = z.object({
@@ -248,7 +249,7 @@ function formatResponse(
     output += "|:------:|:----------|:--:|----------:|\n";
 
     for (const v of vizinhos) {
-      const pop = v.populacao ? v.populacao.toLocaleString("pt-BR") : "-";
+      const pop = v.populacao ? formatNumber(v.populacao) : "-";
       output += `| ${v.codigo} | ${v.nome} | ${v.uf || "-"} | ${pop} |\n`;
     }
   } else {
