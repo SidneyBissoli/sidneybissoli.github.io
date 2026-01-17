@@ -3,6 +3,7 @@ import { IBGE_API, type UF } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const estadosSchema = z.object({
@@ -79,9 +80,9 @@ export async function ibgeEstados(input: EstadosInput): Promise<string> {
       return output;
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar estados: ${error.message}`;
+        return parseHttpError(error, "ibge_estados", { regiao: input.regiao });
       }
-      return "Erro desconhecido ao buscar estados.";
+      return ValidationErrors.emptyResult("ibge_estados");
     }
   });
 }

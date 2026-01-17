@@ -3,6 +3,7 @@ import { IBGE_API, Municipio } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { formatNumber } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const vizinhosSchema = z.object({
@@ -90,9 +91,12 @@ export async function ibgeVizinhos(input: VizinhosInput): Promise<string> {
       return formatResponse(municipioNome, municipioId, vizinhosData, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar vizinhos: ${error.message}`;
+        return parseHttpError(error, "ibge_vizinhos", {
+          municipio: input.municipio,
+          uf: input.uf,
+        });
       }
-      return "Erro desconhecido ao buscar municípios vizinhos.";
+      return ValidationErrors.emptyResult("ibge_vizinhos");
     }
   });
 }

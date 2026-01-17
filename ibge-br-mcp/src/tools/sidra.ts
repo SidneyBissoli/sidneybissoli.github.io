@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const sidraSchema = z.object({
@@ -92,14 +93,27 @@ export async function ibgeSidra(input: SidraInput): Promise<string> {
       try {
         data = await cachedFetch<SidraRecord[]>(url, key, CACHE_TTL.SHORT);
       } catch (error) {
-        if (error instanceof Error && error.message.includes("400")) {
-          return `Erro na consulta SIDRA: Parâmetros inválidos. Verifique se a tabela ${input.tabela} existe e se os parâmetros estão corretos.`;
+        if (error instanceof Error) {
+          return parseHttpError(
+            error,
+            "ibge_sidra",
+            {
+              tabela: input.tabela,
+              nivel_territorial: input.nivel_territorial,
+              localidades: input.localidades,
+              periodos: input.periodos,
+            },
+            ["ibge_sidra_metadados", "ibge_sidra_tabelas"]
+          );
         }
         throw error;
       }
 
       if (!data || data.length === 0) {
-        return "Nenhum dado encontrado para os parâmetros informados.";
+        return ValidationErrors.emptyResult(
+          "ibge_sidra",
+          "Verifique se a tabela e parâmetros estão corretos. Use ibge_sidra_metadados para consultar os níveis e períodos disponíveis."
+        );
       }
 
       // Return based on format
@@ -110,9 +124,16 @@ export async function ibgeSidra(input: SidraInput): Promise<string> {
       return formatSidraResponse(data, input.tabela);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao consultar SIDRA: ${error.message}`;
+        return parseHttpError(
+          error,
+          "ibge_sidra",
+          {
+            tabela: input.tabela,
+          },
+          ["ibge_sidra_metadados"]
+        );
       }
-      return "Erro desconhecido ao consultar SIDRA.";
+      return ValidationErrors.emptyResult("ibge_sidra");
     }
   });
 }
@@ -183,9 +204,9 @@ export async function listSidraTables(pesquisaId?: string): Promise<string> {
     return JSON.stringify(data, null, 2);
   } catch (error) {
     if (error instanceof Error) {
-      return `Erro: ${error.message}`;
+      return parseHttpError(error, "ibge_sidra", { pesquisaId });
     }
-    return "Erro desconhecido.";
+    return ValidationErrors.emptyResult("ibge_sidra");
   }
 }
 

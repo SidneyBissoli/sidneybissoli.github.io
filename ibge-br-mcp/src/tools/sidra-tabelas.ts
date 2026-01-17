@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, truncate } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const sidraTabelasSchema = z.object({
@@ -94,9 +95,12 @@ export async function ibgeSidraTabelas(input: SidraTabelasInput): Promise<string
       return formatTabelasResponse(limited, allAgregados.length, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar tabelas SIDRA: ${error.message}`;
+        return parseHttpError(error, "ibge_sidra_tabelas", {
+          busca: input.busca,
+          pesquisa: input.pesquisa,
+        });
       }
-      return "Erro desconhecido ao buscar tabelas SIDRA.";
+      return ValidationErrors.emptyResult("ibge_sidra_tabelas");
     }
   });
 }

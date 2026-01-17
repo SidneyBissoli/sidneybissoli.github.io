@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { buildQueryString } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Available thematic meshes
 const TEMAS_DISPONIVEIS = {
@@ -135,9 +136,12 @@ export async function ibgeMalhasTema(input: MalhasTemaInput): Promise<string> {
       return formatResponse(data, fullUrl, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar malha temática: ${error.message}`;
+        return parseHttpError(error, "ibge_malhas_tema", {
+          tema: input.tema,
+          codigo: input.codigo,
+        });
       }
-      return "Erro desconhecido ao buscar malha temática.";
+      return ValidationErrors.emptyResult("ibge_malhas_tema");
     }
   });
 }

@@ -3,6 +3,7 @@ import { IBGE_API, Municipio, MunicipioSimples } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Map of state codes to names
 const ESTADOS_MAP: Record<number, { sigla: string; nome: string; regiao: string }> = {
@@ -80,9 +81,17 @@ export async function ibgeGeocodigo(input: GeocodigoInput): Promise<string> {
       return showGeocodigoHelp();
     } catch (error) {
       if (error instanceof Error) {
-        return formatGeocodigoError(error.message, input);
+        return parseHttpError(
+          error,
+          "ibge_geocodigo",
+          {
+            codigo: input.codigo,
+            nome: input.nome,
+          },
+          ["ibge_municipios", "ibge_estados"]
+        );
       }
-      return "Erro desconhecido ao consultar código IBGE.";
+      return ValidationErrors.emptyResult("ibge_geocodigo");
     }
   });
 }
@@ -402,22 +411,6 @@ ibge_geocodigo(nome="Sudeste")
     ],
     { alignment: ["center", "center", "left"] }
   );
-
-  return output;
-}
-
-function formatGeocodigoError(message: string, input: GeocodigoInput): string {
-  let output = `## Erro ao consultar código IBGE\n\n`;
-  output += `**Erro:** ${message}\n\n`;
-
-  if (input.codigo) {
-    output += `**Código buscado:** ${input.codigo}\n\n`;
-  }
-  if (input.nome) {
-    output += `**Nome buscado:** ${input.nome}\n\n`;
-  }
-
-  output += `Use ibge_geocodigo() sem parâmetros para ver a ajuda.`;
 
   return output;
 }

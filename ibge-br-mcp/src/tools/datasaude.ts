@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Health indicators available via IBGE SIDRA
 const INDICADORES_SAUDE: Record<
@@ -156,9 +157,12 @@ export async function ibgeDatasaude(input: DatasaudeInput): Promise<string> {
       return formatResponse(data, indicadorInfo, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao consultar dados de saúde: ${error.message}`;
+        return parseHttpError(error, "datasaude", { indicador: input.indicador }, [
+          "ibge_sidra",
+          "ibge_sidra_metadados",
+        ]);
       }
-      return "Erro desconhecido ao consultar dados de saúde.";
+      return ValidationErrors.emptyResult("datasaude");
     }
   });
 }

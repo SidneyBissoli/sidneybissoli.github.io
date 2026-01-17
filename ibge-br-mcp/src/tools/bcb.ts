@@ -3,6 +3,7 @@ import { BCB_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, createKeyValueTable, formatNumber } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Known series codes
 const SERIES_CONHECIDAS: Record<
@@ -188,9 +189,9 @@ export async function ibgeBcb(input: BcbInput): Promise<string> {
       return formatResponse(data, nome, unidade, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao consultar BCB: ${error.message}`;
+        return parseHttpError(error, "bcb", { indicador: input.indicador });
       }
-      return "Erro desconhecido ao consultar dados do Banco Central.";
+      return ValidationErrors.emptyResult("bcb");
     }
   });
 }

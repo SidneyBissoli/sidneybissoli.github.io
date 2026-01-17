@@ -3,6 +3,7 @@ import { IBGE_API, type NomeFrequencia, type NomeRanking } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber, buildQueryString } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for frequency search
 export const nomesFrequenciaSchema = z.object({
@@ -77,9 +78,9 @@ export async function ibgeNomesFrequencia(input: NomesFrequenciaInput): Promise<
       return formatFrequenciaResponse(data);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar frequência de nomes: ${error.message}`;
+        return parseHttpError(error, "ibge_nomes_frequencia", { nomes: input.nomes });
       }
-      return "Erro desconhecido ao buscar frequência de nomes.";
+      return ValidationErrors.emptyResult("ibge_nomes_frequencia");
     }
   });
 }
@@ -111,9 +112,9 @@ export async function ibgeNomesRanking(input: NomesRankingInput): Promise<string
       return formatRankingResponse(data, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar ranking de nomes: ${error.message}`;
+        return parseHttpError(error, "ibge_nomes_ranking", { decada: input.decada });
       }
-      return "Erro desconhecido ao buscar ranking de nomes.";
+      return ValidationErrors.emptyResult("ibge_nomes_ranking");
     }
   });
 }

@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Mapping of census data themes to SIDRA tables
 const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: string }>> = {
@@ -293,9 +294,17 @@ export async function ibgeCenso(input: CensoInput): Promise<string> {
       return output;
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao consultar dados do censo: ${error.message}`;
+        return parseHttpError(
+          error,
+          "ibge_censo",
+          {
+            ano: input.ano,
+            tema: input.tema,
+          },
+          ["ibge_sidra_metadados", "ibge_sidra"]
+        );
       }
-      return "Erro desconhecido ao consultar dados do censo.";
+      return ValidationErrors.emptyResult("ibge_censo");
     }
   });
 }

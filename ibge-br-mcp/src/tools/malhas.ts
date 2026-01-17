@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { buildQueryString } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const malhasSchema = z.object({
@@ -114,7 +115,11 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
         );
       } catch (error) {
         if (error instanceof Error && error.message.includes("404")) {
-          return `Malha não encontrada para localidade: ${input.localidade}`;
+          return ValidationErrors.notFound(
+            `Malha para localidade ${input.localidade}`,
+            "ibge_malhas",
+            "ibge_municipios ou ibge_estados"
+          );
         }
         throw error;
       }
@@ -122,9 +127,12 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
       return formatMalhasResponse(data, fullUrl, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar malhas: ${error.message}`;
+        return parseHttpError(error, "ibge_malhas", {
+          localidade: input.localidade,
+          formato: input.formato,
+        });
       }
-      return "Erro desconhecido ao buscar malhas.";
+      return ValidationErrors.emptyResult("ibge_malhas");
     }
   });
 }

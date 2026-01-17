@@ -7,6 +7,7 @@ import {
   formatDate as formatDateUtil,
   buildQueryString,
 } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const noticiasSchema = z.object({
@@ -61,9 +62,9 @@ export async function ibgeNoticias(input: NoticiasInput): Promise<string> {
       return formatNoticiasResponse(data, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar notícias: ${error.message}`;
+        return parseHttpError(error, "ibge_noticias", { busca: input.busca });
       }
-      return "Erro desconhecido ao buscar notícias.";
+      return ValidationErrors.emptyResult("ibge_noticias");
     }
   });
 }

@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, createKeyValueTable, truncate } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const sidraMetadadosSchema = z.object({
@@ -102,9 +103,11 @@ export async function ibgeSidraMetadados(input: SidraMetadadosInput): Promise<st
       return formatMetadadosResponse(metadados, periodos, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar metadados: ${error.message}`;
+        return parseHttpError(error, "ibge_sidra_metadados", { tabela: input.tabela }, [
+          "ibge_sidra_tabelas",
+        ]);
       }
-      return "Erro desconhecido ao buscar metadados.";
+      return ValidationErrors.emptyResult("ibge_sidra_metadados");
     }
   });
 }

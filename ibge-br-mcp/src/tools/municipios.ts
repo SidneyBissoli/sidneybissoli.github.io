@@ -3,6 +3,7 @@ import { IBGE_API, type Municipio, type MunicipioSimples } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const municipiosSchema = z.object({
@@ -138,9 +139,9 @@ export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
       return output;
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar municípios: ${error.message}`;
+        return parseHttpError(error, "ibge_municipios", { uf: input.uf, busca: input.busca });
       }
-      return "Erro desconhecido ao buscar municípios.";
+      return ValidationErrors.emptyResult("ibge_municipios");
     }
   });
 }

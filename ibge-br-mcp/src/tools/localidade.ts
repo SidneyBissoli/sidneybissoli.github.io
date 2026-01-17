@@ -3,6 +3,7 @@ import { IBGE_API, type Municipio, type UF, type Distrito } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createKeyValueTable } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const localidadeSchema = z.object({
@@ -62,21 +63,33 @@ export async function ibgeLocalidade(input: LocalidadeInput): Promise<string> {
         data = await cachedFetch<unknown>(url, key, CACHE_TTL.STATIC);
       } catch (error) {
         if (error instanceof Error && error.message.includes("404")) {
-          return `Localidade não encontrada com o código ${input.codigo}.`;
+          return ValidationErrors.notFound(
+            `Localidade com código ${input.codigo}`,
+            "ibge_localidade",
+            "ibge_municipios ou ibge_estados"
+          );
         }
         throw error;
       }
 
       // Check if empty response
       if (!data || (Array.isArray(data) && data.length === 0)) {
-        return `Localidade não encontrada com o código ${input.codigo}.`;
+        return ValidationErrors.notFound(
+          `Localidade com código ${input.codigo}`,
+          "ibge_localidade",
+          "ibge_municipios ou ibge_estados"
+        );
       }
 
       // Handle array response (some endpoints return arrays)
       const localidade = Array.isArray(data) ? data[0] : data;
 
       if (!localidade) {
-        return `Localidade não encontrada com o código ${input.codigo}.`;
+        return ValidationErrors.notFound(
+          `Localidade com código ${input.codigo}`,
+          "ibge_localidade",
+          "ibge_municipios ou ibge_estados"
+        );
       }
 
       // Format response based on type
@@ -92,9 +105,12 @@ export async function ibgeLocalidade(input: LocalidadeInput): Promise<string> {
       }
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar localidade: ${error.message}`;
+        return parseHttpError(error, "ibge_localidade", { codigo: input.codigo }, [
+          "ibge_municipios",
+          "ibge_estados",
+        ]);
       }
-      return "Erro desconhecido ao buscar localidade.";
+      return ValidationErrors.emptyResult("ibge_localidade");
     }
   });
 }

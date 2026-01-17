@@ -3,6 +3,7 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, truncate } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
 
 // Schema for the tool input
 export const pesquisasSchema = z.object({
@@ -72,9 +73,9 @@ export async function ibgePesquisas(input: PesquisasInput): Promise<string> {
       return formatPesquisasLista(filtered, input);
     } catch (error) {
       if (error instanceof Error) {
-        return `Erro ao buscar pesquisas: ${error.message}`;
+        return parseHttpError(error, "ibge_pesquisas", { busca: input.busca });
       }
-      return "Erro desconhecido ao buscar pesquisas.";
+      return ValidationErrors.emptyResult("ibge_pesquisas");
     }
   });
 }
