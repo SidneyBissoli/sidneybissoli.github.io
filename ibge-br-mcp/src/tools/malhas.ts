@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { buildQueryString } from "../utils/index.js";
 
 // Schema for the tool input
 export const malhasSchema = z.object({
@@ -74,30 +75,20 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
       }
 
       // Add query parameters
-      const params = new URLSearchParams();
-
-      // Format
-      const formatMap = {
+      const formatMap: Record<string, string> = {
         geojson: "application/vnd.geo+json",
         topojson: "application/json",
         svg: "image/svg+xml",
       };
-      params.append("formato", formatMap[input.formato || "geojson"]);
 
-      // Resolution
-      if (input.resolucao && input.resolucao !== "0") {
-        params.append("resolucao", input.resolucao);
-      }
+      const queryString = buildQueryString({
+        formato: formatMap[input.formato || "geojson"],
+        resolucao: input.resolucao && input.resolucao !== "0" ? input.resolucao : undefined,
+        qualidade: input.qualidade || "4",
+        intrarregiao: input.intrarregiao,
+      });
 
-      // Quality
-      params.append("qualidade", input.qualidade || "4");
-
-      // Intraregion filter
-      if (input.intrarregiao) {
-        params.append("intrarregiao", input.intrarregiao);
-      }
-
-      const fullUrl = `${url}?${params.toString()}`;
+      const fullUrl = `${url}?${queryString}`;
 
     // For SVG format, return the URL (as SVG content would be too large)
     if (input.formato === "svg") {

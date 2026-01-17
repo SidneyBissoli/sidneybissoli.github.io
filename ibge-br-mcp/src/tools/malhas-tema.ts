@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { withMetrics } from "../metrics.js";
+import { buildQueryString } from "../utils/index.js";
 
 // Available thematic meshes
 const TEMAS_DISPONIVEIS = {
@@ -91,22 +92,19 @@ export async function ibgeMalhasTema(input: MalhasTemaInput): Promise<string> {
       }
 
       // Build query parameters
-      const params = new URLSearchParams();
-
       const formatMap: Record<string, string> = {
         geojson: "application/vnd.geo+json",
         topojson: "application/json",
         svg: "image/svg+xml",
       };
-      params.append("formato", formatMap[input.formato || "geojson"]);
 
-      if (input.resolucao && input.resolucao !== "0") {
-        params.append("resolucao", input.resolucao);
-      }
+      const queryString = buildQueryString({
+        formato: formatMap[input.formato || "geojson"],
+        resolucao: input.resolucao && input.resolucao !== "0" ? input.resolucao : undefined,
+        qualidade: input.qualidade || "4",
+      });
 
-      params.append("qualidade", input.qualidade || "4");
-
-      const fullUrl = `${urlPath}?${params.toString()}`;
+      const fullUrl = `${urlPath}?${queryString}`;
 
       // For SVG, return URL only
       if (input.formato === "svg") {

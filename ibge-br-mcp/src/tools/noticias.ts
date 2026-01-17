@@ -2,7 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type NoticiasResponse, type Noticia } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-import { decodeHtmlEntities, formatDate as formatDateUtil } from "../utils/index.js";
+import { decodeHtmlEntities, formatDate as formatDateUtil, buildQueryString } from "../utils/index.js";
 
 // Schema for the tool input
 export const noticiasSchema = z.object({
@@ -49,28 +49,17 @@ export type NoticiasInput = z.infer<typeof noticiasSchema>;
 export async function ibgeNoticias(input: NoticiasInput): Promise<string> {
   return withMetrics("ibge_noticias", "noticias", async () => {
     try {
-      const params = new URLSearchParams();
+      const queryString = buildQueryString({
+        qtd: input.quantidade || 10,
+        page: input.pagina || 1,
+        busca: input.busca,
+        de: input.de,
+        ate: input.ate,
+        tipo: input.tipo,
+        destaque: input.destaque !== undefined ? (input.destaque ? "1" : "0") : undefined,
+      });
 
-      params.append("qtd", input.quantidade?.toString() || "10");
-      params.append("page", input.pagina?.toString() || "1");
-
-      if (input.busca) {
-        params.append("busca", input.busca);
-      }
-      if (input.de) {
-        params.append("de", input.de);
-      }
-      if (input.ate) {
-        params.append("ate", input.ate);
-      }
-      if (input.tipo) {
-        params.append("tipo", input.tipo);
-      }
-      if (input.destaque !== undefined) {
-        params.append("destaque", input.destaque ? "1" : "0");
-      }
-
-      const url = `${IBGE_API.NOTICIAS}?${params.toString()}`;
+      const url = `${IBGE_API.NOTICIAS}?${queryString}`;
 
       // Use cache for news data (5 minutes TTL - news updates frequently)
       const key = cacheKey(url);

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-import { createMarkdownTable, truncate } from "../utils/index.js";
+import { createMarkdownTable, truncate, buildQueryString } from "../utils/index.js";
 
 // Types for calendar data
 interface CalendarioItem {
@@ -66,25 +66,20 @@ export async function ibgeCalendario(input: CalendarioInput): Promise<string> {
   return withMetrics("ibge_calendario", "calendario", async () => {
     try {
       // Build URL with query parameters
-      const params = new URLSearchParams();
+      const tipoValue = input.tipo && input.tipo !== "todos"
+        ? (input.tipo === "divulgacao" ? "1" : "2")
+        : undefined;
 
-      if (input.de) {
-        params.append("de", input.de);
-      }
-      if (input.ate) {
-        params.append("ate", input.ate);
-      }
-      if (input.produto) {
-        params.append("busca", input.produto);
-      }
-      if (input.tipo && input.tipo !== "todos") {
-        // tipo_id: 1 = divulgação, 2 = coleta
-        params.append("tipo", input.tipo === "divulgacao" ? "1" : "2");
-      }
-      params.append("page", String(input.pagina || 1));
-      params.append("qtd", String(input.quantidade || 20));
+      const queryString = buildQueryString({
+        de: input.de,
+        ate: input.ate,
+        busca: input.produto,
+        tipo: tipoValue,
+        page: input.pagina || 1,
+        qtd: input.quantidade || 20,
+      });
 
-      const url = `${IBGE_API.CALENDARIO}?${params.toString()}`;
+      const url = `${IBGE_API.CALENDARIO}?${queryString}`;
       const key = cacheKey("calendario", {
         de: input.de,
         ate: input.ate,

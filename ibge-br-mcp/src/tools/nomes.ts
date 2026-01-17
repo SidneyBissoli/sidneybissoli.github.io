@@ -2,7 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type NomeFrequencia, type NomeRanking } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-import { createMarkdownTable, formatNumber } from "../utils/index.js";
+import { createMarkdownTable, formatNumber, buildQueryString } from "../utils/index.js";
 
 // Schema for frequency search
 export const nomesFrequenciaSchema = z.object({
@@ -53,20 +53,14 @@ export async function ibgeNomesFrequencia(input: NomesFrequenciaInput): Promise<
     try {
       // Build URL with names
       const nomes = input.nomes.replace(/\s+/g, "").toUpperCase();
-      let url = `${IBGE_API.NOMES}/${encodeURIComponent(nomes)}`;
+      const queryString = buildQueryString({
+        sexo: input.sexo,
+        localidade: input.localidade,
+      });
 
-      // Add query parameters
-      const params = new URLSearchParams();
-      if (input.sexo) {
-        params.append("sexo", input.sexo);
-      }
-      if (input.localidade) {
-        params.append("localidade", input.localidade);
-      }
-
-      if (params.toString()) {
-        url += `?${params.toString()}`;
-      }
+      const url = queryString
+        ? `${IBGE_API.NOMES}/${encodeURIComponent(nomes)}?${queryString}`
+        : `${IBGE_API.NOMES}/${encodeURIComponent(nomes)}`;
 
       // Use cache for name frequency data (1 hour TTL)
       const key = cacheKey(url);
@@ -101,23 +95,15 @@ export async function ibgeNomesFrequencia(input: NomesFrequenciaInput): Promise<
 export async function ibgeNomesRanking(input: NomesRankingInput): Promise<string> {
   return withMetrics("ibge_nomes_ranking", "nomes", async () => {
     try {
-      let url = `${IBGE_API.NOMES}/ranking`;
+      const queryString = buildQueryString({
+        decada: input.decada,
+        sexo: input.sexo,
+        localidade: input.localidade,
+      });
 
-      // Add query parameters
-      const params = new URLSearchParams();
-      if (input.decada) {
-        params.append("decada", input.decada.toString());
-      }
-      if (input.sexo) {
-        params.append("sexo", input.sexo);
-      }
-      if (input.localidade) {
-        params.append("localidade", input.localidade);
-      }
-
-      if (params.toString()) {
-        url += `?${params.toString()}`;
-      }
+      const url = queryString
+        ? `${IBGE_API.NOMES}/ranking?${queryString}`
+        : `${IBGE_API.NOMES}/ranking`;
 
       // Use cache for name ranking data (1 hour TTL)
       const key = cacheKey(url);
