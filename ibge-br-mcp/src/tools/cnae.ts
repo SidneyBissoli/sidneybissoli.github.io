@@ -40,9 +40,7 @@ interface CnaeSubclasse {
 }
 
 export const cnaeSchema = z.object({
-  codigo: z
-    .string()
-    .optional()
+  codigo: z.string().optional()
     .describe(`Código CNAE para buscar (seção, divisão, grupo, classe ou subclasse).
 Exemplos:
 - Seção: "A" (agricultura)
@@ -53,16 +51,14 @@ Exemplos:
   busca: z
     .string()
     .optional()
-    .describe("Termo para buscar na descrição das atividades (ex: 'software', 'restaurante', 'comércio')"),
+    .describe(
+      "Termo para buscar na descrição das atividades (ex: 'software', 'restaurante', 'comércio')"
+    ),
   nivel: z
     .enum(["secoes", "divisoes", "grupos", "classes", "subclasses"])
     .optional()
     .describe("Nível hierárquico para listar (padrão: mostra todos os níveis relevantes)"),
-  limite: z
-    .number()
-    .optional()
-    .default(20)
-    .describe("Número máximo de resultados (padrão: 20)"),
+  limite: z.number().optional().default(20).describe("Número máximo de resultados (padrão: 20)"),
 });
 
 export type CnaeInput = z.infer<typeof cnaeSchema>;
@@ -90,7 +86,6 @@ export async function ibgeCnae(input: CnaeInput): Promise<string> {
 
       // Default: show structure overview
       return showCnaeStructure();
-
     } catch (error) {
       if (error instanceof Error) {
         return formatCnaeError(error.message, input);
@@ -102,7 +97,7 @@ export async function ibgeCnae(input: CnaeInput): Promise<string> {
 
 async function getCnaeByCode(codigo: string): Promise<string> {
   // Normalize code
-  const normalized = codigo.replace(/[.\-\/]/g, "").toUpperCase();
+  const normalized = codigo.replace(/[.\-/]/g, "").toUpperCase();
 
   // Determine the level based on code format
   let endpoint: string;
@@ -127,13 +122,15 @@ async function getCnaeByCode(codigo: string): Promise<string> {
     endpoint = `${IBGE_API.CNAE}/subclasses/${normalized}`;
     level = "subclasse";
   } else {
-    return `Código CNAE inválido: "${codigo}"\n\n` +
+    return (
+      `Código CNAE inválido: "${codigo}"\n\n` +
       `Formatos aceitos:\n` +
       `- Seção: letra de A a U (ex: "A")\n` +
       `- Divisão: 2 dígitos (ex: "01")\n` +
       `- Grupo: 3 dígitos (ex: "011")\n` +
       `- Classe: 4-5 dígitos (ex: "0111" ou "01113")\n` +
-      `- Subclasse: 7 dígitos (ex: "0111301")`;
+      `- Subclasse: 7 dígitos (ex: "0111301")`
+    );
   }
 
   const key = cacheKey("cnae", { codigo: normalized });
@@ -152,32 +149,29 @@ async function searchCnae(termo: string, nivel?: string, limite: number = 20): P
   const endpoint = `${IBGE_API.CNAE}/${searchLevel}`;
 
   const key = cacheKey("cnae-list", { nivel: searchLevel });
-  const allData = await cachedFetch<CnaeSubclasse[] | CnaeClasse[] | CnaeGrupo[] | CnaeDivisao[] | CnaeSecao[]>(
-    endpoint,
-    key,
-    CACHE_TTL.STATIC
-  );
+  const allData = await cachedFetch<
+    CnaeSubclasse[] | CnaeClasse[] | CnaeGrupo[] | CnaeDivisao[] | CnaeSecao[]
+  >(endpoint, key, CACHE_TTL.STATIC);
 
   // Filter by search term
   const termoLower = termo.toLowerCase();
-  const filtered = allData.filter((item: { descricao: string }) =>
-    item.descricao.toLowerCase().includes(termoLower)
-  ).slice(0, limite);
+  const filtered = allData
+    .filter((item: { descricao: string }) => item.descricao.toLowerCase().includes(termoLower))
+    .slice(0, limite);
 
   if (filtered.length === 0) {
-    return `Nenhuma atividade encontrada para "${termo}".\n\n` +
+    return (
+      `Nenhuma atividade encontrada para "${termo}".\n\n` +
       `Dicas:\n` +
       `- Tente termos mais genéricos\n` +
-      `- Use ibge_cnae(nivel="secoes") para ver as categorias principais`;
+      `- Use ibge_cnae(nivel="secoes") para ver as categorias principais`
+    );
   }
 
   let output = `## Busca CNAE: "${termo}"\n\n`;
   output += `Encontrados ${filtered.length} resultados (nível: ${searchLevel}):\n\n`;
 
-  const rows = filtered.map((item) => [
-    (item as { id: string }).id,
-    truncate(item.descricao, 80),
-  ]);
+  const rows = filtered.map((item) => [(item as { id: string }).id, truncate(item.descricao, 80)]);
   output += createMarkdownTable(["Código", "Descrição"], rows, {
     alignment: ["left", "left"],
   });

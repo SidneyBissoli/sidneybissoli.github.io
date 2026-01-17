@@ -6,10 +6,7 @@ import { createMarkdownTable, truncate } from "../utils/index.js";
 
 // Schema for the tool input
 export const sidraTabelasSchema = z.object({
-  busca: z
-    .string()
-    .optional()
-    .describe("Termo para buscar no nome das tabelas/agregados"),
+  busca: z.string().optional().describe("Termo para buscar no nome das tabelas/agregados"),
   pesquisa: z
     .string()
     .optional()
@@ -54,8 +51,7 @@ export async function ibgeSidraTabelas(input: SidraTabelasInput): Promise<string
         const searchTerm = input.pesquisa.toLowerCase();
         filteredData = data.filter(
           (p) =>
-            p.id.toLowerCase().includes(searchTerm) ||
-            p.nome.toLowerCase().includes(searchTerm)
+            p.id.toLowerCase().includes(searchTerm) || p.nome.toLowerCase().includes(searchTerm)
         );
       }
 
@@ -82,9 +78,7 @@ export async function ibgeSidraTabelas(input: SidraTabelasInput): Promise<string
       if (input.busca) {
         const searchTerm = input.busca.toLowerCase();
         allAgregados = allAgregados.filter(
-          (a) =>
-            a.id.includes(searchTerm) ||
-            a.nome.toLowerCase().includes(searchTerm)
+          (a) => a.id.includes(searchTerm) || a.nome.toLowerCase().includes(searchTerm)
         );
       }
 

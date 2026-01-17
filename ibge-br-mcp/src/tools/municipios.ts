@@ -10,11 +10,10 @@ export const municipiosSchema = z.object({
     .string()
     .length(2)
     .optional()
-    .describe("Sigla do estado (ex: SP, RJ, MG). Se não informado, retorna todos os municípios do Brasil."),
-  busca: z
-    .string()
-    .optional()
-    .describe("Termo para buscar no nome do município"),
+    .describe(
+      "Sigla do estado (ex: SP, RJ, MG). Se não informado, retorna todos os municípios do Brasil."
+    ),
+  busca: z.string().optional().describe("Termo para buscar no nome do município"),
   limite: z
     .number()
     .min(1)
@@ -28,11 +27,33 @@ export type MunicipiosInput = z.infer<typeof municipiosSchema>;
 
 // Map of state abbreviations to IDs
 const UF_IDS: Record<string, number> = {
-  RO: 11, AC: 12, AM: 13, RR: 14, PA: 15, AP: 16, TO: 17,
-  MA: 21, PI: 22, CE: 23, RN: 24, PB: 25, PE: 26, AL: 27, SE: 28, BA: 29,
-  MG: 31, ES: 32, RJ: 33, SP: 35,
-  PR: 41, SC: 42, RS: 43,
-  MS: 50, MT: 51, GO: 52, DF: 53,
+  RO: 11,
+  AC: 12,
+  AM: 13,
+  RR: 14,
+  PA: 15,
+  AP: 16,
+  TO: 17,
+  MA: 21,
+  PI: 22,
+  CE: 23,
+  RN: 24,
+  PB: 25,
+  PE: 26,
+  AL: 27,
+  SE: 28,
+  BA: 29,
+  MG: 31,
+  ES: 32,
+  RJ: 33,
+  SP: 35,
+  PR: 41,
+  SC: 42,
+  RS: 43,
+  MS: 50,
+  MT: 51,
+  GO: 52,
+  DF: 53,
 };
 
 /**
@@ -60,13 +81,23 @@ export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
 
       // Use cache for static municipality data (24 hours TTL)
       const key = cacheKey(url);
-      let municipios = await cachedFetch<(Municipio | MunicipioSimples)[]>(url, key, CACHE_TTL.STATIC);
+      let municipios = await cachedFetch<(Municipio | MunicipioSimples)[]>(
+        url,
+        key,
+        CACHE_TTL.STATIC
+      );
 
       // Filter by search term if provided
       if (input.busca) {
-        const busca = input.busca.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const busca = input.busca
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
         municipios = municipios.filter((m) => {
-          const nome = m.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const nome = m.nome
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
           return nome.includes(busca);
         });
       }

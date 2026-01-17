@@ -5,14 +5,17 @@ import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Common indicators with their SIDRA tables
-const INDICADORES_CONHECIDOS: Record<string, {
-  tabela: string;
-  variavel?: string;
-  nome: string;
-  descricao: string;
-  periodicidade: string;
-  categoria: string;
-}> = {
+const INDICADORES_CONHECIDOS: Record<
+  string,
+  {
+    tabela: string;
+    variavel?: string;
+    nome: string;
+    descricao: string;
+    periodicidade: string;
+    categoria: string;
+  }
+> = {
   // Econômicos
   pib: {
     tabela: "6784",
@@ -151,9 +154,7 @@ const CATEGORIAS = {
 };
 
 export const indicadoresSchema = z.object({
-  indicador: z
-    .string()
-    .optional()
+  indicador: z.string().optional()
     .describe(`Nome do indicador (ex: "pib", "ipca", "desemprego", "populacao").
 Use "listar" para ver todos os indicadores disponíveis.`),
   categoria: z
@@ -165,21 +166,13 @@ Use "listar" para ver todos os indicadores disponíveis.`),
     .optional()
     .default("1")
     .describe("Nível territorial: 1=Brasil, 2=Região, 3=UF"),
-  localidades: z
-    .string()
-    .optional()
-    .default("all")
-    .describe("Códigos das localidades ou 'all'"),
+  localidades: z.string().optional().default("all").describe("Códigos das localidades ou 'all'"),
   periodos: z
     .string()
     .optional()
     .default("last")
     .describe("Períodos (ex: '2023', 'last', 'last 4')"),
-  formato: z
-    .enum(["tabela", "json"])
-    .optional()
-    .default("tabela")
-    .describe("Formato de saída"),
+  formato: z.enum(["tabela", "json"]).optional().default("tabela").describe("Formato de saída"),
 });
 
 export type IndicadoresInput = z.infer<typeof indicadoresSchema>;
@@ -207,9 +200,11 @@ export async function ibgeIndicadores(input: IndicadoresInput): Promise<string> 
 
     const indicador = INDICADORES_CONHECIDOS[indicadorKey];
     if (!indicador) {
-      return `Indicador "${input.indicador}" não encontrado.\n\n` +
-             `Use ibge_indicadores(indicador="listar") para ver os indicadores disponíveis.\n\n` +
-             `Dica: Você também pode usar ibge_sidra_tabelas para buscar tabelas específicas.`;
+      return (
+        `Indicador "${input.indicador}" não encontrado.\n\n` +
+        `Use ibge_indicadores(indicador="listar") para ver os indicadores disponíveis.\n\n` +
+        `Dica: Você também pode usar ibge_sidra_tabelas para buscar tabelas específicas.`
+      );
     }
 
     try {
@@ -266,7 +261,6 @@ export async function ibgeIndicadores(input: IndicadoresInput): Promise<string> 
 
       output += formatIndicadorTable(data);
       return output;
-
     } catch (error) {
       if (error instanceof Error) {
         return formatErrorMessage(
@@ -299,13 +293,15 @@ function buildSidraUrl(
 function listIndicadores(categoria?: string): string {
   let output = "## Indicadores Disponíveis\n\n";
 
-  const categoriasToShow = categoria && categoria !== "todos"
-    ? { [categoria]: CATEGORIAS[categoria as keyof typeof CATEGORIAS] }
-    : CATEGORIAS;
+  const categoriasToShow =
+    categoria && categoria !== "todos"
+      ? { [categoria]: CATEGORIAS[categoria as keyof typeof CATEGORIAS] }
+      : CATEGORIAS;
 
   for (const [catKey, catNome] of Object.entries(categoriasToShow)) {
-    const indicadoresCategoria = Object.entries(INDICADORES_CONHECIDOS)
-      .filter(([, info]) => info.categoria === catKey);
+    const indicadoresCategoria = Object.entries(INDICADORES_CONHECIDOS).filter(
+      ([, info]) => info.categoria === catKey
+    );
 
     if (indicadoresCategoria.length === 0) continue;
 
@@ -370,16 +366,18 @@ function formatIndicadorTable(data: Record<string, string>[]): string {
 
 function formatErrorMessage(
   error: string,
-  indicador: typeof INDICADORES_CONHECIDOS[string],
+  indicador: (typeof INDICADORES_CONHECIDOS)[string],
   indicadorKey: string,
   dica: string
 ): string {
-  return `## Erro ao consultar indicador\n\n` +
+  return (
+    `## Erro ao consultar indicador\n\n` +
     `**Indicador:** ${indicador?.nome || indicadorKey}\n` +
     `**Erro:** ${error}\n\n` +
     `**Dica:** ${dica}\n\n` +
     `Para ver a estrutura completa desta tabela, use:\n` +
-    `\`\`\`\nibge_sidra_metadados(tabela="${indicador?.tabela}")\n\`\`\``;
+    `\`\`\`\nibge_sidra_metadados(tabela="${indicador?.tabela}")\n\`\`\``
+  );
 }
 
 // Tool definition for MCP

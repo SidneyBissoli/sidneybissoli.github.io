@@ -10,7 +10,17 @@ export const malhasSchema = z.object({
     .string()
     .describe("Código IBGE ou sigla da localidade (ex: 'BR', 'SP', '35', '3550308')"),
   tipo: z
-    .enum(["paises", "regioes", "estados", "mesorregioes", "microrregioes", "municipios", "distritos", "regioes-imediatas", "regioes-intermediarias"])
+    .enum([
+      "paises",
+      "regioes",
+      "estados",
+      "mesorregioes",
+      "microrregioes",
+      "municipios",
+      "distritos",
+      "regioes-imediatas",
+      "regioes-intermediarias",
+    ])
     .optional()
     .describe("Tipo de divisão territorial"),
   formato: z
@@ -18,10 +28,7 @@ export const malhasSchema = z.object({
     .optional()
     .default("geojson")
     .describe("Formato de saída (padrão: geojson)"),
-  resolucao: z
-    .enum(["0", "1", "2", "3", "4", "5"])
-    .optional()
-    .default("0")
+  resolucao: z.enum(["0", "1", "2", "3", "4", "5"]).optional().default("0")
     .describe(`Resolução/divisões internas:
 0 = Sem divisões internas
 1 = Macrorregiões (apenas para BR)
@@ -90,23 +97,27 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
 
       const fullUrl = `${url}?${queryString}`;
 
-    // For SVG format, return the URL (as SVG content would be too large)
-    if (input.formato === "svg") {
-      return formatSvgResponse(fullUrl, input);
-    }
-
-    // Use cache for geographic mesh data (24 hours TTL - static data)
-    const key = cacheKey(fullUrl);
-    let data: GeoJSONFeatureCollection | GeoJSONFeature;
-
-    try {
-      data = await cachedFetch<GeoJSONFeatureCollection | GeoJSONFeature>(fullUrl, key, CACHE_TTL.STATIC);
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("404")) {
-        return `Malha não encontrada para localidade: ${input.localidade}`;
+      // For SVG format, return the URL (as SVG content would be too large)
+      if (input.formato === "svg") {
+        return formatSvgResponse(fullUrl, input);
       }
-      throw error;
-    }
+
+      // Use cache for geographic mesh data (24 hours TTL - static data)
+      const key = cacheKey(fullUrl);
+      let data: GeoJSONFeatureCollection | GeoJSONFeature;
+
+      try {
+        data = await cachedFetch<GeoJSONFeatureCollection | GeoJSONFeature>(
+          fullUrl,
+          key,
+          CACHE_TTL.STATIC
+        );
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
+          return `Malha não encontrada para localidade: ${input.localidade}`;
+        }
+        throw error;
+      }
 
       return formatMalhasResponse(data, fullUrl, input);
     } catch (error) {
@@ -152,7 +163,9 @@ function formatMalhasResponse(
         const type = f.geometry?.type || "Unknown";
         geomTypes[type] = (geomTypes[type] || 0) + 1;
       }
-      output += `| **Tipos de geometria** | ${Object.entries(geomTypes).map(([k, v]) => `${k}: ${v}`).join(", ")} |\n`;
+      output += `| **Tipos de geometria** | ${Object.entries(geomTypes)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(", ")} |\n`;
 
       // Sample properties
       if (features.length > 0 && features[0].properties) {
@@ -180,12 +193,18 @@ function formatMalhasResponse(
 
       if (propKeys.length > 0) {
         output += "| " + propKeys.slice(0, 5).join(" | ") + " |\n";
-        output += "|" + propKeys.slice(0, 5).map(() => ":---").join("|") + "|\n";
+        output +=
+          "|" +
+          propKeys
+            .slice(0, 5)
+            .map(() => ":---")
+            .join("|") +
+          "|\n";
 
         for (const f of features.slice(0, 5)) {
-          const values = propKeys.slice(0, 5).map((k) =>
-            f.properties?.[k] !== undefined ? String(f.properties[k]) : "-"
-          );
+          const values = propKeys
+            .slice(0, 5)
+            .map((k) => (f.properties?.[k] !== undefined ? String(f.properties[k]) : "-"));
           output += "| " + values.join(" | ") + " |\n";
         }
 

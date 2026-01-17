@@ -25,22 +25,28 @@ export function formatNumber(
   // Compact formatting for large numbers
   if (compact) {
     if (Math.abs(value) >= 1_000_000_000) {
-      return (value / 1_000_000_000).toLocaleString(locale, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 2,
-      }) + " bi";
+      return (
+        (value / 1_000_000_000).toLocaleString(locale, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 2,
+        }) + " bi"
+      );
     }
     if (Math.abs(value) >= 1_000_000) {
-      return (value / 1_000_000).toLocaleString(locale, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 2,
-      }) + " mi";
+      return (
+        (value / 1_000_000).toLocaleString(locale, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 2,
+        }) + " mi"
+      );
     }
     if (Math.abs(value) >= 1_000) {
-      return (value / 1_000).toLocaleString(locale, {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 2,
-      }) + " mil";
+      return (
+        (value / 1_000).toLocaleString(locale, {
+          minimumFractionDigits: 1,
+          maximumFractionDigits: 2,
+        }) + " mil"
+      );
     }
   }
 
@@ -97,9 +103,7 @@ export function parseNumber(value: string | number): number {
   if (!value || value === "-" || value === "...") return NaN;
 
   // Handle Brazilian format (1.234,56)
-  const normalized = value
-    .replace(/\./g, "")
-    .replace(",", ".");
+  const normalized = value.replace(/\./g, "").replace(",", ".");
 
   return parseFloat(normalized);
 }
@@ -133,14 +137,23 @@ export function createMarkdownTable(
   let output = "| " + headers.join(" | ") + " |\n";
 
   // Build alignment row
-  output += "|" + alignment.map((a) => {
-    switch (a) {
-      case "left": return ":---";
-      case "right": return "---:";
-      case "center": return ":---:";
-      default: return "---";
-    }
-  }).join("|") + "|\n";
+  output +=
+    "|" +
+    alignment
+      .map((a) => {
+        switch (a) {
+          case "left":
+            return ":---";
+          case "right":
+            return "---:";
+          case "center":
+            return ":---:";
+          default:
+            return "---";
+        }
+      })
+      .join("|") +
+    "|\n";
 
   // Build rows
   const displayRows = maxRows ? rows.slice(0, maxRows) : rows;
@@ -275,9 +288,7 @@ export function decodeHtmlEntities(text: string): string {
   }
 
   // Replace numeric entities (&#123;)
-  decoded = decoded.replace(/&#(\d+);/g, (_, code) =>
-    String.fromCharCode(parseInt(code))
-  );
+  decoded = decoded.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code)));
 
   // Remove HTML tags
   decoded = decoded.replace(/<[^>]*>/g, "");
@@ -307,10 +318,7 @@ export function normalizeText(text: string): string {
 /**
  * Format a section header
  */
-export function formatHeader(
-  title: string,
-  level: 1 | 2 | 3 | 4 = 2
-): string {
+export function formatHeader(title: string, level: 1 | 2 | 3 | 4 = 2): string {
   const prefix = "#".repeat(level);
   return `${prefix} ${title}\n\n`;
 }

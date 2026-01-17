@@ -5,13 +5,16 @@ import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Health indicators available via IBGE SIDRA
-const INDICADORES_SAUDE: Record<string, {
-  tabela: string;
-  variaveis?: string;
-  nome: string;
-  descricao: string;
-  fonte: string;
-}> = {
+const INDICADORES_SAUDE: Record<
+  string,
+  {
+    tabela: string;
+    variaveis?: string;
+    nome: string;
+    descricao: string;
+    fonte: string;
+  }
+> = {
   mortalidade_infantil: {
     tabela: "793",
     nome: "Mortalidade Infantil",
@@ -76,9 +79,7 @@ const INDICADORES_SAUDE: Record<string, {
 
 // Schema for the tool input
 export const datasaudeSchema = z.object({
-  indicador: z
-    .string()
-    .describe(`Indicador de saúde. Disponíveis:
+  indicador: z.string().describe(`Indicador de saúde. Disponíveis:
 - mortalidade_infantil: Taxa de mortalidade infantil
 - esperanca_vida: Esperança de vida ao nascer
 - nascidos_vivos: Nascidos vivos
@@ -94,21 +95,13 @@ export const datasaudeSchema = z.object({
     .optional()
     .default("1")
     .describe("1=Brasil, 2=Região, 3=UF, 6=Município"),
-  localidade: z
-    .string()
-    .optional()
-    .default("all")
-    .describe("Código da localidade ou 'all'"),
+  localidade: z.string().optional().default("all").describe("Código da localidade ou 'all'"),
   periodo: z
     .string()
     .optional()
     .default("last")
     .describe("Período: 'last', 'all', ou ano específico"),
-  formato: z
-    .enum(["tabela", "json"])
-    .optional()
-    .default("tabela")
-    .describe("Formato de saída"),
+  formato: z.enum(["tabela", "json"]).optional().default("tabela").describe("Formato de saída"),
 });
 
 export type DatasaudeInput = z.infer<typeof datasaudeSchema>;
@@ -126,8 +119,10 @@ export async function ibgeDatasaude(input: DatasaudeInput): Promise<string> {
     const indicadorInfo = INDICADORES_SAUDE[input.indicador.toLowerCase()];
 
     if (!indicadorInfo) {
-      return `Indicador "${input.indicador}" não encontrado.\n\n` +
-             `Use indicador="listar" para ver indicadores disponíveis.`;
+      return (
+        `Indicador "${input.indicador}" não encontrado.\n\n` +
+        `Use indicador="listar" para ver indicadores disponíveis.`
+      );
     }
 
     try {
@@ -172,12 +167,7 @@ interface SidraData {
   [key: string]: string;
 }
 
-function buildSidraUrl(
-  tabela: string,
-  nivel: string,
-  localidade: string,
-  periodo: string
-): string {
+function buildSidraUrl(tabela: string, nivel: string, localidade: string, periodo: string): string {
   let path = `/t/${tabela}`;
   path += `/n${nivel}/${localidade}`;
   path += `/v/allxp`;
@@ -190,38 +180,94 @@ function listHealthIndicators(): string {
   let output = "## Indicadores de Saúde Disponíveis\n\n";
 
   output += "### Mortalidade e Natalidade\n\n";
-  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
-    ["`mortalidade_infantil`", INDICADORES_SAUDE.mortalidade_infantil.nome, INDICADORES_SAUDE.mortalidade_infantil.descricao],
-    ["`nascidos_vivos`", INDICADORES_SAUDE.nascidos_vivos.nome, INDICADORES_SAUDE.nascidos_vivos.descricao],
-    ["`obitos`", INDICADORES_SAUDE.obitos.nome, INDICADORES_SAUDE.obitos.descricao],
-    ["`obitos_causas`", INDICADORES_SAUDE.obitos_causas.nome, INDICADORES_SAUDE.obitos_causas.descricao],
-  ], { alignment: ["left", "left", "left"] });
+  output += createMarkdownTable(
+    ["Indicador", "Nome", "Descrição"],
+    [
+      [
+        "`mortalidade_infantil`",
+        INDICADORES_SAUDE.mortalidade_infantil.nome,
+        INDICADORES_SAUDE.mortalidade_infantil.descricao,
+      ],
+      [
+        "`nascidos_vivos`",
+        INDICADORES_SAUDE.nascidos_vivos.nome,
+        INDICADORES_SAUDE.nascidos_vivos.descricao,
+      ],
+      ["`obitos`", INDICADORES_SAUDE.obitos.nome, INDICADORES_SAUDE.obitos.descricao],
+      [
+        "`obitos_causas`",
+        INDICADORES_SAUDE.obitos_causas.nome,
+        INDICADORES_SAUDE.obitos_causas.descricao,
+      ],
+    ],
+    { alignment: ["left", "left", "left"] }
+  );
 
   output += "\n### Indicadores Demográficos\n\n";
-  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
-    ["`esperanca_vida`", INDICADORES_SAUDE.esperanca_vida.nome, INDICADORES_SAUDE.esperanca_vida.descricao],
-    ["`fecundidade`", INDICADORES_SAUDE.fecundidade.nome, INDICADORES_SAUDE.fecundidade.descricao],
-  ], { alignment: ["left", "left", "left"] });
+  output += createMarkdownTable(
+    ["Indicador", "Nome", "Descrição"],
+    [
+      [
+        "`esperanca_vida`",
+        INDICADORES_SAUDE.esperanca_vida.nome,
+        INDICADORES_SAUDE.esperanca_vida.descricao,
+      ],
+      [
+        "`fecundidade`",
+        INDICADORES_SAUDE.fecundidade.nome,
+        INDICADORES_SAUDE.fecundidade.descricao,
+      ],
+    ],
+    { alignment: ["left", "left", "left"] }
+  );
 
   output += "\n### Saneamento\n\n";
-  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
-    ["`saneamento_agua`", INDICADORES_SAUDE.saneamento_agua.nome, INDICADORES_SAUDE.saneamento_agua.descricao],
-    ["`saneamento_esgoto`", INDICADORES_SAUDE.saneamento_esgoto.nome, INDICADORES_SAUDE.saneamento_esgoto.descricao],
-  ], { alignment: ["left", "left", "left"] });
+  output += createMarkdownTable(
+    ["Indicador", "Nome", "Descrição"],
+    [
+      [
+        "`saneamento_agua`",
+        INDICADORES_SAUDE.saneamento_agua.nome,
+        INDICADORES_SAUDE.saneamento_agua.descricao,
+      ],
+      [
+        "`saneamento_esgoto`",
+        INDICADORES_SAUDE.saneamento_esgoto.nome,
+        INDICADORES_SAUDE.saneamento_esgoto.descricao,
+      ],
+    ],
+    { alignment: ["left", "left", "left"] }
+  );
 
   output += "\n### Cobertura de Saúde\n\n";
-  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
-    ["`plano_saude`", INDICADORES_SAUDE.plano_saude.nome, INDICADORES_SAUDE.plano_saude.descricao],
-    ["`autoavaliacao_saude`", INDICADORES_SAUDE.autoavaliacao_saude.nome, INDICADORES_SAUDE.autoavaliacao_saude.descricao],
-  ], { alignment: ["left", "left", "left"] });
+  output += createMarkdownTable(
+    ["Indicador", "Nome", "Descrição"],
+    [
+      [
+        "`plano_saude`",
+        INDICADORES_SAUDE.plano_saude.nome,
+        INDICADORES_SAUDE.plano_saude.descricao,
+      ],
+      [
+        "`autoavaliacao_saude`",
+        INDICADORES_SAUDE.autoavaliacao_saude.nome,
+        INDICADORES_SAUDE.autoavaliacao_saude.descricao,
+      ],
+    ],
+    { alignment: ["left", "left", "left"] }
+  );
 
   output += "\n### Níveis Territoriais\n\n";
-  output += createMarkdownTable(["Código", "Descrição"], [
-    ["1", "Brasil"],
-    ["2", "Grande Região"],
-    ["3", "Unidade da Federação"],
-    ["6", "Município"],
-  ], { alignment: ["center", "left"] });
+  output += createMarkdownTable(
+    ["Código", "Descrição"],
+    [
+      ["1", "Brasil"],
+      ["2", "Grande Região"],
+      ["3", "Unidade da Federação"],
+      ["6", "Município"],
+    ],
+    { alignment: ["center", "left"] }
+  );
 
   output += "\n### Exemplos de Uso\n\n";
   output += "```\n";
@@ -240,7 +286,7 @@ function listHealthIndicators(): string {
 
 function formatResponse(
   data: SidraData[],
-  indicadorInfo: typeof INDICADORES_SAUDE[string],
+  indicadorInfo: (typeof INDICADORES_SAUDE)[string],
   input: DatasaudeInput
 ): string {
   let output = `## ${indicadorInfo.nome}\n\n`;

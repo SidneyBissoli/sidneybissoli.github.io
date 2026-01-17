@@ -45,10 +45,7 @@ const REGIOES_MAP: Record<number, { sigla: string; nome: string }> = {
 };
 
 export const geocodigoSchema = z.object({
-  codigo: z
-    .string()
-    .optional()
-    .describe(`Código IBGE para decodificar.
+  codigo: z.string().optional().describe(`Código IBGE para decodificar.
 Formatos aceitos:
 - 1 dígito: Região (1-5)
 - 2 dígitos: UF (11-53)
@@ -58,10 +55,7 @@ Formatos aceitos:
     .string()
     .optional()
     .describe("Nome da localidade para encontrar o código IBGE (estado ou município)"),
-  uf: z
-    .string()
-    .optional()
-    .describe("Sigla da UF para restringir a busca por nome de município"),
+  uf: z.string().optional().describe("Sigla da UF para restringir a busca por nome de município"),
 });
 
 export type GeocodigoInput = z.infer<typeof geocodigoSchema>;
@@ -84,7 +78,6 @@ export async function ibgeGeocodigo(input: GeocodigoInput): Promise<string> {
 
       // Show help
       return showGeocodigoHelp();
-
     } catch (error) {
       if (error instanceof Error) {
         return formatGeocodigoError(error.message, input);
@@ -125,13 +118,15 @@ async function decodeIbgeCode(codigo: string): Promise<string> {
     return await decodeDistrito(normalized);
   }
 
-  return `Código IBGE inválido: "${codigo}"\n\n` +
+  return (
+    `Código IBGE inválido: "${codigo}"\n\n` +
     `Formatos aceitos:\n` +
     `- 1 dígito: Região (1-5)\n` +
     `- 2 dígitos: UF (11-53)\n` +
     `- 7 dígitos: Município\n` +
     `- 9 dígitos: Distrito\n\n` +
-    `Use ibge_geocodigo(nome="...") para buscar por nome.`;
+    `Use ibge_geocodigo(nome="...") para buscar por nome.`
+  );
 }
 
 async function decodeMunicipio(codigo: string): Promise<string> {
@@ -146,16 +141,32 @@ async function decodeMunicipio(codigo: string): Promise<string> {
     output += `### Hierarquia Geográfica\n\n`;
 
     const rows: string[][] = [
-      ["Região", String(data.microrregiao.mesorregiao.UF.regiao.id), data.microrregiao.mesorregiao.UF.regiao.nome],
-      ["UF", String(data.microrregiao.mesorregiao.UF.id), `${data.microrregiao.mesorregiao.UF.nome} (${data.microrregiao.mesorregiao.UF.sigla})`],
+      [
+        "Região",
+        String(data.microrregiao.mesorregiao.UF.regiao.id),
+        data.microrregiao.mesorregiao.UF.regiao.nome,
+      ],
+      [
+        "UF",
+        String(data.microrregiao.mesorregiao.UF.id),
+        `${data.microrregiao.mesorregiao.UF.nome} (${data.microrregiao.mesorregiao.UF.sigla})`,
+      ],
       ["Mesorregião", String(data.microrregiao.mesorregiao.id), data.microrregiao.mesorregiao.nome],
       ["Microrregião", String(data.microrregiao.id), data.microrregiao.nome],
     ];
 
     if (data["regiao-imediata"]) {
-      rows.push(["Região Imediata", String(data["regiao-imediata"].id), data["regiao-imediata"].nome]);
+      rows.push([
+        "Região Imediata",
+        String(data["regiao-imediata"].id),
+        data["regiao-imediata"].nome,
+      ]);
       if (data["regiao-imediata"]["regiao-intermediaria"]) {
-        rows.push(["Região Intermediária", String(data["regiao-imediata"]["regiao-intermediaria"].id), data["regiao-imediata"]["regiao-intermediaria"].nome]);
+        rows.push([
+          "Região Intermediária",
+          String(data["regiao-imediata"]["regiao-intermediaria"].id),
+          data["regiao-imediata"]["regiao-intermediaria"].nome,
+        ]);
       }
     }
 
@@ -171,8 +182,10 @@ async function decodeMunicipio(codigo: string): Promise<string> {
 
     return output;
   } catch {
-    return `Município não encontrado para o código: ${codigo}\n\n` +
-      `Use ibge_municipios(busca="nome") para buscar municípios.`;
+    return (
+      `Município não encontrado para o código: ${codigo}\n\n` +
+      `Use ibge_municipios(busca="nome") para buscar municípios.`
+    );
   }
 }
 
@@ -191,19 +204,33 @@ async function decodeDistrito(codigo: string): Promise<string> {
     output += `**Código IBGE:** ${data.id}\n\n`;
     output += `### Hierarquia Geográfica\n\n`;
 
-    output += createMarkdownTable(["Nível", "Código", "Nome"], [
-      ["Região", String(data.municipio.microrregiao.mesorregiao.UF.regiao.id), data.municipio.microrregiao.mesorregiao.UF.regiao.nome],
-      ["UF", String(data.municipio.microrregiao.mesorregiao.UF.id), data.municipio.microrregiao.mesorregiao.UF.nome],
-      ["Município", String(data.municipio.id), data.municipio.nome],
-      ["Distrito", String(data.id), data.nome],
-    ], {
-      alignment: ["left", "right", "left"],
-    });
+    output += createMarkdownTable(
+      ["Nível", "Código", "Nome"],
+      [
+        [
+          "Região",
+          String(data.municipio.microrregiao.mesorregiao.UF.regiao.id),
+          data.municipio.microrregiao.mesorregiao.UF.regiao.nome,
+        ],
+        [
+          "UF",
+          String(data.municipio.microrregiao.mesorregiao.UF.id),
+          data.municipio.microrregiao.mesorregiao.UF.nome,
+        ],
+        ["Município", String(data.municipio.id), data.municipio.nome],
+        ["Distrito", String(data.id), data.nome],
+      ],
+      {
+        alignment: ["left", "right", "left"],
+      }
+    );
 
     return output;
   } catch {
-    return `Distrito não encontrado para o código: ${codigo}\n\n` +
-      `Verifique se o código possui 9 dígitos.`;
+    return (
+      `Distrito não encontrado para o código: ${codigo}\n\n` +
+      `Verifique se o código possui 9 dígitos.`
+    );
   }
 }
 
@@ -211,10 +238,11 @@ async function searchByName(nome: string, uf?: string): Promise<string> {
   const nomeNormalized = nome.toLowerCase().trim();
 
   // First, check if it's a state name or abbreviation
-  const estadoMatch = Object.entries(ESTADOS_MAP).find(([, info]) =>
-    info.sigla.toLowerCase() === nomeNormalized ||
-    info.nome.toLowerCase() === nomeNormalized ||
-    info.nome.toLowerCase().includes(nomeNormalized)
+  const estadoMatch = Object.entries(ESTADOS_MAP).find(
+    ([, info]) =>
+      info.sigla.toLowerCase() === nomeNormalized ||
+      info.nome.toLowerCase() === nomeNormalized ||
+      info.nome.toLowerCase().includes(nomeNormalized)
   );
 
   if (estadoMatch && !uf) {
@@ -223,9 +251,9 @@ async function searchByName(nome: string, uf?: string): Promise<string> {
   }
 
   // Check regions
-  const regiaoMatch = Object.entries(REGIOES_MAP).find(([, info]) =>
-    info.sigla.toLowerCase() === nomeNormalized ||
-    info.nome.toLowerCase() === nomeNormalized
+  const regiaoMatch = Object.entries(REGIOES_MAP).find(
+    ([, info]) =>
+      info.sigla.toLowerCase() === nomeNormalized || info.nome.toLowerCase() === nomeNormalized
   );
 
   if (regiaoMatch && !uf) {
@@ -236,8 +264,8 @@ async function searchByName(nome: string, uf?: string): Promise<string> {
   // Search municipalities
   let endpoint = `${IBGE_API.LOCALIDADES}/municipios`;
   if (uf) {
-    const ufCode = Object.entries(ESTADOS_MAP).find(([, info]) =>
-      info.sigla.toLowerCase() === uf.toLowerCase()
+    const ufCode = Object.entries(ESTADOS_MAP).find(
+      ([, info]) => info.sigla.toLowerCase() === uf.toLowerCase()
     )?.[0];
     if (ufCode) {
       endpoint = `${IBGE_API.LOCALIDADES}/estados/${ufCode}/municipios`;
@@ -247,16 +275,18 @@ async function searchByName(nome: string, uf?: string): Promise<string> {
   const key = cacheKey("municipios", { uf: uf || "all" });
   const municipios = await cachedFetch<MunicipioSimples[]>(endpoint, key, CACHE_TTL.STATIC);
 
-  const matches = municipios.filter(m =>
-    m.nome.toLowerCase().includes(nomeNormalized)
-  ).slice(0, 20);
+  const matches = municipios
+    .filter((m) => m.nome.toLowerCase().includes(nomeNormalized))
+    .slice(0, 20);
 
   if (matches.length === 0) {
-    return `Nenhuma localidade encontrada para "${nome}"${uf ? ` em ${uf.toUpperCase()}` : ""}.\n\n` +
+    return (
+      `Nenhuma localidade encontrada para "${nome}"${uf ? ` em ${uf.toUpperCase()}` : ""}.\n\n` +
       `Dicas:\n` +
       `- Verifique a grafia do nome\n` +
       `- Tente um termo mais específico\n` +
-      `- Use ibge_municipios(busca="...") para busca mais detalhada`;
+      `- Use ibge_municipios(busca="...") para busca mais detalhada`
+    );
   }
 
   if (matches.length === 1) {
@@ -288,11 +318,7 @@ function formatRegiaoInfo(codigo: number, regiao: { sigla: string; nome: string 
   output += `**Sigla:** ${regiao.sigla}\n\n`;
   output += `### Estados da região\n\n`;
 
-  const rows = estadosRegiao.map((estado) => [
-    String(estado.codigo),
-    estado.sigla,
-    estado.nome,
-  ]);
+  const rows = estadosRegiao.map((estado) => [String(estado.codigo), estado.sigla, estado.nome]);
   output += createMarkdownTable(["Código", "Sigla", "Nome"], rows, {
     alignment: ["right", "center", "left"],
   });
@@ -300,7 +326,10 @@ function formatRegiaoInfo(codigo: number, regiao: { sigla: string; nome: string 
   return output;
 }
 
-function formatEstadoInfo(codigo: number, estado: { sigla: string; nome: string; regiao: string }): string {
+function formatEstadoInfo(
+  codigo: number,
+  estado: { sigla: string; nome: string; regiao: string }
+): string {
   const regiaoCode = Object.entries(REGIOES_MAP).find(([, r]) => r.nome === estado.regiao)?.[0];
 
   let output = `## Estado: ${estado.nome}\n\n`;
@@ -326,12 +355,16 @@ Esta ferramenta permite:
 
 `;
 
-  output += createMarkdownTable(["Dígitos", "Nível", "Exemplo", "Descrição"], [
-    ["1", "Região", "3", "Sudeste"],
-    ["2", "UF", "35", "São Paulo"],
-    ["7", "Município", "3550308", "São Paulo (capital)"],
-    ["9", "Distrito", "355030805", "Sé (distrito de SP)"],
-  ], { alignment: ["center", "left", "left", "left"] });
+  output += createMarkdownTable(
+    ["Dígitos", "Nível", "Exemplo", "Descrição"],
+    [
+      ["1", "Região", "3", "Sudeste"],
+      ["2", "UF", "35", "São Paulo"],
+      ["7", "Município", "3550308", "São Paulo (capital)"],
+      ["9", "Distrito", "355030805", "Sé (distrito de SP)"],
+    ],
+    { alignment: ["center", "left", "left", "left"] }
+  );
 
   output += `
 
@@ -358,13 +391,17 @@ ibge_geocodigo(nome="Sudeste")
 
 `;
 
-  output += createMarkdownTable(["Código", "Sigla", "Nome"], [
-    ["1", "N", "Norte"],
-    ["2", "NE", "Nordeste"],
-    ["3", "SE", "Sudeste"],
-    ["4", "S", "Sul"],
-    ["5", "CO", "Centro-Oeste"],
-  ], { alignment: ["center", "center", "left"] });
+  output += createMarkdownTable(
+    ["Código", "Sigla", "Nome"],
+    [
+      ["1", "N", "Norte"],
+      ["2", "NE", "Nordeste"],
+      ["3", "SE", "Sudeste"],
+      ["4", "S", "Sul"],
+      ["5", "CO", "Centro-Oeste"],
+    ],
+    { alignment: ["center", "center", "left"] }
+  );
 
   return output;
 }

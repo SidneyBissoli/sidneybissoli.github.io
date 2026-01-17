@@ -35,11 +35,18 @@ export async function ibgePopulacao(input: PopulacaoInput): Promise<string> {
       output += `**${formatNumber(data.projecao.populacao)}** habitantes\n\n`;
 
       output += "### Indicadores (Período Médio)\n\n";
-      output += createMarkdownTable(["Indicador", "Valor"], [
-        ["Incremento populacional", `${formatNumber(data.projecao.periodoMedio.incrementoPopulacional)} por dia`],
-        ["Nascimentos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.nascimento)}`],
-        ["Óbitos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.obito)}`],
-      ], { alignment: ["left", "right"] });
+      output += createMarkdownTable(
+        ["Indicador", "Valor"],
+        [
+          [
+            "Incremento populacional",
+            `${formatNumber(data.projecao.periodoMedio.incrementoPopulacional)} por dia`,
+          ],
+          ["Nascimentos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.nascimento)}`],
+          ["Óbitos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.obito)}`],
+        ],
+        { alignment: ["left", "right"] }
+      );
 
       output += "\n### Notas\n\n";
       output += "- Os dados são projeções em tempo real baseadas em modelos estatísticos do IBGE\n";
@@ -93,9 +100,7 @@ function formatSeconds(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = Math.round(seconds % 60);
   if (minutes < 60) {
-    return remainingSeconds > 0
-      ? `${minutes} min ${remainingSeconds} seg`
-      : `${minutes} minutos`;
+    return remainingSeconds > 0 ? `${minutes} min ${remainingSeconds} seg` : `${minutes} minutos`;
   }
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;

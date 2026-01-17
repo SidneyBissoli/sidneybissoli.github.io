@@ -8,16 +8,15 @@ import { createMarkdownTable, formatNumber } from "../utils/index.js";
 export const sidraSchema = z.object({
   tabela: z
     .string()
-    .describe("Código da tabela SIDRA (ex: 6579 para estimativas de população, 9514 para censo 2022)"),
+    .describe(
+      "Código da tabela SIDRA (ex: 6579 para estimativas de população, 9514 para censo 2022)"
+    ),
   variaveis: z
     .string()
     .optional()
     .default("allxp")
     .describe("IDs das variáveis separados por vírgula, ou 'allxp' para todas"),
-  nivel_territorial: z
-    .string()
-    .optional()
-    .default("1")
+  nivel_territorial: z.string().optional().default("1")
     .describe(`Nível territorial (código N sem o prefixo):
 1=Brasil, 2=Grande Região, 3=UF, 6=Município, 7=Região Metropolitana,
 8=Mesorregião, 9=Microrregião, 10=Distrito, 11=Subdistrito,
@@ -34,7 +33,9 @@ export const sidraSchema = z.object({
     .string()
     .optional()
     .default("last")
-    .describe("Períodos: 'last' para último, 'all' para todos, ou anos específicos (ex: 2020,2021,2022)"),
+    .describe(
+      "Períodos: 'last' para último, 'all' para todos, ou anos específicos (ex: 2020,2021,2022)"
+    ),
   classificacoes: z
     .string()
     .optional()

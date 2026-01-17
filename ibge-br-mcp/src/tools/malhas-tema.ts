@@ -40,9 +40,16 @@ type TemaDisponivel = keyof typeof TEMAS_DISPONIVEIS;
 
 // Schema for the tool input
 export const malhasTemaSchema = z.object({
-  tema: z
-    .enum(["biomas", "amazonia_legal", "semiarido", "costeiro", "fronteira", "metropolitana", "ride", "listar"])
-    .describe(`Tema da malha:
+  tema: z.enum([
+    "biomas",
+    "amazonia_legal",
+    "semiarido",
+    "costeiro",
+    "fronteira",
+    "metropolitana",
+    "ride",
+    "listar",
+  ]).describe(`Tema da malha:
 - biomas: Biomas brasileiros (Amazônia, Cerrado, etc.)
 - amazonia_legal: Área da Amazônia Legal
 - semiarido: Região do semiárido
@@ -210,11 +217,7 @@ function listThemes(): string {
   return output;
 }
 
-function formatResponse(
-  data: GeoJSONData,
-  url: string,
-  input: MalhasTemaInput
-): string {
+function formatResponse(data: GeoJSONData, url: string, input: MalhasTemaInput): string {
   const temaInfo = TEMAS_DISPONIVEIS[input.tema as TemaDisponivel];
   let output = `## Malha Temática: ${temaInfo?.nome || input.tema}\n\n`;
 
@@ -256,7 +259,9 @@ function formatResponse(
     if (features.length > 0 && features.length <= 10) {
       output += `### Features\n\n`;
 
-      const propKeys = features[0].properties ? Object.keys(features[0].properties).slice(0, 4) : [];
+      const propKeys = features[0].properties
+        ? Object.keys(features[0].properties).slice(0, 4)
+        : [];
 
       if (propKeys.length > 0) {
         output += "| " + propKeys.join(" | ") + " |\n";

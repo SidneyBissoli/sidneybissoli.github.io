@@ -38,15 +38,37 @@ export const API_ENDPOINTS = {
  */
 export const UF_CODES: Record<string, number> = {
   // Norte
-  RO: 11, AC: 12, AM: 13, RR: 14, PA: 15, AP: 16, TO: 17,
+  RO: 11,
+  AC: 12,
+  AM: 13,
+  RR: 14,
+  PA: 15,
+  AP: 16,
+  TO: 17,
   // Nordeste
-  MA: 21, PI: 22, CE: 23, RN: 24, PB: 25, PE: 26, AL: 27, SE: 28, BA: 29,
+  MA: 21,
+  PI: 22,
+  CE: 23,
+  RN: 24,
+  PB: 25,
+  PE: 26,
+  AL: 27,
+  SE: 28,
+  BA: 29,
   // Sudeste
-  MG: 31, ES: 32, RJ: 33, SP: 35,
+  MG: 31,
+  ES: 32,
+  RJ: 33,
+  SP: 35,
   // Sul
-  PR: 41, SC: 42, RS: 43,
+  PR: 41,
+  SC: 42,
+  RS: 43,
   // Centro-Oeste
-  MS: 50, MT: 51, GO: 52, DF: 53,
+  MS: 50,
+  MT: 51,
+  GO: 52,
+  DF: 53,
 };
 
 /**
@@ -60,24 +82,44 @@ export const UF_SIGLAS: Record<number, string> = Object.fromEntries(
  * State names by abbreviation
  */
 export const UF_NAMES: Record<string, string> = {
-  AC: "Acre", AL: "Alagoas", AM: "Amazonas", AP: "Amapá",
-  BA: "Bahia", CE: "Ceará", DF: "Distrito Federal", ES: "Espírito Santo",
-  GO: "Goiás", MA: "Maranhão", MG: "Minas Gerais", MS: "Mato Grosso do Sul",
-  MT: "Mato Grosso", PA: "Pará", PB: "Paraíba", PE: "Pernambuco",
-  PI: "Piauí", PR: "Paraná", RJ: "Rio de Janeiro", RN: "Rio Grande do Norte",
-  RO: "Rondônia", RR: "Roraima", RS: "Rio Grande do Sul", SC: "Santa Catarina",
-  SE: "Sergipe", SP: "São Paulo", TO: "Tocantins",
+  AC: "Acre",
+  AL: "Alagoas",
+  AM: "Amazonas",
+  AP: "Amapá",
+  BA: "Bahia",
+  CE: "Ceará",
+  DF: "Distrito Federal",
+  ES: "Espírito Santo",
+  GO: "Goiás",
+  MA: "Maranhão",
+  MG: "Minas Gerais",
+  MS: "Mato Grosso do Sul",
+  MT: "Mato Grosso",
+  PA: "Pará",
+  PB: "Paraíba",
+  PE: "Pernambuco",
+  PI: "Piauí",
+  PR: "Paraná",
+  RJ: "Rio de Janeiro",
+  RN: "Rio Grande do Norte",
+  RO: "Rondônia",
+  RR: "Roraima",
+  RS: "Rio Grande do Sul",
+  SC: "Santa Catarina",
+  SE: "Sergipe",
+  SP: "São Paulo",
+  TO: "Tocantins",
 };
 
 /**
  * Region codes
  */
 export const REGION_CODES: Record<string, number> = {
-  N: 1,    // Norte
-  NE: 2,   // Nordeste
-  SE: 3,   // Sudeste
-  S: 4,    // Sul
-  CO: 5,   // Centro-Oeste
+  N: 1, // Norte
+  NE: 2, // Nordeste
+  SE: 3, // Sudeste
+  S: 4, // Sul
+  CO: 5, // Centro-Oeste
 };
 
 /**
@@ -95,11 +137,11 @@ export const REGION_NAMES: Record<number, string> = {
  * States by region
  */
 export const STATES_BY_REGION: Record<number, string[]> = {
-  1: ["RO", "AC", "AM", "RR", "PA", "AP", "TO"],           // Norte
+  1: ["RO", "AC", "AM", "RR", "PA", "AP", "TO"], // Norte
   2: ["MA", "PI", "CE", "RN", "PB", "PE", "AL", "SE", "BA"], // Nordeste
-  3: ["MG", "ES", "RJ", "SP"],                              // Sudeste
-  4: ["PR", "SC", "RS"],                                    // Sul
-  5: ["MS", "MT", "GO", "DF"],                              // Centro-Oeste
+  3: ["MG", "ES", "RJ", "SP"], // Sudeste
+  4: ["PR", "SC", "RS"], // Sul
+  5: ["MS", "MT", "GO", "DF"], // Centro-Oeste
 };
 
 // ============================================================================
@@ -235,10 +277,10 @@ export const DEFAULTS = {
     MAX_PAGE_SIZE: 100,
   },
   CACHE_TTL: {
-    STATIC: 60 * 24,   // 24 hours
-    MEDIUM: 60,        // 1 hour
-    SHORT: 15,         // 15 minutes
-    REALTIME: 1,       // 1 minute
+    STATIC: 60 * 24, // 24 hours
+    MEDIUM: 60, // 1 hour
+    SHORT: 15, // 15 minutes
+    REALTIME: 1, // 1 minute
   },
   QUALITY: {
     MESH_QUALITY: "4",

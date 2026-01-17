@@ -2,14 +2,15 @@ import { z } from "zod";
 import { IBGE_API, type NoticiasResponse, type Noticia } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
-import { decodeHtmlEntities, formatDate as formatDateUtil, buildQueryString } from "../utils/index.js";
+import {
+  decodeHtmlEntities,
+  formatDate as formatDateUtil,
+  buildQueryString,
+} from "../utils/index.js";
 
 // Schema for the tool input
 export const noticiasSchema = z.object({
-  busca: z
-    .string()
-    .optional()
-    .describe("Termo para buscar nas notícias"),
+  busca: z.string().optional().describe("Termo para buscar nas notícias"),
   quantidade: z
     .number()
     .min(1)
@@ -17,28 +18,14 @@ export const noticiasSchema = z.object({
     .optional()
     .default(10)
     .describe("Quantidade de notícias a retornar (padrão: 10, máximo: 100)"),
-  pagina: z
-    .number()
-    .min(1)
-    .optional()
-    .default(1)
-    .describe("Número da página para paginação"),
-  de: z
-    .string()
-    .optional()
-    .describe("Data inicial no formato MM-DD-AAAA (ex: 01-01-2024)"),
-  ate: z
-    .string()
-    .optional()
-    .describe("Data final no formato MM-DD-AAAA (ex: 12-31-2024)"),
+  pagina: z.number().min(1).optional().default(1).describe("Número da página para paginação"),
+  de: z.string().optional().describe("Data inicial no formato MM-DD-AAAA (ex: 01-01-2024)"),
+  ate: z.string().optional().describe("Data final no formato MM-DD-AAAA (ex: 12-31-2024)"),
   tipo: z
     .enum(["release", "noticia"])
     .optional()
     .describe("Tipo de publicação: 'release' ou 'noticia'"),
-  destaque: z
-    .boolean()
-    .optional()
-    .describe("Filtrar apenas notícias em destaque"),
+  destaque: z.boolean().optional().describe("Filtrar apenas notícias em destaque"),
 });
 
 export type NoticiasInput = z.infer<typeof noticiasSchema>;

@@ -6,10 +6,7 @@ import { createMarkdownTable, truncate } from "../utils/index.js";
 
 // Schema for the tool input
 export const pesquisasSchema = z.object({
-  busca: z
-    .string()
-    .optional()
-    .describe("Termo para buscar no nome ou ID da pesquisa"),
+  busca: z.string().optional().describe("Termo para buscar no nome ou ID da pesquisa"),
   detalhes: z
     .string()
     .optional()
@@ -62,8 +59,7 @@ export async function ibgePesquisas(input: PesquisasInput): Promise<string> {
         const searchTerm = input.busca.toLowerCase();
         filtered = data.filter(
           (p) =>
-            p.id.toLowerCase().includes(searchTerm) ||
-            p.nome.toLowerCase().includes(searchTerm)
+            p.id.toLowerCase().includes(searchTerm) || p.nome.toLowerCase().includes(searchTerm)
         );
       }
 
@@ -83,10 +79,7 @@ export async function ibgePesquisas(input: PesquisasInput): Promise<string> {
   });
 }
 
-function formatPesquisasLista(
-  pesquisas: PesquisaCompleta[],
-  input: PesquisasInput
-): string {
+function formatPesquisasLista(pesquisas: PesquisaCompleta[], input: PesquisasInput): string {
   let output = `## Pesquisas do IBGE\n\n`;
 
   if (input.busca) {
@@ -97,11 +90,7 @@ function formatPesquisasLista(
 
   // Summary table using createMarkdownTable
   const headers = ["Código", "Pesquisa", "Tabelas"];
-  const rows = pesquisas.map((p) => [
-    p.id,
-    truncate(p.nome, 60),
-    p.agregados.length,
-  ]);
+  const rows = pesquisas.map((p) => [p.id, truncate(p.nome, 60), p.agregados.length]);
 
   output += createMarkdownTable(headers, rows, {
     alignment: ["left", "left", "right"],
@@ -119,8 +108,8 @@ function formatPesquisasLista(
     output += "\n";
   }
 
-  output += "_Use `ibge_pesquisas(detalhes=\"CODIGO\")` para ver as tabelas de uma pesquisa._\n";
-  output += "_Use `ibge_sidra_tabelas(pesquisa=\"CODIGO\")` para buscar tabelas específicas._\n";
+  output += '_Use `ibge_pesquisas(detalhes="CODIGO")` para ver as tabelas de uma pesquisa._\n';
+  output += '_Use `ibge_sidra_tabelas(pesquisa="CODIGO")` para buscar tabelas específicas._\n';
 
   return output;
 }
@@ -135,37 +124,32 @@ function formatPesquisaDetalhes(pesquisa: PesquisaCompleta): string {
   output += "### Tabelas Disponíveis\n\n";
 
   const headers = ["Código", "Nome da Tabela"];
-  const rows = pesquisa.agregados.map((ag) => [
-    ag.id,
-    truncate(ag.nome, 70),
-  ]);
+  const rows = pesquisa.agregados.map((ag) => [ag.id, truncate(ag.nome, 70)]);
 
   output += createMarkdownTable(headers, rows, {
     alignment: ["right", "left"],
   });
 
   output += "\n---\n\n";
-  output += "_Use `ibge_sidra_metadados(tabela=\"CODIGO\")` para ver detalhes de uma tabela._\n";
-  output += "_Use `ibge_sidra(tabela=\"CODIGO\")` para consultar os dados._\n";
+  output += '_Use `ibge_sidra_metadados(tabela="CODIGO")` para ver detalhes de uma tabela._\n';
+  output += '_Use `ibge_sidra(tabela="CODIGO")` para consultar os dados._\n';
 
   return output;
 }
 
-function categorizarPesquisas(
-  pesquisas: PesquisaCompleta[]
-): Record<string, PesquisaCompleta[]> {
+function categorizarPesquisas(pesquisas: PesquisaCompleta[]): Record<string, PesquisaCompleta[]> {
   const categorias: Record<string, PesquisaCompleta[]> = {};
 
   const keywords: Record<string, string[]> = {
-    "Censos": ["censo", "contagem"],
+    Censos: ["censo", "contagem"],
     "Trabalho e Renda": ["pnad", "trabalho", "emprego", "rendimento", "ocupação"],
-    "Economia": ["pib", "contas", "produção", "industrial", "comércio", "serviços"],
-    "Agropecuária": ["agrícola", "agropecuária", "pecuária", "safra", "abate"],
-    "Preços": ["preço", "inflação", "ipca", "inpc", "custo"],
-    "Saúde": ["saúde", "pns"],
-    "Educação": ["educação", "ensino"],
-    "Demografia": ["população", "natalidade", "mortalidade", "nupcialidade"],
-    "Outras": [],
+    Economia: ["pib", "contas", "produção", "industrial", "comércio", "serviços"],
+    Agropecuária: ["agrícola", "agropecuária", "pecuária", "safra", "abate"],
+    Preços: ["preço", "inflação", "ipca", "inpc", "custo"],
+    Saúde: ["saúde", "pns"],
+    Educação: ["educação", "ensino"],
+    Demografia: ["população", "natalidade", "mortalidade", "nupcialidade"],
+    Outras: [],
   };
 
   for (const p of pesquisas) {

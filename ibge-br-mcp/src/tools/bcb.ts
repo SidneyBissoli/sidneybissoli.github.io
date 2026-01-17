@@ -5,7 +5,10 @@ import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, createKeyValueTable, formatNumber } from "../utils/index.js";
 
 // Known series codes
-const SERIES_CONHECIDAS: Record<string, { codigo: number; nome: string; descricao: string; unidade: string }> = {
+const SERIES_CONHECIDAS: Record<
+  string,
+  { codigo: number; nome: string; descricao: string; unidade: string }
+> = {
   selic: {
     codigo: 432,
     nome: "Taxa SELIC",
@@ -100,9 +103,7 @@ const SERIES_CONHECIDAS: Record<string, { codigo: number; nome: string; descrica
 
 // Schema for the tool input
 export const bcbSchema = z.object({
-  indicador: z
-    .string()
-    .describe(`Indicador ou código da série BCB. Indicadores conhecidos:
+  indicador: z.string().describe(`Indicador ou código da série BCB. Indicadores conhecidos:
 - selic: Taxa SELIC
 - ipca: IPCA mensal
 - ipca_acum: IPCA acumulado 12 meses
@@ -116,23 +117,10 @@ export const bcbSchema = z.object({
 - tr: Taxa Referencial
 - listar: Lista indicadores disponíveis
 - Ou código numérico da série SGS`),
-  dataInicio: z
-    .string()
-    .optional()
-    .describe("Data inicial no formato DD/MM/AAAA"),
-  dataFim: z
-    .string()
-    .optional()
-    .describe("Data final no formato DD/MM/AAAA"),
-  ultimos: z
-    .number()
-    .optional()
-    .describe("Retornar apenas os últimos N valores"),
-  formato: z
-    .enum(["tabela", "json"])
-    .optional()
-    .default("tabela")
-    .describe("Formato de saída"),
+  dataInicio: z.string().optional().describe("Data inicial no formato DD/MM/AAAA"),
+  dataFim: z.string().optional().describe("Data final no formato DD/MM/AAAA"),
+  ultimos: z.number().optional().describe("Retornar apenas os últimos N valores"),
+  formato: z.enum(["tabela", "json"]).optional().default("tabela").describe("Formato de saída"),
 });
 
 export type BcbInput = z.infer<typeof bcbSchema>;
@@ -163,8 +151,10 @@ export async function ibgeBcb(input: BcbInput): Promise<string> {
         nome = `Série ${codigo}`;
         unidade = "";
       } else {
-        return `Indicador "${input.indicador}" não encontrado.\n\n` +
-               `Use indicador="listar" para ver indicadores disponíveis ou informe o código numérico da série SGS.`;
+        return (
+          `Indicador "${input.indicador}" não encontrado.\n\n` +
+          `Use indicador="listar" para ver indicadores disponíveis ou informe o código numérico da série SGS.`
+        );
       }
 
       // Build URL
@@ -216,33 +206,49 @@ function listIndicators(): string {
   const headers = ["Indicador", "Código", "Descrição"];
 
   output += "### Taxas de Juros\n\n";
-  output += createMarkdownTable(headers, [
-    ["`selic`", "432", SERIES_CONHECIDAS.selic.descricao],
-    ["`cdi`", "12", SERIES_CONHECIDAS.cdi.descricao],
-    ["`tr`", "226", SERIES_CONHECIDAS.tr.descricao],
-  ], { alignment: ["left", "center", "left"] });
+  output += createMarkdownTable(
+    headers,
+    [
+      ["`selic`", "432", SERIES_CONHECIDAS.selic.descricao],
+      ["`cdi`", "12", SERIES_CONHECIDAS.cdi.descricao],
+      ["`tr`", "226", SERIES_CONHECIDAS.tr.descricao],
+    ],
+    { alignment: ["left", "center", "left"] }
+  );
 
   output += "\n### Inflação\n\n";
-  output += createMarkdownTable(headers, [
-    ["`ipca`", "433", SERIES_CONHECIDAS.ipca.descricao],
-    ["`ipca_acum`", "13522", SERIES_CONHECIDAS.ipca_acum.descricao],
-    ["`igpm`", "189", SERIES_CONHECIDAS.igpm.descricao],
-    ["`inpc`", "188", SERIES_CONHECIDAS.inpc.descricao],
-  ], { alignment: ["left", "center", "left"] });
+  output += createMarkdownTable(
+    headers,
+    [
+      ["`ipca`", "433", SERIES_CONHECIDAS.ipca.descricao],
+      ["`ipca_acum`", "13522", SERIES_CONHECIDAS.ipca_acum.descricao],
+      ["`igpm`", "189", SERIES_CONHECIDAS.igpm.descricao],
+      ["`inpc`", "188", SERIES_CONHECIDAS.inpc.descricao],
+    ],
+    { alignment: ["left", "center", "left"] }
+  );
 
   output += "\n### Câmbio\n\n";
-  output += createMarkdownTable(headers, [
-    ["`dolar_compra`", "1", SERIES_CONHECIDAS.dolar_compra.descricao],
-    ["`dolar_venda`", "10813", SERIES_CONHECIDAS.dolar_venda.descricao],
-    ["`euro`", "21619", SERIES_CONHECIDAS.euro.descricao],
-  ], { alignment: ["left", "center", "left"] });
+  output += createMarkdownTable(
+    headers,
+    [
+      ["`dolar_compra`", "1", SERIES_CONHECIDAS.dolar_compra.descricao],
+      ["`dolar_venda`", "10813", SERIES_CONHECIDAS.dolar_venda.descricao],
+      ["`euro`", "21619", SERIES_CONHECIDAS.euro.descricao],
+    ],
+    { alignment: ["left", "center", "left"] }
+  );
 
   output += "\n### Indicadores Macroeconômicos\n\n";
-  output += createMarkdownTable(headers, [
-    ["`desemprego`", "24369", SERIES_CONHECIDAS.desemprego.descricao],
-    ["`divida_pib`", "13762", SERIES_CONHECIDAS.divida_pib.descricao],
-    ["`reservas`", "3546", SERIES_CONHECIDAS.reservas.descricao],
-  ], { alignment: ["left", "center", "left"] });
+  output += createMarkdownTable(
+    headers,
+    [
+      ["`desemprego`", "24369", SERIES_CONHECIDAS.desemprego.descricao],
+      ["`divida_pib`", "13762", SERIES_CONHECIDAS.divida_pib.descricao],
+      ["`reservas`", "3546", SERIES_CONHECIDAS.reservas.descricao],
+    ],
+    { alignment: ["left", "center", "left"] }
+  );
 
   output += "\n### Exemplos de Uso\n\n";
   output += "```\n";
@@ -282,15 +288,18 @@ function formatResponse(
     const media = valores.reduce((a, b) => a + b, 0) / valores.length;
 
     output += "### Resumo\n\n";
-    output += createKeyValueTable({
-      "**Último valor**": `${formatNumber(ultimo, { maximumFractionDigits: 4 })} ${unidade}`,
-      "**Primeiro valor**": `${formatNumber(primeiro, { maximumFractionDigits: 4 })} ${unidade}`,
-      "**Máximo**": `${formatNumber(maximo, { maximumFractionDigits: 4 })} ${unidade}`,
-      "**Mínimo**": `${formatNumber(minimo, { maximumFractionDigits: 4 })} ${unidade}`,
-      "**Média**": `${formatNumber(media, { maximumFractionDigits: 4 })} ${unidade}`,
-      "**Período**": `${data[0].data} a ${data[data.length - 1].data}`,
-      "**Registros**": data.length,
-    }, { keyHeader: "Estatística", valueHeader: "Valor" });
+    output += createKeyValueTable(
+      {
+        "**Último valor**": `${formatNumber(ultimo, { maximumFractionDigits: 4 })} ${unidade}`,
+        "**Primeiro valor**": `${formatNumber(primeiro, { maximumFractionDigits: 4 })} ${unidade}`,
+        "**Máximo**": `${formatNumber(maximo, { maximumFractionDigits: 4 })} ${unidade}`,
+        "**Mínimo**": `${formatNumber(minimo, { maximumFractionDigits: 4 })} ${unidade}`,
+        "**Média**": `${formatNumber(media, { maximumFractionDigits: 4 })} ${unidade}`,
+        "**Período**": `${data[0].data} a ${data[data.length - 1].data}`,
+        "**Registros**": data.length,
+      },
+      { keyHeader: "Estatística", valueHeader: "Valor" }
+    );
     output += "\n";
   }
 
@@ -316,11 +325,9 @@ function formatResponse(
       rows.push([d.data, formatNumber(valor, { maximumFractionDigits: 4 })]);
     }
 
-    output += createMarkdownTable(
-      ["Data", `Valor ${unidade ? `(${unidade})` : ""}`],
-      rows,
-      { alignment: ["left", "right"] }
-    );
+    output += createMarkdownTable(["Data", `Valor ${unidade ? `(${unidade})` : ""}`], rows, {
+      alignment: ["left", "right"],
+    });
   }
 
   return output;

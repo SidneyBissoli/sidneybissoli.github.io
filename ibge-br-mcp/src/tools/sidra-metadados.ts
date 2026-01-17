@@ -6,9 +6,7 @@ import { createMarkdownTable, createKeyValueTable, truncate } from "../utils/ind
 
 // Schema for the tool input
 export const sidraMetadadosSchema = z.object({
-  tabela: z
-    .string()
-    .describe("Código da tabela/agregado SIDRA (ex: '6579', '9514', '4714')"),
+  tabela: z.string().describe("Código da tabela/agregado SIDRA (ex: '6579', '9514', '4714')"),
   incluir_periodos: z
     .boolean()
     .optional()
@@ -135,28 +133,28 @@ function formatMetadadosResponse(
   output += `### Níveis Territoriais Disponíveis\n\n`;
 
   const niveis: { [key: string]: string } = {
-    "N1": "Brasil",
-    "N2": "Grande Região",
-    "N3": "Unidade da Federação",
-    "N6": "Município",
-    "N7": "Região Metropolitana",
-    "N8": "Mesorregião",
-    "N9": "Microrregião",
-    "N10": "Distrito",
-    "N11": "Subdistrito",
-    "N13": "Região Metropolitana e RIDE",
-    "N14": "Região Integrada de Desenvolvimento",
-    "N15": "Aglomeração Urbana",
-    "N17": "Região Geográfica Imediata",
-    "N18": "Região Geográfica Intermediária",
-    "N101": "País do Mercosul, Bolívia e Chile",
-    "N102": "Município do Mercosul, Bolívia e Chile",
-    "N103": "UF do Mercosul, Bolívia e Chile",
-    "N104": "Aglomerado Subnormal",
-    "N105": "Macrorregião de Saúde",
-    "N106": "Região de Saúde",
-    "N107": "Bacia Hidrográfica",
-    "N108": "Sub-bacia Hidrográfica",
+    N1: "Brasil",
+    N2: "Grande Região",
+    N3: "Unidade da Federação",
+    N6: "Município",
+    N7: "Região Metropolitana",
+    N8: "Mesorregião",
+    N9: "Microrregião",
+    N10: "Distrito",
+    N11: "Subdistrito",
+    N13: "Região Metropolitana e RIDE",
+    N14: "Região Integrada de Desenvolvimento",
+    N15: "Aglomeração Urbana",
+    N17: "Região Geográfica Imediata",
+    N18: "Região Geográfica Intermediária",
+    N101: "País do Mercosul, Bolívia e Chile",
+    N102: "Município do Mercosul, Bolívia e Chile",
+    N103: "UF do Mercosul, Bolívia e Chile",
+    N104: "Aglomerado Subnormal",
+    N105: "Macrorregião de Saúde",
+    N106: "Região de Saúde",
+    N107: "Bacia Hidrográfica",
+    N108: "Sub-bacia Hidrográfica",
   };
 
   const allNiveis = [
@@ -195,19 +193,15 @@ function formatMetadadosResponse(
         for (const c of v.classificacoes) {
           output += `**${c.id} - ${c.nome}:**\n`;
           if (c.categorias.length <= 20) {
-            const catRows = c.categorias.map((cat) => [
-              String(cat.id),
-              truncate(cat.nome, 60),
-            ]);
+            const catRows = c.categorias.map((cat) => [String(cat.id), truncate(cat.nome, 60)]);
             output += createMarkdownTable(["ID", "Categoria"], catRows, {
               alignment: ["right", "left"],
             });
           } else {
             output += `_${c.categorias.length} categorias disponíveis. Primeiras 10:_\n`;
-            const catRows = c.categorias.slice(0, 10).map((cat) => [
-              String(cat.id),
-              truncate(cat.nome, 60),
-            ]);
+            const catRows = c.categorias
+              .slice(0, 10)
+              .map((cat) => [String(cat.id), truncate(cat.nome, 60)]);
             catRows.push(["...", `_e mais ${c.categorias.length - 10} categorias_`]);
             output += createMarkdownTable(["ID", "Categoria"], catRows, {
               alignment: ["right", "left"],

@@ -91,16 +91,19 @@ export const cache = new RequestCache(15);
 
 // Cache TTL presets (in minutes)
 export const CACHE_TTL = {
-  STATIC: 60 * 24,     // 24 hours - for static data like states, municipalities
-  MEDIUM: 60,          // 1 hour - for semi-static data like CNAE, indicators list
-  SHORT: 15,           // 15 minutes - for data that changes occasionally
-  REALTIME: 1,         // 1 minute - for real-time data like population projection
+  STATIC: 60 * 24, // 24 hours - for static data like states, municipalities
+  MEDIUM: 60, // 1 hour - for semi-static data like CNAE, indicators list
+  SHORT: 15, // 15 minutes - for data that changes occasionally
+  REALTIME: 1, // 1 minute - for real-time data like population projection
 } as const;
 
 /**
  * Generate cache key from URL and parameters
  */
-export function cacheKey(base: string, params?: Record<string, string | number | boolean | undefined>): string {
+export function cacheKey(
+  base: string,
+  params?: Record<string, string | number | boolean | undefined>
+): string {
   if (!params) return base;
 
   const sortedParams = Object.entries(params)
@@ -133,7 +136,7 @@ export async function cachedFetch<T>(
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
 
-  const data = await response.json() as T;
+  const data = (await response.json()) as T;
 
   // Store in cache
   cache.set(cacheKeyStr, data, ttlMinutes);

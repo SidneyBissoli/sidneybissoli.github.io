@@ -208,8 +208,7 @@ class MetricsCollector {
       report += "| Ferramenta | Chamadas | Sucesso | Tempo médio | Cache hit |\n";
       report += "|:-----------|:--------:|:-------:|:-----------:|:---------:|\n";
 
-      const sortedTools = Object.entries(m.byTool)
-        .sort(([, a], [, b]) => b.calls - a.calls);
+      const sortedTools = Object.entries(m.byTool).sort(([, a], [, b]) => b.calls - a.calls);
 
       for (const [name, stats] of sortedTools) {
         const successRate = this.percentage(stats.successes, stats.calls);

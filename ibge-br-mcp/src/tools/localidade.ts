@@ -8,7 +8,9 @@ import { createKeyValueTable } from "../utils/index.js";
 export const localidadeSchema = z.object({
   codigo: z
     .number()
-    .describe("Código IBGE da localidade (estado: 2 dígitos, município: 7 dígitos, distrito: 9 dígitos)"),
+    .describe(
+      "Código IBGE da localidade (estado: 2 dígitos, município: 7 dígitos, distrito: 9 dígitos)"
+    ),
   tipo: z
     .enum(["estado", "municipio", "distrito"])
     .optional()

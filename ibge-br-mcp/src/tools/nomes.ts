@@ -9,14 +9,13 @@ export const nomesFrequenciaSchema = z.object({
   nomes: z
     .string()
     .describe("Nome ou nomes separados por vírgula (ex: 'Maria' ou 'João,José,Pedro')"),
-  sexo: z
-    .enum(["M", "F"])
-    .optional()
-    .describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
+  sexo: z.enum(["M", "F"]).optional().describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
   localidade: z
     .string()
     .optional()
-    .describe("Código IBGE da localidade (UF ou município). Ex: 33 para RJ, 3550308 para São Paulo capital"),
+    .describe(
+      "Código IBGE da localidade (UF ou município). Ex: 33 para RJ, 3550308 para São Paulo capital"
+    ),
 });
 
 // Schema for ranking search
@@ -24,15 +23,11 @@ export const nomesRankingSchema = z.object({
   decada: z
     .number()
     .optional()
-    .describe("Década para o ranking (ex: 1990, 2000, 2010). Se não informado, retorna ranking geral."),
-  sexo: z
-    .enum(["M", "F"])
-    .optional()
-    .describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
-  localidade: z
-    .string()
-    .optional()
-    .describe("Código IBGE da localidade (UF ou município)"),
+    .describe(
+      "Década para o ranking (ex: 1990, 2000, 2010). Se não informado, retorna ranking geral."
+    ),
+  sexo: z.enum(["M", "F"]).optional().describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
+  localidade: z.string().optional().describe("Código IBGE da localidade (UF ou município)"),
   limite: z
     .number()
     .min(1)
@@ -143,9 +138,12 @@ function formatFrequenciaResponse(data: NomeFrequencia[]): string {
     });
     rows.push(["**Total**", `**${formatNumber(total)}**`]);
 
-    output += "\n" + createMarkdownTable(["Período", "Frequência"], rows, {
-      alignment: ["left", "right"],
-    }) + "\n";
+    output +=
+      "\n" +
+      createMarkdownTable(["Período", "Frequência"], rows, {
+        alignment: ["left", "right"],
+      }) +
+      "\n";
   }
 
   output += "\n**Fonte:** IBGE - Censo Demográfico\n";
@@ -176,15 +174,13 @@ function formatRankingResponse(data: NomeRanking[], input: NomesRankingInput): s
   const limit = input.limite || 20;
   const items = ranking.res.slice(0, limit);
 
-  const rows = items.map((item) => [
-    `${item.ranking}º`,
-    item.nome,
-    formatNumber(item.frequencia),
-  ]);
+  const rows = items.map((item) => [`${item.ranking}º`, item.nome, formatNumber(item.frequencia)]);
 
-  output += "\n" + createMarkdownTable(["Posição", "Nome", "Frequência"], rows, {
-    alignment: ["right", "left", "right"],
-  });
+  output +=
+    "\n" +
+    createMarkdownTable(["Posição", "Nome", "Frequência"], rows, {
+      alignment: ["right", "left", "right"],
+    });
 
   output += "\n**Fonte:** IBGE - Censo Demográfico\n";
 
@@ -195,7 +191,9 @@ function formatRankingResponse(data: NomeRanking[], input: NomesRankingInput): s
 export const nomesSchema = z.object({
   tipo: z
     .enum(["frequencia", "ranking"])
-    .describe("Tipo de consulta: 'frequencia' para buscar nomes específicos ou 'ranking' para ver os mais populares"),
+    .describe(
+      "Tipo de consulta: 'frequencia' para buscar nomes específicos ou 'ranking' para ver os mais populares"
+    ),
   nomes: z
     .string()
     .optional()
@@ -204,10 +202,7 @@ export const nomesSchema = z.object({
     .number()
     .optional()
     .describe("Para tipo='ranking': Década do ranking (ex: 1990, 2000, 2010)"),
-  sexo: z
-    .enum(["M", "F"])
-    .optional()
-    .describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
+  sexo: z.enum(["M", "F"]).optional().describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
   localidade: z
     .string()
     .optional()

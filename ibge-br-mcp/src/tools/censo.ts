@@ -8,18 +8,36 @@ import { createMarkdownTable, formatNumber } from "../utils/index.js";
 const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: string }>> = {
   // População
   populacao: {
-    "1970-2010": { tabela: "200", descricao: "População residente por sexo e situação (série histórica)" },
-    "1991-2010": { tabela: "202", descricao: "População residente por sexo e situação do domicílio" },
+    "1970-2010": {
+      tabela: "200",
+      descricao: "População residente por sexo e situação (série histórica)",
+    },
+    "1991-2010": {
+      tabela: "202",
+      descricao: "População residente por sexo e situação do domicílio",
+    },
     "2000": { tabela: "1552", descricao: "População residente por situação, sexo e idade" },
-    "2010": { tabela: "1378", descricao: "População residente por situação, sexo, idade e condição no domicílio" },
+    "2010": {
+      tabela: "1378",
+      descricao: "População residente por situação, sexo, idade e condição no domicílio",
+    },
     "2022": { tabela: "9514", descricao: "População residente por idade e sexo (universo)" },
     "2022-primeiros": { tabela: "4709", descricao: "População residente - primeiros resultados" },
   },
   // Alfabetização
   alfabetizacao: {
-    "1970-2010": { tabela: "204", descricao: "População de 5 anos ou mais por alfabetização e idade" },
-    "2000": { tabela: "752", descricao: "População de 5 anos ou mais por alfabetização, sexo e idade" },
-    "2010": { tabela: "1383", descricao: "População de 5 anos ou mais por alfabetização e grupos de idade" },
+    "1970-2010": {
+      tabela: "204",
+      descricao: "População de 5 anos ou mais por alfabetização e idade",
+    },
+    "2000": {
+      tabela: "752",
+      descricao: "População de 5 anos ou mais por alfabetização, sexo e idade",
+    },
+    "2010": {
+      tabela: "1383",
+      descricao: "População de 5 anos ou mais por alfabetização e grupos de idade",
+    },
     "2022": { tabela: "9543", descricao: "Taxa de alfabetização por idade, cor/raça e sexo" },
   },
   // Domicílios
@@ -148,8 +166,7 @@ export const censoSchema = z.object({
       "listar",
     ])
     .optional()
-    .default("populacao")
-    .describe(`Tema dos dados:
+    .default("populacao").describe(`Tema dos dados:
 - populacao: População residente
 - alfabetizacao: Taxa de alfabetização
 - domicilios: Características dos domicílios
@@ -172,16 +189,8 @@ export const censoSchema = z.object({
     .optional()
     .default("1")
     .describe("Nível territorial: 1=Brasil, 2=Região, 3=UF, 6=Município"),
-  localidades: z
-    .string()
-    .optional()
-    .default("all")
-    .describe("Códigos das localidades ou 'all'"),
-  formato: z
-    .enum(["tabela", "json"])
-    .optional()
-    .default("tabela")
-    .describe("Formato de saída"),
+  localidades: z.string().optional().default("all").describe("Códigos das localidades ou 'all'"),
+  formato: z.enum(["tabela", "json"]).optional().default("tabela").describe("Formato de saída"),
 });
 
 export type CensoInput = z.infer<typeof censoSchema>;
@@ -232,13 +241,20 @@ export async function ibgeCenso(input: CensoInput): Promise<string> {
     }
 
     if (!tabelaInfo) {
-      return `Dados de "${tema}" não disponíveis para o ano ${input.ano || "solicitado"}.\n\n` +
-             `Use ibge_censo(tema="listar") para ver tabelas disponíveis.`;
+      return (
+        `Dados de "${tema}" não disponíveis para o ano ${input.ano || "solicitado"}.\n\n` +
+        `Use ibge_censo(tema="listar") para ver tabelas disponíveis.`
+      );
     }
 
     // Build SIDRA query
     try {
-      const url = buildSidraUrl(tabelaInfo.tabela, input.nivel_territorial!, input.localidades!, periodos);
+      const url = buildSidraUrl(
+        tabelaInfo.tabela,
+        input.nivel_territorial!,
+        input.localidades!,
+        periodos
+      );
 
       // Use cache for census data (1 hour TTL - data doesn't change often but queries vary)
       const key = cacheKey(url);
@@ -248,9 +264,11 @@ export async function ibgeCenso(input: CensoInput): Promise<string> {
         data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.MEDIUM);
       } catch (error) {
         if (error instanceof Error && error.message.includes("400")) {
-          return `Erro na consulta: Parâmetros inválidos para a tabela ${tabelaInfo.tabela}.\n` +
-                 `Descrição: ${tabelaInfo.descricao}\n\n` +
-                 `Use ibge_sidra_metadados(tabela="${tabelaInfo.tabela}") para ver a estrutura da tabela.`;
+          return (
+            `Erro na consulta: Parâmetros inválidos para a tabela ${tabelaInfo.tabela}.\n` +
+            `Descrição: ${tabelaInfo.descricao}\n\n` +
+            `Use ibge_sidra_metadados(tabela="${tabelaInfo.tabela}") para ver a estrutura da tabela.`
+          );
         }
         throw error;
       }
@@ -282,7 +300,12 @@ export async function ibgeCenso(input: CensoInput): Promise<string> {
   });
 }
 
-function buildSidraUrl(tabela: string, nivel: string, localidades: string, periodos: string): string {
+function buildSidraUrl(
+  tabela: string,
+  nivel: string,
+  localidades: string,
+  periodos: string
+): string {
   let path = `/t/${tabela}`;
   path += `/n${nivel}/${localidades}`;
   path += `/v/allxp`;
@@ -329,8 +352,11 @@ function listAvailableTables(ano?: string): string {
 
     const rows: string[][] = [];
     for (const [tema, tabelas] of Object.entries(CENSO_TABELAS)) {
-      const tabelaInfo = tabelas[ano] ||
-                         (["1970", "1980", "1991", "2000", "2010"].includes(ano) ? tabelas["1970-2010"] || tabelas["1991-2010"] : null);
+      const tabelaInfo =
+        tabelas[ano] ||
+        (["1970", "1980", "1991", "2000", "2010"].includes(ano)
+          ? tabelas["1970-2010"] || tabelas["1991-2010"]
+          : null);
       if (tabelaInfo) {
         rows.push([tema, tabelaInfo.tabela, tabelaInfo.descricao]);
       }
@@ -365,7 +391,8 @@ function listAvailableTables(ano?: string): string {
   output += "# Alfabetização em 2010 por UF\n";
   output += 'ibge_censo(ano="2010", tema="alfabetizacao", nivel_territorial="3")\n\n';
   output += "# População de um município específico\n";
-  output += 'ibge_censo(ano="2022", tema="populacao", nivel_territorial="6", localidades="3550308")\n';
+  output +=
+    'ibge_censo(ano="2022", tema="populacao", nivel_territorial="6", localidades="3550308")\n';
   output += "```\n";
 
   return output;

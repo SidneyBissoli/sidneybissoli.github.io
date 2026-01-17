@@ -6,13 +6,8 @@ import { formatNumber } from "../utils/index.js";
 
 // Schema for the tool input
 export const vizinhosSchema = z.object({
-  municipio: z
-    .string()
-    .describe("Código IBGE do município (7 dígitos) ou nome do município"),
-  uf: z
-    .string()
-    .optional()
-    .describe("Sigla da UF (obrigatório se usar nome do município)"),
+  municipio: z.string().describe("Código IBGE do município (7 dígitos) ou nome do município"),
+  uf: z.string().optional().describe("Sigla da UF (obrigatório se usar nome do município)"),
   raio: z
     .number()
     .optional()
@@ -128,20 +123,23 @@ async function getMunicipioInfo(codigo: string): Promise<Municipio | null> {
   }
 }
 
-async function findMunicipioByName(
-  nome: string,
-  uf: string
-): Promise<Municipio | null> {
+async function findMunicipioByName(nome: string, uf: string): Promise<Municipio | null> {
   try {
     const url = `${IBGE_API.LOCALIDADES}/estados/${uf.toUpperCase()}/municipios`;
     const key = cacheKey(url);
 
     const municipios = await cachedFetch<Municipio[]>(url, key, CACHE_TTL.STATIC);
 
-    const normalized = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const normalized = nome
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
 
     const found = municipios.find((m) => {
-      const mNorm = m.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const mNorm = m.nome
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
       return mNorm === normalized || mNorm.includes(normalized);
     });
 
@@ -262,7 +260,8 @@ function formatResponse(
   }
 
   output += "\n---\n\n";
-  output += "**Nota:** Os municípios listados estão na mesma mesorregião, o que indica proximidade geográfica.\n";
+  output +=
+    "**Nota:** Os municípios listados estão na mesma mesorregião, o que indica proximidade geográfica.\n";
   output += "Para vizinhança exata, seria necessário análise espacial das malhas geográficas.\n";
 
   return output;
@@ -273,9 +272,12 @@ function formatNoNeighborsFound(municipioNome: string, municipioId: string): str
   output += `**Código IBGE:** ${municipioId}\n\n`;
   output += "Não foi possível determinar os municípios vizinhos automaticamente.\n\n";
   output += "### Sugestões\n\n";
-  output += "1. Use `ibge_malhas(localidade=\"" + municipioId + "\", resolucao=\"5\")` para visualizar a região\n";
+  output +=
+    '1. Use `ibge_malhas(localidade="' +
+    municipioId +
+    '", resolucao="5")` para visualizar a região\n';
   output += "2. Consulte o mapa do estado para identificar vizinhos\n";
-  output += "3. Use `ibge_municipios(uf=\"XX\")` para listar todos os municípios do estado\n";
+  output += '3. Use `ibge_municipios(uf="XX")` para listar todos os municípios do estado\n';
 
   return output;
 }

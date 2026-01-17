@@ -9,7 +9,9 @@ export const estadosSchema = z.object({
   regiao: z
     .enum(["N", "NE", "SE", "S", "CO"])
     .optional()
-    .describe("Filtrar por região: N (Norte), NE (Nordeste), SE (Sudeste), S (Sul), CO (Centro-Oeste)"),
+    .describe(
+      "Filtrar por região: N (Norte), NE (Nordeste), SE (Sudeste), S (Sul), CO (Centro-Oeste)"
+    ),
   ordenar: z
     .enum(["id", "nome", "sigla"])
     .optional()
@@ -21,11 +23,11 @@ export type EstadosInput = z.infer<typeof estadosSchema>;
 
 // Map region codes to IDs
 const REGIAO_IDS: Record<string, number> = {
-  N: 1,   // Norte
-  NE: 2,  // Nordeste
-  SE: 3,  // Sudeste
-  S: 4,   // Sul
-  CO: 5,  // Centro-Oeste
+  N: 1, // Norte
+  NE: 2, // Nordeste
+  SE: 3, // Sudeste
+  S: 4, // Sul
+  CO: 5, // Centro-Oeste
 };
 
 /**

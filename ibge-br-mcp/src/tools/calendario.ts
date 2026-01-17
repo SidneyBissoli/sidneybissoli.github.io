@@ -28,14 +28,8 @@ interface CalendarioResponse {
 }
 
 export const calendarioSchema = z.object({
-  de: z
-    .string()
-    .optional()
-    .describe("Data inicial no formato MM-DD-AAAA (ex: '01-01-2024')"),
-  ate: z
-    .string()
-    .optional()
-    .describe("Data final no formato MM-DD-AAAA (ex: '12-31-2024')"),
+  de: z.string().optional().describe("Data inicial no formato MM-DD-AAAA (ex: '01-01-2024')"),
+  ate: z.string().optional().describe("Data final no formato MM-DD-AAAA (ex: '12-31-2024')"),
   produto: z
     .string()
     .optional()
@@ -44,12 +38,10 @@ export const calendarioSchema = z.object({
     .enum(["divulgacao", "coleta", "todos"])
     .optional()
     .default("divulgacao")
-    .describe("Tipo de evento: 'divulgacao' (publicações), 'coleta' (pesquisas de campo), ou 'todos'"),
-  pagina: z
-    .number()
-    .optional()
-    .default(1)
-    .describe("Número da página (padrão: 1)"),
+    .describe(
+      "Tipo de evento: 'divulgacao' (publicações), 'coleta' (pesquisas de campo), ou 'todos'"
+    ),
+  pagina: z.number().optional().default(1).describe("Número da página (padrão: 1)"),
   quantidade: z
     .number()
     .optional()
@@ -66,9 +58,12 @@ export async function ibgeCalendario(input: CalendarioInput): Promise<string> {
   return withMetrics("ibge_calendario", "calendario", async () => {
     try {
       // Build URL with query parameters
-      const tipoValue = input.tipo && input.tipo !== "todos"
-        ? (input.tipo === "divulgacao" ? "1" : "2")
-        : undefined;
+      const tipoValue =
+        input.tipo && input.tipo !== "todos"
+          ? input.tipo === "divulgacao"
+            ? "1"
+            : "2"
+          : undefined;
 
       const queryString = buildQueryString({
         de: input.de,
@@ -128,9 +123,18 @@ function formatCalendarioResponse(data: CalendarioResponse, input: CalendarioInp
   }
 
   const monthNames: Record<string, string> = {
-    "01": "Janeiro", "02": "Fevereiro", "03": "Março", "04": "Abril",
-    "05": "Maio", "06": "Junho", "07": "Julho", "08": "Agosto",
-    "09": "Setembro", "10": "Outubro", "11": "Novembro", "12": "Dezembro",
+    "01": "Janeiro",
+    "02": "Fevereiro",
+    "03": "Março",
+    "04": "Abril",
+    "05": "Maio",
+    "06": "Junho",
+    "07": "Julho",
+    "08": "Agosto",
+    "09": "Setembro",
+    "10": "Outubro",
+    "11": "Novembro",
+    "12": "Dezembro",
   };
 
   for (const [monthKey, items] of Object.entries(byMonth).sort()) {
