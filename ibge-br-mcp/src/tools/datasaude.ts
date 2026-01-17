@@ -148,7 +148,7 @@ export async function ibgeDatasaude(input: DatasaudeInput): Promise<string> {
     // Try to fetch with cache (shorter TTL for health data)
     let data: SidraData[];
     try {
-      data = await cachedFetch<SidraData[]>(key, url, CACHE_TTL.SHORT);
+      data = await cachedFetch<SidraData[]>(url, key, CACHE_TTL.SHORT);
     } catch {
       // Fallback without cache
       const response = await fetch(url);

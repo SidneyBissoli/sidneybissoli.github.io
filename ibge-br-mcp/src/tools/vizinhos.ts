@@ -117,7 +117,7 @@ async function getMunicipioInfo(codigo: string): Promise<Municipio | null> {
     const url = `${IBGE_API.LOCALIDADES}/municipios/${codigo}`;
     const key = cacheKey(url);
 
-    const data = await cachedFetch<Municipio>(key, url, CACHE_TTL.STATIC);
+    const data = await cachedFetch<Municipio>(url, key, CACHE_TTL.STATIC);
     return data;
   } catch {
     return null;
@@ -132,7 +132,7 @@ async function findMunicipioByName(
     const url = `${IBGE_API.LOCALIDADES}/estados/${uf.toUpperCase()}/municipios`;
     const key = cacheKey(url);
 
-    const municipios = await cachedFetch<Municipio[]>(key, url, CACHE_TTL.STATIC);
+    const municipios = await cachedFetch<Municipio[]>(url, key, CACHE_TTL.STATIC);
 
     const normalized = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
@@ -152,7 +152,7 @@ async function getMunicipiosByUf(ufCode: string): Promise<Municipio[]> {
     const url = `${IBGE_API.LOCALIDADES}/estados/${ufCode}/municipios`;
     const key = cacheKey(url);
 
-    return await cachedFetch<Municipio[]>(key, url, CACHE_TTL.STATIC);
+    return await cachedFetch<Municipio[]>(url, key, CACHE_TTL.STATIC);
   } catch {
     return [];
   }

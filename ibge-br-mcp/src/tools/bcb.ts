@@ -192,7 +192,7 @@ export async function ibgeBcb(input: BcbInput): Promise<string> {
 
     // Fetch data
     const key = cacheKey(url);
-    const data = await cachedFetch<BcbSgsData[]>(key, url, CACHE_TTL.SHORT);
+    const data = await cachedFetch<BcbSgsData[]>(url, key, CACHE_TTL.SHORT);
 
     if (!data || data.length === 0) {
       return `Nenhum dado encontrado para ${nome}.`;
