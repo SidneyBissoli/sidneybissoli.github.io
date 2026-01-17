@@ -12,6 +12,7 @@ export { sidraTabelasTool, ibgeSidraTabelas, sidraTabelasSchema } from "./sidra-
 export { sidraMetadadosTool, ibgeSidraMetadados, sidraMetadadosSchema } from "./sidra-metadados.js";
 export { malhasTool, ibgeMalhas, malhasSchema } from "./malhas.js";
 export { pesquisasTool, ibgePesquisas, pesquisasSchema } from "./pesquisas.js";
+export { censoTool, ibgeCenso, censoSchema } from "./censo.js";
 
 // Tool definitions array for registration
 export const tools = [
@@ -198,5 +199,21 @@ Exemplos de uso:
 - Listar todas as pesquisas: (sem parâmetros)
 - Buscar pesquisas de população: busca="população"
 - Detalhes da PNAD: detalhes="pnad"`,
+  },
+  {
+    name: "ibge_censo",
+    description: `Consulta dados dos Censos Demográficos do IBGE (1970-2022).
+
+Ferramenta simplificada para acessar dados censitários.
+
+Anos: 1970, 1980, 1991, 2000, 2010, 2022
+
+Temas: populacao, alfabetizacao, domicilios, idade_sexo, religiao,
+cor_raca, rendimento, migracao, educacao, trabalho
+
+Exemplos:
+- População 2022: ano="2022", tema="populacao"
+- Série histórica: ano="todos", tema="populacao"
+- Listar tabelas: tema="listar"`,
   },
 ];

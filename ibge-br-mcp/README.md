@@ -21,6 +21,11 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 | `ibge_sidra_metadados` | Metadados de uma tabela (variáveis, períodos, níveis) |
 | `ibge_pesquisas` | Lista pesquisas do IBGE e suas tabelas |
 
+### Censos Demográficos
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `ibge_censo` | **NOVO** - Dados dos Censos 1970-2022 (interface simplificada) |
+
 ### Demografia e População
 | Ferramenta | Descrição |
 |:-----------|:----------|
@@ -146,6 +151,56 @@ ibge_localidade(codigo=35)
 
 # Detalhes de São Paulo (município)
 ibge_localidade(codigo=3550308)
+```
+
+### ibge_censo
+
+Consulta dados dos Censos Demográficos do IBGE (1970-2022).
+
+Interface simplificada que abstrai os códigos das tabelas SIDRA, permitindo consultar dados censitários de forma intuitiva.
+
+**Parâmetros:**
+- `ano` (opcional): Ano do censo (1970, 1980, 1991, 2000, 2010, 2022) ou "todos" para série histórica
+- `tema` (opcional): Tipo de dado a consultar (padrão: "populacao")
+- `nivel_territorial` (opcional): 1=Brasil, 2=Região, 3=UF, 6=Município
+- `localidades` (opcional): Códigos das localidades ou "all"
+- `formato` (opcional): "tabela" ou "json"
+
+**Temas disponíveis:**
+
+| Tema | Descrição |
+|:-----|:----------|
+| populacao | População residente por sexo e situação |
+| alfabetizacao | Taxa de alfabetização |
+| domicilios | Características dos domicílios |
+| idade_sexo | Pirâmide etária / grupos de idade |
+| religiao | Distribuição por religião |
+| cor_raca | Cor ou raça |
+| rendimento | Rendimento mensal |
+| migracao | Migração |
+| educacao | Nível de instrução |
+| trabalho | Ocupação e trabalho |
+| listar | Lista todas as tabelas disponíveis |
+
+**Exemplos:**
+```
+# População do Censo 2022
+ibge_censo(ano="2022", tema="populacao")
+
+# Série histórica de população (1970-2010)
+ibge_censo(ano="todos", tema="populacao")
+
+# Alfabetização em 2010 por UF
+ibge_censo(ano="2010", tema="alfabetizacao", nivel_territorial="3")
+
+# População de um município específico
+ibge_censo(ano="2022", tema="populacao", nivel_territorial="6", localidades="3550308")
+
+# Ver todas as tabelas disponíveis
+ibge_censo(tema="listar")
+
+# Tabelas disponíveis para o Censo 2022
+ibge_censo(tema="listar", ano="2022")
 ```
 
 ### ibge_populacao
@@ -435,6 +490,7 @@ ibge-br-mcp/
 │       ├── estados.ts        # Tool: ibge_estados
 │       ├── municipios.ts     # Tool: ibge_municipios
 │       ├── localidade.ts     # Tool: ibge_localidade
+│       ├── censo.ts          # Tool: ibge_censo (Censos 1970-2022)
 │       ├── populacao.ts      # Tool: ibge_populacao
 │       ├── sidra.ts          # Tool: ibge_sidra
 │       ├── sidra-tabelas.ts  # Tool: ibge_sidra_tabelas

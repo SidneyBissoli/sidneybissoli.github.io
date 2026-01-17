@@ -26,11 +26,13 @@ import {
   ibgeMalhas,
   pesquisasSchema,
   ibgePesquisas,
+  censoSchema,
+  ibgeCenso,
 } from "./tools/index.js";
 
 // Server metadata
 const SERVER_NAME = "ibge-br-mcp";
-const SERVER_VERSION = "1.2.0";
+const SERVER_VERSION = "1.3.0";
 
 /**
  * IBGE MCP Server
@@ -371,6 +373,41 @@ Exemplos de uso:
     pesquisasSchema.shape,
     async (args) => {
       const result = await ibgePesquisas(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_censo tool
+  server.tool(
+    "ibge_censo",
+    `Consulta dados dos Censos Demográficos do IBGE (1970-2022).
+
+Ferramenta simplificada para acessar dados censitários sem precisar saber os códigos das tabelas SIDRA.
+
+Anos disponíveis: 1970, 1980, 1991, 2000, 2010, 2022
+
+Temas disponíveis:
+- populacao: População residente por sexo e situação
+- alfabetizacao: Taxa de alfabetização
+- domicilios: Características dos domicílios
+- idade_sexo: Pirâmide etária / grupos de idade
+- religiao: Distribuição por religião
+- cor_raca: Cor ou raça
+- rendimento: Rendimento mensal
+- migracao: Migração
+- educacao: Nível de instrução
+- trabalho: Ocupação e trabalho
+- listar: Lista todas as tabelas disponíveis
+
+Exemplos de uso:
+- População 2022: ano="2022", tema="populacao"
+- Série histórica: ano="todos", tema="populacao"
+- Alfabetização 2010 por UF: ano="2010", tema="alfabetizacao", nivel_territorial="3"
+- Ver tabelas disponíveis: tema="listar"
+- População de um município: ano="2022", nivel_territorial="6", localidades="3550308"`,
+    censoSchema.shape,
+    async (args) => {
+      const result = await ibgeCenso(args);
       return { content: [{ type: "text", text: result }] };
     }
   );
