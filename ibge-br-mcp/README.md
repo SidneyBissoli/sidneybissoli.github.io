@@ -30,12 +30,12 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 ### Censos Demográficos
 | Ferramenta | Descrição |
 |:-----------|:----------|
-| `ibge_censo` | Dados dos Censos 1970-2022 (interface simplificada) |
+| `ibge_censo` | Dados dos Censos 1970-2022 (16 temas: população, indígenas, quilombolas, saneamento, etc.) |
 
 ### Classificações
 | Ferramenta | Descrição |
 |:-----------|:----------|
-| `ibge_cnae` | **NOVO** - CNAE (Classificação Nacional de Atividades Econômicas) |
+| `ibge_cnae` | CNAE (Classificação Nacional de Atividades Econômicas) |
 
 ### Demografia e População
 | Ferramenta | Descrição |
@@ -43,15 +43,21 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 | `ibge_populacao` | Projeção da população brasileira em tempo real |
 | `ibge_nomes` | Frequência e ranking de nomes no Brasil |
 
+### Comparação de Dados
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `ibge_comparar` | **NOVO** - Compara indicadores entre localidades com ranking e estatísticas |
+
 ### Mapas e Geolocalização
 | Ferramenta | Descrição |
 |:-----------|:----------|
 | `ibge_malhas` | Malhas geográficas (GeoJSON, TopoJSON, SVG) |
 
-### Informações
+### Informações e Calendário
 | Ferramenta | Descrição |
 |:-----------|:----------|
 | `ibge_noticias` | Notícias e releases do IBGE |
+| `ibge_calendario` | **NOVO** - Calendário de divulgações e coletas do IBGE |
 
 ## Instalação
 
@@ -581,6 +587,71 @@ ibge_geocodigo(nome="Campinas", uf="SP")
 ibge_geocodigo()
 ```
 
+### ibge_calendario
+
+Consulta o calendário de divulgações e coletas do IBGE.
+
+**Parâmetros:**
+- `de` (opcional): Data inicial no formato MM-DD-AAAA
+- `ate` (opcional): Data final no formato MM-DD-AAAA
+- `produto` (opcional): Filtrar por produto/pesquisa (ex: "IPCA", "PNAD")
+- `tipo` (opcional): "divulgacao", "coleta" ou "todos" (padrão: "divulgacao")
+- `pagina` (opcional): Página de resultados (padrão: 1)
+- `quantidade` (opcional): Resultados por página (padrão: 20)
+
+**Exemplos:**
+```
+# Próximas divulgações
+ibge_calendario()
+
+# Divulgações do mês
+ibge_calendario(de="01-01-2024", ate="01-31-2024")
+
+# Buscar divulgações do IPCA
+ibge_calendario(produto="IPCA")
+
+# Calendário de coletas
+ibge_calendario(tipo="coleta")
+
+# Todos os eventos (divulgação e coleta)
+ibge_calendario(tipo="todos", quantidade=50)
+```
+
+### ibge_comparar
+
+Compara dados entre múltiplas localidades (estados, municípios).
+
+**Parâmetros:**
+- `localidades` (obrigatório): Códigos IBGE separados por vírgula (ex: "35,33,31" para SP, RJ, MG)
+- `indicador` (opcional): Tipo de comparação:
+  - "populacao" (padrão): População estimada atual
+  - "populacao_censo": População do Censo 2022
+  - "pib": PIB (Produto Interno Bruto)
+  - "area": Área territorial em km²
+  - "densidade": Densidade demográfica
+  - "alfabetizacao": Taxa de alfabetização
+  - "domicilios": Número de domicílios
+  - "listar": Lista indicadores disponíveis
+- `formato` (opcional): "tabela", "json" ou "ranking" (padrão: "tabela")
+
+**Exemplos:**
+```
+# Comparar população dos estados do Sudeste
+ibge_comparar(localidades="35,33,31,32", indicador="populacao")
+
+# Ranking de PIB das capitais
+ibge_comparar(localidades="3550308,3304557,3106200,4106902,5300108", indicador="pib", formato="ranking")
+
+# Comparar densidade de municípios
+ibge_comparar(localidades="3550308,3509502,3518800", indicador="densidade")
+
+# Comparação de alfabetização
+ibge_comparar(localidades="35,33", indicador="alfabetizacao")
+
+# Ver indicadores disponíveis
+ibge_comparar(indicador="listar")
+```
+
 ## APIs do IBGE Utilizadas
 
 Este MCP Server utiliza as seguintes APIs públicas do IBGE:
@@ -593,6 +664,7 @@ Este MCP Server utiliza as seguintes APIs públicas do IBGE:
 - **Notícias**: `https://servicodados.ibge.gov.br/api/v3/noticias`
 - **População**: `https://servicodados.ibge.gov.br/api/v1/projecoes/populacao`
 - **CNAE**: `https://servicodados.ibge.gov.br/api/v2/cnae`
+- **Calendário**: `https://servicodados.ibge.gov.br/api/v3/calendario`
 
 ## Desenvolvimento
 
@@ -613,6 +685,7 @@ ibge-br-mcp/
 │   ├── types.ts              # Tipos TypeScript
 │   ├── cache.ts              # Sistema de cache de requisições
 │   ├── errors.ts             # Tratamento padronizado de erros
+│   ├── validation.ts         # Helpers de validação de entrada
 │   └── tools/
 │       ├── index.ts          # Exportação das ferramentas
 │       ├── estados.ts        # Tool: ibge_estados
@@ -626,6 +699,8 @@ ibge-br-mcp/
 │       ├── sidra-metadados.ts# Tool: ibge_sidra_metadados
 │       ├── indicadores.ts    # Tool: ibge_indicadores
 │       ├── cnae.ts           # Tool: ibge_cnae
+│       ├── calendario.ts     # Tool: ibge_calendario
+│       ├── comparar.ts       # Tool: ibge_comparar
 │       ├── malhas.ts         # Tool: ibge_malhas
 │       ├── pesquisas.ts      # Tool: ibge_pesquisas
 │       ├── nomes.ts          # Tool: ibge_nomes

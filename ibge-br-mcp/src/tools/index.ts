@@ -19,6 +19,10 @@ export { indicadoresTool, ibgeIndicadores, indicadoresSchema } from "./indicador
 export { cnaeTool, ibgeCnae, cnaeSchema } from "./cnae.js";
 export { geocodigoTool, ibgeGeocodigo, geocodigoSchema } from "./geocodigo.js";
 
+// Phase 2 tools (v1.5.0)
+export { calendarioTool, ibgeCalendario, calendarioSchema } from "./calendario.js";
+export { compararTool, ibgeComparar, compararSchema } from "./comparar.js";
+
 // Tool definitions array for registration
 export const tools = [
   {
@@ -268,5 +272,36 @@ Exemplos:
 - Decodificar: codigo="3550308"
 - Buscar: nome="São Paulo"
 - Buscar em UF: nome="Campinas", uf="SP"`,
+  },
+  {
+    name: "ibge_calendario",
+    description: `Consulta o calendário de divulgações do IBGE.
+
+Funcionalidades:
+- Lista próximas divulgações de pesquisas
+- Filtra por produto (IPCA, PNAD, PIB, etc.)
+- Filtra por período
+- Diferencia divulgações e coletas
+
+Exemplos:
+- Próximas divulgações: (sem parâmetros)
+- Divulgações do IPCA: produto="IPCA"
+- Calendário 2024: de="01-01-2024", ate="12-31-2024"`,
+  },
+  {
+    name: "ibge_comparar",
+    description: `Compara dados entre localidades (municípios ou UFs).
+
+Indicadores: populacao, pib, area, densidade, alfabetizacao, domicilios
+
+Funcionalidades:
+- Compara até 10 localidades
+- Calcula estatísticas (maior, menor, média)
+- Gera ranking ordenado
+
+Exemplos:
+- Comparar capitais: localidades="3550308,3304557"
+- Ranking por área: formato="ranking"
+- Listar indicadores: indicador="listar"`,
   },
 ];

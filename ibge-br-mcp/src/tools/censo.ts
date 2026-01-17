@@ -64,6 +64,38 @@ const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: 
     "2000": { tabela: "616", descricao: "Pessoas de 10 anos ou mais por condição de ocupação" },
     "2010": { tabela: "3592", descricao: "População ocupada por setor de atividade" },
   },
+  // Indígenas (novo)
+  indigenas: {
+    "2010": { tabela: "3451", descricao: "População indígena por etnia e localização" },
+    "2022": { tabela: "9587", descricao: "População indígena por etnia, sexo e idade" },
+    "2022-terras": { tabela: "9588", descricao: "População indígena em terras indígenas" },
+  },
+  // Quilombolas (novo)
+  quilombolas: {
+    "2022": { tabela: "9674", descricao: "População quilombola por sexo e idade" },
+    "2022-territorios": { tabela: "9675", descricao: "População em territórios quilombolas" },
+  },
+  // Saneamento (novo)
+  saneamento: {
+    "2000": { tabela: "764", descricao: "Domicílios por forma de abastecimento de água" },
+    "2010": { tabela: "3218", descricao: "Domicílios por tipo de saneamento" },
+    "2022": { tabela: "9696", descricao: "Domicílios por abastecimento de água e esgotamento" },
+  },
+  // Deficiência (novo)
+  deficiencia: {
+    "2000": { tabela: "2649", descricao: "Pessoas com deficiência por tipo" },
+    "2010": { tabela: "3426", descricao: "População com deficiência por tipo e grau" },
+  },
+  // Nupcialidade/Estado civil (novo)
+  nupcialidade: {
+    "2000": { tabela: "594", descricao: "Pessoas de 10 anos ou mais por estado civil" },
+    "2010": { tabela: "1488", descricao: "Pessoas por estado civil e sexo" },
+  },
+  // Fecundidade (novo)
+  fecundidade: {
+    "2000": { tabela: "2443", descricao: "Mulheres por número de filhos nascidos vivos" },
+    "2010": { tabela: "1691", descricao: "Taxa de fecundidade" },
+  },
 };
 
 // Available themes
@@ -78,6 +110,12 @@ const TEMAS_CENSO = [
   "migracao",
   "educacao",
   "trabalho",
+  "indigenas",
+  "quilombolas",
+  "saneamento",
+  "deficiencia",
+  "nupcialidade",
+  "fecundidade",
 ] as const;
 
 // Schema for the tool input
@@ -98,6 +136,12 @@ export const censoSchema = z.object({
       "migracao",
       "educacao",
       "trabalho",
+      "indigenas",
+      "quilombolas",
+      "saneamento",
+      "deficiencia",
+      "nupcialidade",
+      "fecundidade",
       "listar",
     ])
     .optional()
@@ -113,6 +157,12 @@ export const censoSchema = z.object({
 - migracao: Migração
 - educacao: Nível de instrução
 - trabalho: Ocupação e trabalho
+- indigenas: População indígena
+- quilombolas: População quilombola
+- saneamento: Abastecimento de água e esgoto
+- deficiencia: Pessoas com deficiência
+- nupcialidade: Estado civil
+- fecundidade: Taxa de fecundidade
 - listar: Lista tabelas disponíveis`),
   nivel_territorial: z
     .string()

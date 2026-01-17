@@ -35,11 +35,16 @@ import {
   ibgeCnae,
   geocodigoSchema,
   ibgeGeocodigo,
+  // Phase 2 tools (v1.5.0)
+  calendarioSchema,
+  ibgeCalendario,
+  compararSchema,
+  ibgeComparar,
 } from "./tools/index.js";
 
 // Server metadata
 const SERVER_NAME = "ibge-br-mcp";
-const SERVER_VERSION = "1.4.0";
+const SERVER_VERSION = "1.5.0";
 
 /**
  * IBGE MCP Server
@@ -524,6 +529,65 @@ Exemplos de uso:
     geocodigoSchema.shape,
     async (args) => {
       const result = await ibgeGeocodigo(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_calendario tool (Phase 2)
+  server.tool(
+    "ibge_calendario",
+    `Consulta o calendário de divulgações e coletas do IBGE.
+
+Funcionalidades:
+- Lista próximas divulgações de pesquisas
+- Filtra por produto (IPCA, PNAD, PIB, etc.)
+- Filtra por período
+- Diferencia divulgações e coletas de campo
+
+Tipos de eventos:
+- **Divulgação**: Publicação de resultados de pesquisas
+- **Coleta**: Período de pesquisa de campo
+
+Exemplos de uso:
+- Próximas divulgações: (sem parâmetros)
+- Divulgações do IPCA: produto="IPCA"
+- Calendário 2024: de="01-01-2024", ate="12-31-2024"
+- Coletas de campo: tipo="coleta"`,
+    calendarioSchema.shape,
+    async (args) => {
+      const result = await ibgeCalendario(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_comparar tool (Phase 2)
+  server.tool(
+    "ibge_comparar",
+    `Compara dados entre localidades (municípios ou UFs).
+
+Indicadores disponíveis:
+- populacao: Estimativa populacional atual
+- populacao_censo: População do Censo 2022
+- pib: PIB per capita
+- area: Área territorial (km²)
+- densidade: Densidade demográfica (hab/km²)
+- alfabetizacao: Taxa de alfabetização
+- domicilios: Número de domicílios
+
+Funcionalidades:
+- Compara até 10 localidades de uma vez
+- Calcula estatísticas (maior, menor, média, variação)
+- Gera ranking ordenado por valor
+- Aceita códigos de municípios (7 dígitos) ou UFs (2 dígitos)
+
+Exemplos de uso:
+- Comparar capitais: localidades="3550308,3304557,4106902", indicador="populacao"
+- Comparar estados: localidades="35,33,41", indicador="pib"
+- Ranking por área: localidades="3550308,3304557", formato="ranking"
+- Listar indicadores: indicador="listar"`,
+    compararSchema.shape,
+    async (args) => {
+      const result = await ibgeComparar(args);
       return { content: [{ type: "text", text: result }] };
     }
   );
