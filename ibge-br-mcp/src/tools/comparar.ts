@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Pre-defined comparison templates
@@ -110,63 +111,65 @@ export type CompararInput = z.infer<typeof compararSchema>;
  * Compares data between localities
  */
 export async function ibgeComparar(input: CompararInput): Promise<string> {
-  // List available indicators
-  if (input.indicador === "listar") {
-    return listIndicadoresComparacao();
-  }
-
-  const template = TEMPLATES_COMPARACAO[input.indicador || "populacao"];
-  if (!template) {
-    return `Indicador "${input.indicador}" não encontrado.\n\n` +
-           `Use ibge_comparar(indicador="listar") para ver os indicadores disponíveis.`;
-  }
-
-  // Parse localities
-  const localidadesList = input.localidades.split(",").map(l => l.trim());
-  if (localidadesList.length < 2) {
-    return "Informe pelo menos 2 localidades para comparação.\n\n" +
-           `Exemplo: localidades="3550308,3304557" para comparar São Paulo e Rio de Janeiro.`;
-  }
-
-  if (localidadesList.length > 10) {
-    return "Máximo de 10 localidades por comparação.\n\n" +
-           "Para consultas maiores, use ibge_sidra diretamente.";
-  }
-
-  // Determine territorial level based on first code
-  const nivel = localidadesList[0].length === 2 ? "3" : "6";
-
-  try {
-    // Build SIDRA URL
-    const url = buildSidraUrl(
-      template.tabela,
-      nivel,
-      localidadesList.join(","),
-      template.periodos,
-      template.variaveis
-    );
-
-    const key = cacheKey("comparar", {
-      indicador: input.indicador,
-      localidades: input.localidades,
-    });
-
-    const data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.SHORT);
-
-    if (!data || data.length <= 1) {
-      return formatNoData(input, template);
+  return withMetrics("ibge_comparar", "agregados", async () => {
+    // List available indicators
+    if (input.indicador === "listar") {
+      return listIndicadoresComparacao();
     }
 
-    // Get locality names
-    const localidadeNames = await getLocalidadeNames(localidadesList, nivel);
-
-    return formatCompararResponse(data, template, localidadeNames, input.formato || "tabela");
-  } catch (error) {
-    if (error instanceof Error) {
-      return formatCompararError(error.message, input, template);
+    const template = TEMPLATES_COMPARACAO[input.indicador || "populacao"];
+    if (!template) {
+      return `Indicador "${input.indicador}" não encontrado.\n\n` +
+             `Use ibge_comparar(indicador="listar") para ver os indicadores disponíveis.`;
     }
-    return "Erro desconhecido ao comparar localidades.";
-  }
+
+    // Parse localities
+    const localidadesList = input.localidades.split(",").map(l => l.trim());
+    if (localidadesList.length < 2) {
+      return "Informe pelo menos 2 localidades para comparação.\n\n" +
+             `Exemplo: localidades="3550308,3304557" para comparar São Paulo e Rio de Janeiro.`;
+    }
+
+    if (localidadesList.length > 10) {
+      return "Máximo de 10 localidades por comparação.\n\n" +
+             "Para consultas maiores, use ibge_sidra diretamente.";
+    }
+
+    // Determine territorial level based on first code
+    const nivel = localidadesList[0].length === 2 ? "3" : "6";
+
+    try {
+      // Build SIDRA URL
+      const url = buildSidraUrl(
+        template.tabela,
+        nivel,
+        localidadesList.join(","),
+        template.periodos,
+        template.variaveis
+      );
+
+      const key = cacheKey("comparar", {
+        indicador: input.indicador,
+        localidades: input.localidades,
+      });
+
+      const data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.SHORT);
+
+      if (!data || data.length <= 1) {
+        return formatNoData(input, template);
+      }
+
+      // Get locality names
+      const localidadeNames = await getLocalidadeNames(localidadesList, nivel);
+
+      return formatCompararResponse(data, template, localidadeNames, input.formato || "tabela");
+    } catch (error) {
+      if (error instanceof Error) {
+        return formatCompararError(error.message, input, template);
+      }
+      return "Erro desconhecido ao comparar localidades.";
+    }
+  });
 }
 
 function buildSidraUrl(

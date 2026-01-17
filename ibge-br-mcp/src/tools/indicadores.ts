@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Common indicators with their SIDRA tables
@@ -187,95 +188,97 @@ export type IndicadoresInput = z.infer<typeof indicadoresSchema>;
  * Fetches economic and social indicators from IBGE
  */
 export async function ibgeIndicadores(input: IndicadoresInput): Promise<string> {
-  // List available indicators
-  if (input.indicador === "listar" || (!input.indicador && !input.categoria)) {
-    return listIndicadores(input.categoria);
-  }
+  return withMetrics("ibge_indicadores", "agregados", async () => {
+    // List available indicators
+    if (input.indicador === "listar" || (!input.indicador && !input.categoria)) {
+      return listIndicadores(input.categoria);
+    }
 
-  // Get indicator by category
-  if (input.categoria && input.categoria !== "todos" && !input.indicador) {
-    return listIndicadores(input.categoria);
-  }
+    // Get indicator by category
+    if (input.categoria && input.categoria !== "todos" && !input.indicador) {
+      return listIndicadores(input.categoria);
+    }
 
-  // Get specific indicator
-  const indicadorKey = input.indicador?.toLowerCase();
-  if (!indicadorKey) {
-    return listIndicadores();
-  }
+    // Get specific indicator
+    const indicadorKey = input.indicador?.toLowerCase();
+    if (!indicadorKey) {
+      return listIndicadores();
+    }
 
-  const indicador = INDICADORES_CONHECIDOS[indicadorKey];
-  if (!indicador) {
-    return `Indicador "${input.indicador}" não encontrado.\n\n` +
-           `Use ibge_indicadores(indicador="listar") para ver os indicadores disponíveis.\n\n` +
-           `Dica: Você também pode usar ibge_sidra_tabelas para buscar tabelas específicas.`;
-  }
+    const indicador = INDICADORES_CONHECIDOS[indicadorKey];
+    if (!indicador) {
+      return `Indicador "${input.indicador}" não encontrado.\n\n` +
+             `Use ibge_indicadores(indicador="listar") para ver os indicadores disponíveis.\n\n` +
+             `Dica: Você também pode usar ibge_sidra_tabelas para buscar tabelas específicas.`;
+    }
 
-  try {
-    // Build SIDRA URL
-    const url = buildSidraUrl(
-      indicador.tabela,
-      input.nivel_territorial!,
-      input.localidades!,
-      input.periodos!,
-      indicador.variavel
-    );
-
-    const key = cacheKey("indicadores", {
-      indicador: indicadorKey,
-      nivel: input.nivel_territorial,
-      localidades: input.localidades,
-      periodos: input.periodos,
-    });
-
-    let data: Record<string, string>[];
     try {
-      data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.SHORT);
-    } catch (fetchError) {
-      // Provide helpful error message
-      if (fetchError instanceof Error && fetchError.message.includes("400")) {
+      // Build SIDRA URL
+      const url = buildSidraUrl(
+        indicador.tabela,
+        input.nivel_territorial!,
+        input.localidades!,
+        input.periodos!,
+        indicador.variavel
+      );
+
+      const key = cacheKey("indicadores", {
+        indicador: indicadorKey,
+        nivel: input.nivel_territorial,
+        localidades: input.localidades,
+        periodos: input.periodos,
+      });
+
+      let data: Record<string, string>[];
+      try {
+        data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.SHORT);
+      } catch (fetchError) {
+        // Provide helpful error message
+        if (fetchError instanceof Error && fetchError.message.includes("400")) {
+          return formatErrorMessage(
+            "Parâmetros inválidos",
+            indicador,
+            indicadorKey,
+            "Verifique se o nível territorial e localidades são suportados para este indicador."
+          );
+        }
+        throw fetchError;
+      }
+
+      if (!data || data.length === 0) {
         return formatErrorMessage(
-          "Parâmetros inválidos",
+          "Nenhum dado encontrado",
           indicador,
           indicadorKey,
-          "Verifique se o nível territorial e localidades são suportados para este indicador."
+          "Tente ajustar os períodos ou localidades."
         );
       }
-      throw fetchError;
+
+      // Format output
+      let output = `## ${indicador.nome}\n\n`;
+      output += `**Descrição:** ${indicador.descricao}\n`;
+      output += `**Periodicidade:** ${indicador.periodicidade}\n`;
+      output += `**Tabela SIDRA:** ${indicador.tabela}\n\n`;
+
+      if (input.formato === "json") {
+        return output + "```json\n" + JSON.stringify(data, null, 2) + "\n```";
+      }
+
+      output += formatIndicadorTable(data);
+      return output;
+
+    } catch (error) {
+      if (error instanceof Error) {
+        return formatErrorMessage(
+          error.message,
+          INDICADORES_CONHECIDOS[indicadorKey!],
+          indicadorKey!,
+          "Verifique sua conexão ou tente novamente mais tarde."
+        );
+      }
+      return "Erro desconhecido ao consultar indicador.";
     }
-
-    if (!data || data.length === 0) {
-      return formatErrorMessage(
-        "Nenhum dado encontrado",
-        indicador,
-        indicadorKey,
-        "Tente ajustar os períodos ou localidades."
-      );
-    }
-
-    // Format output
-    let output = `## ${indicador.nome}\n\n`;
-    output += `**Descrição:** ${indicador.descricao}\n`;
-    output += `**Periodicidade:** ${indicador.periodicidade}\n`;
-    output += `**Tabela SIDRA:** ${indicador.tabela}\n\n`;
-
-    if (input.formato === "json") {
-      return output + "```json\n" + JSON.stringify(data, null, 2) + "\n```";
-    }
-
-    output += formatIndicadorTable(data);
-    return output;
-
-  } catch (error) {
-    if (error instanceof Error) {
-      return formatErrorMessage(
-        error.message,
-        INDICADORES_CONHECIDOS[indicadorKey!],
-        indicadorKey!,
-        "Verifique sua conexão ou tente novamente mais tarde."
-      );
-    }
-    return "Erro desconhecido ao consultar indicador.";
-  }
+  });
 }
 
 function buildSidraUrl(

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, Municipio, MunicipioSimples } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 import { createMarkdownTable } from "../utils/index.js";
 
 // Map of state codes to names
@@ -69,26 +70,28 @@ export type GeocodigoInput = z.infer<typeof geocodigoSchema>;
  * Reverse lookup for IBGE codes
  */
 export async function ibgeGeocodigo(input: GeocodigoInput): Promise<string> {
-  try {
-    // Decode a code
-    if (input.codigo) {
-      return await decodeIbgeCode(input.codigo);
-    }
+  return withMetrics("ibge_geocodigo", "localidades", async () => {
+    try {
+      // Decode a code
+      if (input.codigo) {
+        return await decodeIbgeCode(input.codigo);
+      }
 
-    // Search by name
-    if (input.nome) {
-      return await searchByName(input.nome, input.uf);
-    }
+      // Search by name
+      if (input.nome) {
+        return await searchByName(input.nome, input.uf);
+      }
 
-    // Show help
-    return showGeocodigoHelp();
+      // Show help
+      return showGeocodigoHelp();
 
-  } catch (error) {
-    if (error instanceof Error) {
-      return formatGeocodigoError(error.message, input);
+    } catch (error) {
+      if (error instanceof Error) {
+        return formatGeocodigoError(error.message, input);
+      }
+      return "Erro desconhecido ao consultar código IBGE.";
     }
-    return "Erro desconhecido ao consultar código IBGE.";
-  }
+  });
 }
 
 async function decodeIbgeCode(codigo: string): Promise<string> {

@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, type PopulacaoEstimativa } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Schema for the tool input
@@ -17,43 +19,41 @@ export type PopulacaoInput = z.infer<typeof populacaoSchema>;
  * Fetches population projection/estimate from IBGE API
  */
 export async function ibgePopulacao(input: PopulacaoInput): Promise<string> {
-  try {
-    const url = `${IBGE_API.POPULACAO}/${input.localidade}`;
+  return withMetrics("ibge_populacao", "populacao", async () => {
+    try {
+      const url = `${IBGE_API.POPULACAO}/${input.localidade}`;
 
-    const response = await fetch(url);
+      // Use cache with short TTL (population updates frequently)
+      const key = cacheKey(url);
+      const data = await cachedFetch<PopulacaoEstimativa>(url, key, CACHE_TTL.SHORT);
 
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
+      // Format the response
+      let output = `## Projeção da População do Brasil\n\n`;
+      output += `**Data/Hora da consulta:** ${data.horario}\n\n`;
+
+      output += "### População Atual\n\n";
+      output += `**${formatNumber(data.projecao.populacao)}** habitantes\n\n`;
+
+      output += "### Indicadores (Período Médio)\n\n";
+      output += createMarkdownTable(["Indicador", "Valor"], [
+        ["Incremento populacional", `${formatNumber(data.projecao.periodoMedio.incrementoPopulacional)} por dia`],
+        ["Nascimentos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.nascimento)}`],
+        ["Óbitos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.obito)}`],
+      ], { alignment: ["left", "right"] });
+
+      output += "\n### Notas\n\n";
+      output += "- Os dados são projeções em tempo real baseadas em modelos estatísticos do IBGE\n";
+      output += "- O incremento populacional considera nascimentos menos óbitos\n";
+      output += "- Fonte: IBGE - Projeção da População\n";
+
+      return output;
+    } catch (error) {
+      if (error instanceof Error) {
+        return `Erro ao buscar projeção populacional: ${error.message}`;
+      }
+      return "Erro desconhecido ao buscar projeção populacional.";
     }
-
-    const data: PopulacaoEstimativa = await response.json();
-
-    // Format the response
-    let output = `## Projeção da População do Brasil\n\n`;
-    output += `**Data/Hora da consulta:** ${data.horario}\n\n`;
-
-    output += "### População Atual\n\n";
-    output += `**${formatNumber(data.projecao.populacao)}** habitantes\n\n`;
-
-    output += "### Indicadores (Período Médio)\n\n";
-    output += createMarkdownTable(["Indicador", "Valor"], [
-      ["Incremento populacional", `${formatNumber(data.projecao.periodoMedio.incrementoPopulacional)} por dia`],
-      ["Nascimentos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.nascimento)}`],
-      ["Óbitos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.obito)}`],
-    ], { alignment: ["left", "right"] });
-
-    output += "\n### Notas\n\n";
-    output += "- Os dados são projeções em tempo real baseadas em modelos estatísticos do IBGE\n";
-    output += "- O incremento populacional considera nascimentos menos óbitos\n";
-    output += "- Fonte: IBGE - Projeção da População\n";
-
-    return output;
-  } catch (error) {
-    if (error instanceof Error) {
-      return `Erro ao buscar projeção populacional: ${error.message}`;
-    }
-    return "Erro desconhecido ao buscar projeção populacional.";
-  }
+  });
 }
 
 /**

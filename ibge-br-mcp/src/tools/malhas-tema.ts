@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { buildQueryString } from "../utils/index.js";
 
@@ -111,16 +112,19 @@ export async function ibgeMalhasTema(input: MalhasTemaInput): Promise<string> {
         return formatSvgResponse(fullUrl, input);
       }
 
-      const response = await fetch(fullUrl);
+      // Use cache for geographic data (24 hours TTL - static data)
+      const key = cacheKey(fullUrl);
+      let data: GeoJSONData;
 
-      if (!response.ok) {
-        if (response.status === 404) {
+      try {
+        data = await cachedFetch<GeoJSONData>(fullUrl, key, CACHE_TTL.STATIC);
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("404")) {
           return `Malha temática não encontrada para: ${input.tema}${input.codigo ? ` (código: ${input.codigo})` : ""}`;
         }
-        throw new Error(`Erro na API: ${response.status}`);
+        throw error;
       }
 
-      const data = await response.json();
       return formatResponse(data, fullUrl, input);
     } catch (error) {
       if (error instanceof Error) {
