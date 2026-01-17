@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Mapping of census data themes to SIDRA tables
 const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: string }>> = {
@@ -293,30 +294,28 @@ function buildSidraUrl(tabela: string, nivel: string, localidades: string, perio
 function formatCensoTable(data: Record<string, string>[]): string {
   if (data.length === 0) return "Nenhum dado encontrado.";
 
-  const headers = data[0];
-  const rows = data.slice(1);
-
-  const columns = Object.keys(headers);
-
-  let output = "| " + columns.map(col => headers[col] || col).join(" | ") + " |\n";
-  output += "|" + columns.map(() => "---").join("|") + "|\n";
+  const headerRow = data[0];
+  const dataRows = data.slice(1);
+  const columns = Object.keys(headerRow);
 
   // Limit to first 30 rows
-  const displayRows = rows.slice(0, 30);
+  const displayRows = dataRows.slice(0, 30);
 
-  for (const row of displayRows) {
-    const values = columns.map(col => {
+  const headers = columns.map((col) => headerRow[col] || col);
+  const rows = displayRows.map((row) =>
+    columns.map((col) => {
       const value = row[col];
       if (value && !isNaN(Number(value)) && value.length > 3) {
-        return Number(value).toLocaleString("pt-BR");
+        return formatNumber(Number(value));
       }
       return value || "-";
-    });
-    output += "| " + values.join(" | ") + " |\n";
-  }
+    })
+  );
 
-  if (rows.length > 30) {
-    output += `\n_Mostrando 30 de ${rows.length} registros._\n`;
+  let output = createMarkdownTable(headers, rows);
+
+  if (dataRows.length > 30) {
+    output += `\n_Mostrando 30 de ${dataRows.length} registros._\n`;
   }
 
   return output;
@@ -327,26 +326,31 @@ function listAvailableTables(ano?: string): string {
 
   if (ano && ano !== "todos") {
     output += `### Tabelas para o Censo ${ano}\n\n`;
-    output += "| Tema | Tabela | Descrição |\n";
-    output += "|:-----|-------:|:----------|\n";
 
+    const rows: string[][] = [];
     for (const [tema, tabelas] of Object.entries(CENSO_TABELAS)) {
       const tabelaInfo = tabelas[ano] ||
                          (["1970", "1980", "1991", "2000", "2010"].includes(ano) ? tabelas["1970-2010"] || tabelas["1991-2010"] : null);
       if (tabelaInfo) {
-        output += `| ${tema} | ${tabelaInfo.tabela} | ${tabelaInfo.descricao} |\n`;
+        rows.push([tema, tabelaInfo.tabela, tabelaInfo.descricao]);
       }
     }
+    output += createMarkdownTable(["Tema", "Tabela", "Descrição"], rows, {
+      alignment: ["left", "right", "left"],
+    });
   } else {
     // List all tables by theme
     for (const [tema, tabelas] of Object.entries(CENSO_TABELAS)) {
       output += `### ${tema.charAt(0).toUpperCase() + tema.slice(1).replace("_", " ")}\n\n`;
-      output += "| Anos | Tabela | Descrição |\n";
-      output += "|:-----|-------:|:----------|\n";
 
-      for (const [anos, info] of Object.entries(tabelas)) {
-        output += `| ${anos} | ${info.tabela} | ${info.descricao} |\n`;
-      }
+      const rows = Object.entries(tabelas).map(([anos, info]) => [
+        anos,
+        info.tabela,
+        info.descricao,
+      ]);
+      output += createMarkdownTable(["Anos", "Tabela", "Descrição"], rows, {
+        alignment: ["left", "right", "left"],
+      });
       output += "\n";
     }
   }

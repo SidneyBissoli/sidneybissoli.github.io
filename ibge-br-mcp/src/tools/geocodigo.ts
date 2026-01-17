@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API, Municipio, MunicipioSimples } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { createMarkdownTable } from "../utils/index.js";
 
 // Map of state codes to names
 const ESTADOS_MAP: Record<number, { sigla: string; nome: string; regiao: string }> = {
@@ -140,21 +141,26 @@ async function decodeMunicipio(codigo: string): Promise<string> {
     let output = `## Município: ${data.nome}\n\n`;
     output += `**Código IBGE:** ${data.id}\n\n`;
     output += `### Hierarquia Geográfica\n\n`;
-    output += `| Nível | Código | Nome |\n`;
-    output += `|:------|-------:|:-----|\n`;
-    output += `| Região | ${data.microrregiao.mesorregiao.UF.regiao.id} | ${data.microrregiao.mesorregiao.UF.regiao.nome} |\n`;
-    output += `| UF | ${data.microrregiao.mesorregiao.UF.id} | ${data.microrregiao.mesorregiao.UF.nome} (${data.microrregiao.mesorregiao.UF.sigla}) |\n`;
-    output += `| Mesorregião | ${data.microrregiao.mesorregiao.id} | ${data.microrregiao.mesorregiao.nome} |\n`;
-    output += `| Microrregião | ${data.microrregiao.id} | ${data.microrregiao.nome} |\n`;
+
+    const rows: string[][] = [
+      ["Região", String(data.microrregiao.mesorregiao.UF.regiao.id), data.microrregiao.mesorregiao.UF.regiao.nome],
+      ["UF", String(data.microrregiao.mesorregiao.UF.id), `${data.microrregiao.mesorregiao.UF.nome} (${data.microrregiao.mesorregiao.UF.sigla})`],
+      ["Mesorregião", String(data.microrregiao.mesorregiao.id), data.microrregiao.mesorregiao.nome],
+      ["Microrregião", String(data.microrregiao.id), data.microrregiao.nome],
+    ];
 
     if (data["regiao-imediata"]) {
-      output += `| Região Imediata | ${data["regiao-imediata"].id} | ${data["regiao-imediata"].nome} |\n`;
+      rows.push(["Região Imediata", String(data["regiao-imediata"].id), data["regiao-imediata"].nome]);
       if (data["regiao-imediata"]["regiao-intermediaria"]) {
-        output += `| Região Intermediária | ${data["regiao-imediata"]["regiao-intermediaria"].id} | ${data["regiao-imediata"]["regiao-intermediaria"].nome} |\n`;
+        rows.push(["Região Intermediária", String(data["regiao-imediata"]["regiao-intermediaria"].id), data["regiao-imediata"]["regiao-intermediaria"].nome]);
       }
     }
 
-    output += `| Município | ${data.id} | ${data.nome} |\n`;
+    rows.push(["Município", String(data.id), data.nome]);
+
+    output += createMarkdownTable(["Nível", "Código", "Nome"], rows, {
+      alignment: ["left", "right", "left"],
+    });
 
     output += `\n### Códigos relacionados\n\n`;
     output += `- **Código SIDRA (6 dígitos):** ${codigo.substring(0, 6)}\n`;
@@ -181,12 +187,15 @@ async function decodeDistrito(codigo: string): Promise<string> {
     let output = `## Distrito: ${data.nome}\n\n`;
     output += `**Código IBGE:** ${data.id}\n\n`;
     output += `### Hierarquia Geográfica\n\n`;
-    output += `| Nível | Código | Nome |\n`;
-    output += `|:------|-------:|:-----|\n`;
-    output += `| Região | ${data.municipio.microrregiao.mesorregiao.UF.regiao.id} | ${data.municipio.microrregiao.mesorregiao.UF.regiao.nome} |\n`;
-    output += `| UF | ${data.municipio.microrregiao.mesorregiao.UF.id} | ${data.municipio.microrregiao.mesorregiao.UF.nome} |\n`;
-    output += `| Município | ${data.municipio.id} | ${data.municipio.nome} |\n`;
-    output += `| Distrito | ${data.id} | ${data.nome} |\n`;
+
+    output += createMarkdownTable(["Nível", "Código", "Nome"], [
+      ["Região", String(data.municipio.microrregiao.mesorregiao.UF.regiao.id), data.municipio.microrregiao.mesorregiao.UF.regiao.nome],
+      ["UF", String(data.municipio.microrregiao.mesorregiao.UF.id), data.municipio.microrregiao.mesorregiao.UF.nome],
+      ["Município", String(data.municipio.id), data.municipio.nome],
+      ["Distrito", String(data.id), data.nome],
+    ], {
+      alignment: ["left", "right", "left"],
+    });
 
     return output;
   } catch {
@@ -255,12 +264,11 @@ async function searchByName(nome: string, uf?: string): Promise<string> {
   // Multiple matches - show list
   let output = `## Resultados para "${nome}"${uf ? ` em ${uf.toUpperCase()}` : ""}\n\n`;
   output += `Encontrados ${matches.length} municípios:\n\n`;
-  output += "| Código | Município |\n";
-  output += "|-------:|:----------|\n";
 
-  for (const mun of matches) {
-    output += `| ${mun.id} | ${mun.nome} |\n`;
-  }
+  const rows = matches.map((mun) => [String(mun.id), mun.nome]);
+  output += createMarkdownTable(["Código", "Município"], rows, {
+    alignment: ["right", "left"],
+  });
 
   output += `\nUse ibge_geocodigo(codigo="XXXXXXX") para ver detalhes de um município específico.`;
 
@@ -276,12 +284,15 @@ function formatRegiaoInfo(codigo: number, regiao: { sigla: string; nome: string 
   output += `**Código IBGE:** ${codigo}\n`;
   output += `**Sigla:** ${regiao.sigla}\n\n`;
   output += `### Estados da região\n\n`;
-  output += "| Código | Sigla | Nome |\n";
-  output += "|-------:|:-----:|:-----|\n";
 
-  for (const estado of estadosRegiao) {
-    output += `| ${estado.codigo} | ${estado.sigla} | ${estado.nome} |\n`;
-  }
+  const rows = estadosRegiao.map((estado) => [
+    String(estado.codigo),
+    estado.sigla,
+    estado.nome,
+  ]);
+  output += createMarkdownTable(["Código", "Sigla", "Nome"], rows, {
+    alignment: ["right", "center", "left"],
+  });
 
   return output;
 }
@@ -302,7 +313,7 @@ function formatEstadoInfo(codigo: number, estado: { sigla: string; nome: string;
 }
 
 function showGeocodigoHelp(): string {
-  return `## ibge_geocodigo - Decodificador de códigos IBGE
+  let output = `## ibge_geocodigo - Decodificador de códigos IBGE
 
 Esta ferramenta permite:
 1. **Decodificar** um código IBGE para obter informações da localidade
@@ -310,12 +321,16 @@ Esta ferramenta permite:
 
 ### Estrutura dos códigos IBGE
 
-| Dígitos | Nível | Exemplo | Descrição |
-|:-------:|:------|:--------|:----------|
-| 1 | Região | 3 | Sudeste |
-| 2 | UF | 35 | São Paulo |
-| 7 | Município | 3550308 | São Paulo (capital) |
-| 9 | Distrito | 355030805 | Sé (distrito de SP) |
+`;
+
+  output += createMarkdownTable(["Dígitos", "Nível", "Exemplo", "Descrição"], [
+    ["1", "Região", "3", "Sudeste"],
+    ["2", "UF", "35", "São Paulo"],
+    ["7", "Município", "3550308", "São Paulo (capital)"],
+    ["9", "Distrito", "355030805", "Sé (distrito de SP)"],
+  ], { alignment: ["center", "left", "left", "left"] });
+
+  output += `
 
 ### Exemplos de uso
 
@@ -338,13 +353,17 @@ ibge_geocodigo(nome="Sudeste")
 
 ### Regiões do Brasil
 
-| Código | Sigla | Nome |
-|:------:|:-----:|:-----|
-| 1 | N | Norte |
-| 2 | NE | Nordeste |
-| 3 | SE | Sudeste |
-| 4 | S | Sul |
-| 5 | CO | Centro-Oeste |`;
+`;
+
+  output += createMarkdownTable(["Código", "Sigla", "Nome"], [
+    ["1", "N", "Norte"],
+    ["2", "NE", "Nordeste"],
+    ["3", "SE", "Sudeste"],
+    ["4", "S", "Sul"],
+    ["5", "CO", "Centro-Oeste"],
+  ], { alignment: ["center", "center", "left"] });
+
+  return output;
 }
 
 function formatGeocodigoError(message: string, input: GeocodigoInput): string {

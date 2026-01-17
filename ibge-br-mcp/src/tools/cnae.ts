@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, truncate } from "../utils/index.js";
 
 // Types for CNAE data
 interface CnaeSecao {
@@ -173,15 +174,13 @@ async function searchCnae(termo: string, nivel?: string, limite: number = 20): P
   let output = `## Busca CNAE: "${termo}"\n\n`;
   output += `Encontrados ${filtered.length} resultados (nível: ${searchLevel}):\n\n`;
 
-  output += "| Código | Descrição |\n";
-  output += "|:-------|:----------|\n";
-
-  for (const item of filtered) {
-    const descricao = item.descricao.length > 80
-      ? item.descricao.substring(0, 77) + "..."
-      : item.descricao;
-    output += `| ${(item as { id: string }).id} | ${descricao} |\n`;
-  }
+  const rows = filtered.map((item) => [
+    (item as { id: string }).id,
+    truncate(item.descricao, 80),
+  ]);
+  output += createMarkdownTable(["Código", "Descrição"], rows, {
+    alignment: ["left", "left"],
+  });
 
   if (filtered.length === limite) {
     output += `\n_Mostrando primeiros ${limite} resultados. Use limite maior para ver mais._\n`;
@@ -211,16 +210,11 @@ async function listCnaeByLevel(nivel: string, limite: number): Promise<string> {
   let output = `## CNAE - ${nivelNames[nivel]}\n\n`;
   output += `Total: ${data.length} registros\n\n`;
 
-  output += "| Código | Descrição |\n";
-  output += "|:-------|:----------|\n";
-
   const display = data.slice(0, limite);
-  for (const item of display) {
-    const descricao = item.descricao.length > 80
-      ? item.descricao.substring(0, 77) + "..."
-      : item.descricao;
-    output += `| ${item.id} | ${descricao} |\n`;
-  }
+  const rows = display.map((item) => [item.id, truncate(item.descricao, 80)]);
+  output += createMarkdownTable(["Código", "Descrição"], rows, {
+    alignment: ["left", "left"],
+  });
 
   if (data.length > limite) {
     output += `\n_Mostrando ${limite} de ${data.length} registros._\n`;

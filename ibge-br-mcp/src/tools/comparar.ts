@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Pre-defined comparison templates
 const TEMPLATES_COMPARACAO: Record<string, {
@@ -222,14 +223,14 @@ function formatCompararResponse(
   output += `**Tabela SIDRA:** ${template.tabela}\n\n`;
 
   // Extract header and data rows
-  const headers = data[0];
-  const rows = data.slice(1);
+  const headerRow = data[0];
+  const dataRows = data.slice(1);
 
   if (formato === "json") {
-    const jsonData = rows.map(row => {
+    const jsonData = dataRows.map(row => {
       const result: Record<string, string | number> = {};
       for (const [key, value] of Object.entries(row)) {
-        const headerName = headers[key] || key;
+        const headerName = headerRow[key] || key;
         if (headerName.includes("Código")) continue;
         result[headerName] = value;
       }
@@ -241,8 +242,8 @@ function formatCompararResponse(
   // Find value column and locality column
   let valueCol = "";
   let localCol = "";
-  for (const key of Object.keys(headers)) {
-    const header = headers[key].toLowerCase();
+  for (const key of Object.keys(headerRow)) {
+    const header = headerRow[key].toLowerCase();
     if (header.includes("valor") || header.includes("população") || header.includes("área") ||
         header.includes("pib") || header.includes("taxa") || header.includes("domicílio")) {
       valueCol = key;
@@ -262,11 +263,11 @@ function formatCompararResponse(
 
   const comparisonData: ComparisonRow[] = [];
 
-  for (const row of rows) {
+  for (const row of dataRows) {
     // Find the locality code in the row
     let codigo = "";
     for (const [key, value] of Object.entries(row)) {
-      if (headers[key]?.toLowerCase().includes("código") && value.length >= 2) {
+      if (headerRow[key]?.toLowerCase().includes("código") && value.length >= 2) {
         codigo = value;
         break;
       }
@@ -289,17 +290,16 @@ function formatCompararResponse(
   }
 
   // Build table
-  output += "| # | Localidade | Valor |\n";
-  output += "|--:|:-----------|------:|\n";
-
-  let rank = 1;
-  for (const item of comparisonData) {
+  const rows = comparisonData.map((item, index) => {
     const valorFormatado = item.valor > 0
-      ? item.valor.toLocaleString("pt-BR")
+      ? formatNumber(item.valor)
       : item.valorStr;
-    output += `| ${rank} | ${item.nome} | ${valorFormatado} |\n`;
-    rank++;
-  }
+    return [String(index + 1), item.nome, valorFormatado];
+  });
+
+  output += createMarkdownTable(["#", "Localidade", "Valor"], rows, {
+    alignment: ["right", "left", "right"],
+  });
 
   // Add statistics
   if (comparisonData.length >= 2 && comparisonData[0].valor > 0) {
@@ -309,9 +309,9 @@ function formatCompararResponse(
     const avg = valores.reduce((a, b) => a + b, 0) / valores.length;
 
     output += "\n### Estatísticas\n\n";
-    output += `- **Maior:** ${max.toLocaleString("pt-BR")}\n`;
-    output += `- **Menor:** ${min.toLocaleString("pt-BR")}\n`;
-    output += `- **Média:** ${avg.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}\n`;
+    output += `- **Maior:** ${formatNumber(max)}\n`;
+    output += `- **Menor:** ${formatNumber(min)}\n`;
+    output += `- **Média:** ${formatNumber(avg, { maximumFractionDigits: 2 })}\n`;
     output += `- **Variação:** ${((max / min - 1) * 100).toFixed(1)}%\n`;
   }
 
@@ -321,12 +321,14 @@ function formatCompararResponse(
 function listIndicadoresComparacao(): string {
   let output = "## Indicadores Disponíveis para Comparação\n\n";
 
-  output += "| Indicador | Nome | Descrição |\n";
-  output += "|:----------|:-----|:----------|\n";
-
-  for (const [key, info] of Object.entries(TEMPLATES_COMPARACAO)) {
-    output += `| ${key} | ${info.nome} | ${info.descricao} |\n`;
-  }
+  const indicadoresRows = Object.entries(TEMPLATES_COMPARACAO).map(([key, info]) => [
+    key,
+    info.nome,
+    info.descricao,
+  ]);
+  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], indicadoresRows, {
+    alignment: ["left", "left", "left"],
+  });
 
   output += "\n### Exemplos de uso\n\n";
   output += "```\n";
@@ -339,13 +341,15 @@ function listIndicadoresComparacao(): string {
   output += "```\n\n";
 
   output += "### Códigos de exemplo\n\n";
-  output += "| Município | Código |\n";
-  output += "|:----------|-------:|\n";
-  output += "| São Paulo - SP | 3550308 |\n";
-  output += "| Rio de Janeiro - RJ | 3304557 |\n";
-  output += "| Curitiba - PR | 4106902 |\n";
-  output += "| Belo Horizonte - MG | 3106200 |\n";
-  output += "| Brasília - DF | 5300108 |\n";
+  output += createMarkdownTable(["Município", "Código"], [
+    ["São Paulo - SP", "3550308"],
+    ["Rio de Janeiro - RJ", "3304557"],
+    ["Curitiba - PR", "4106902"],
+    ["Belo Horizonte - MG", "3106200"],
+    ["Brasília - DF", "5300108"],
+  ], {
+    alignment: ["left", "right"],
+  });
 
   return output;
 }

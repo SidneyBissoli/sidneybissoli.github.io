@@ -2,6 +2,7 @@ import { z } from "zod";
 import { BCB_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, createKeyValueTable, formatNumber } from "../utils/index.js";
 
 // Known series codes
 const SERIES_CONHECIDAS: Record<string, { codigo: number; nome: string; descricao: string; unidade: string }> = {
@@ -212,34 +213,36 @@ interface BcbSgsData {
 function listIndicators(): string {
   let output = "## Indicadores do Banco Central do Brasil (BCB)\n\n";
 
+  const headers = ["Indicador", "Código", "Descrição"];
+
   output += "### Taxas de Juros\n\n";
-  output += "| Indicador | Código | Descrição |\n";
-  output += "|:----------|:------:|:----------|\n";
-  output += `| \`selic\` | 432 | ${SERIES_CONHECIDAS.selic.descricao} |\n`;
-  output += `| \`cdi\` | 12 | ${SERIES_CONHECIDAS.cdi.descricao} |\n`;
-  output += `| \`tr\` | 226 | ${SERIES_CONHECIDAS.tr.descricao} |\n`;
+  output += createMarkdownTable(headers, [
+    ["`selic`", "432", SERIES_CONHECIDAS.selic.descricao],
+    ["`cdi`", "12", SERIES_CONHECIDAS.cdi.descricao],
+    ["`tr`", "226", SERIES_CONHECIDAS.tr.descricao],
+  ], { alignment: ["left", "center", "left"] });
 
   output += "\n### Inflação\n\n";
-  output += "| Indicador | Código | Descrição |\n";
-  output += "|:----------|:------:|:----------|\n";
-  output += `| \`ipca\` | 433 | ${SERIES_CONHECIDAS.ipca.descricao} |\n`;
-  output += `| \`ipca_acum\` | 13522 | ${SERIES_CONHECIDAS.ipca_acum.descricao} |\n`;
-  output += `| \`igpm\` | 189 | ${SERIES_CONHECIDAS.igpm.descricao} |\n`;
-  output += `| \`inpc\` | 188 | ${SERIES_CONHECIDAS.inpc.descricao} |\n`;
+  output += createMarkdownTable(headers, [
+    ["`ipca`", "433", SERIES_CONHECIDAS.ipca.descricao],
+    ["`ipca_acum`", "13522", SERIES_CONHECIDAS.ipca_acum.descricao],
+    ["`igpm`", "189", SERIES_CONHECIDAS.igpm.descricao],
+    ["`inpc`", "188", SERIES_CONHECIDAS.inpc.descricao],
+  ], { alignment: ["left", "center", "left"] });
 
   output += "\n### Câmbio\n\n";
-  output += "| Indicador | Código | Descrição |\n";
-  output += "|:----------|:------:|:----------|\n";
-  output += `| \`dolar_compra\` | 1 | ${SERIES_CONHECIDAS.dolar_compra.descricao} |\n`;
-  output += `| \`dolar_venda\` | 10813 | ${SERIES_CONHECIDAS.dolar_venda.descricao} |\n`;
-  output += `| \`euro\` | 21619 | ${SERIES_CONHECIDAS.euro.descricao} |\n`;
+  output += createMarkdownTable(headers, [
+    ["`dolar_compra`", "1", SERIES_CONHECIDAS.dolar_compra.descricao],
+    ["`dolar_venda`", "10813", SERIES_CONHECIDAS.dolar_venda.descricao],
+    ["`euro`", "21619", SERIES_CONHECIDAS.euro.descricao],
+  ], { alignment: ["left", "center", "left"] });
 
   output += "\n### Indicadores Macroeconômicos\n\n";
-  output += "| Indicador | Código | Descrição |\n";
-  output += "|:----------|:------:|:----------|\n";
-  output += `| \`desemprego\` | 24369 | ${SERIES_CONHECIDAS.desemprego.descricao} |\n`;
-  output += `| \`divida_pib\` | 13762 | ${SERIES_CONHECIDAS.divida_pib.descricao} |\n`;
-  output += `| \`reservas\` | 3546 | ${SERIES_CONHECIDAS.reservas.descricao} |\n`;
+  output += createMarkdownTable(headers, [
+    ["`desemprego`", "24369", SERIES_CONHECIDAS.desemprego.descricao],
+    ["`divida_pib`", "13762", SERIES_CONHECIDAS.divida_pib.descricao],
+    ["`reservas`", "3546", SERIES_CONHECIDAS.reservas.descricao],
+  ], { alignment: ["left", "center", "left"] });
 
   output += "\n### Exemplos de Uso\n\n";
   output += "```\n";
@@ -279,15 +282,15 @@ function formatResponse(
     const media = valores.reduce((a, b) => a + b, 0) / valores.length;
 
     output += "### Resumo\n\n";
-    output += "| Estatística | Valor |\n";
-    output += "|:------------|------:|\n";
-    output += `| **Último valor** | ${formatNumber(ultimo)} ${unidade} |\n`;
-    output += `| **Primeiro valor** | ${formatNumber(primeiro)} ${unidade} |\n`;
-    output += `| **Máximo** | ${formatNumber(maximo)} ${unidade} |\n`;
-    output += `| **Mínimo** | ${formatNumber(minimo)} ${unidade} |\n`;
-    output += `| **Média** | ${formatNumber(media)} ${unidade} |\n`;
-    output += `| **Período** | ${data[0].data} a ${data[data.length - 1].data} |\n`;
-    output += `| **Registros** | ${data.length} |\n`;
+    output += createKeyValueTable({
+      "**Último valor**": `${formatNumber(ultimo, { maximumFractionDigits: 4 })} ${unidade}`,
+      "**Primeiro valor**": `${formatNumber(primeiro, { maximumFractionDigits: 4 })} ${unidade}`,
+      "**Máximo**": `${formatNumber(maximo, { maximumFractionDigits: 4 })} ${unidade}`,
+      "**Mínimo**": `${formatNumber(minimo, { maximumFractionDigits: 4 })} ${unidade}`,
+      "**Média**": `${formatNumber(media, { maximumFractionDigits: 4 })} ${unidade}`,
+      "**Período**": `${data[0].data} a ${data[data.length - 1].data}`,
+      "**Registros**": data.length,
+    }, { keyHeader: "Estatística", valueHeader: "Valor" });
     output += "\n";
   }
 
@@ -299,35 +302,28 @@ function formatResponse(
   } else {
     // Table format
     output += "### Dados\n\n";
-    output += `| Data | Valor ${unidade ? `(${unidade})` : ""} |\n`;
-    output += "|:-----|------:|\n";
 
     // Show last 30 or all if less
     const displayData = data.slice(-30);
+    const rows: (string | number)[][] = [];
+
     if (data.length > 30) {
-      output += `| ... | _${data.length - 30} registros anteriores_ |\n`;
+      rows.push(["...", `_${data.length - 30} registros anteriores_`]);
     }
 
     for (const d of displayData) {
       const valor = parseFloat(d.valor.replace(",", "."));
-      output += `| ${d.data} | ${formatNumber(valor)} |\n`;
+      rows.push([d.data, formatNumber(valor, { maximumFractionDigits: 4 })]);
     }
+
+    output += createMarkdownTable(
+      ["Data", `Valor ${unidade ? `(${unidade})` : ""}`],
+      rows,
+      { alignment: ["left", "right"] }
+    );
   }
 
   return output;
-}
-
-function formatNumber(value: number): string {
-  if (isNaN(value)) return "-";
-
-  // Format based on magnitude
-  if (Math.abs(value) >= 1000000) {
-    return (value / 1000000).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " mi";
-  } else if (Math.abs(value) >= 1000) {
-    return value.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
-  } else {
-    return value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
-  }
 }
 
 // Tool definition

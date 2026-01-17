@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API, type PopulacaoEstimativa } from "../types.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Schema for the tool input
 export const populacaoSchema = z.object({
@@ -35,11 +36,11 @@ export async function ibgePopulacao(input: PopulacaoInput): Promise<string> {
     output += `**${formatNumber(data.projecao.populacao)}** habitantes\n\n`;
 
     output += "### Indicadores (Período Médio)\n\n";
-    output += "| Indicador | Valor |\n";
-    output += "|:----------|------:|\n";
-    output += `| Incremento populacional | ${formatNumber(data.projecao.periodoMedio.incrementoPopulacional)} por dia |\n`;
-    output += `| Nascimentos | 1 a cada ${formatSeconds(data.projecao.periodoMedio.nascimento)} |\n`;
-    output += `| Óbitos | 1 a cada ${formatSeconds(data.projecao.periodoMedio.obito)} |\n`;
+    output += createMarkdownTable(["Indicador", "Valor"], [
+      ["Incremento populacional", `${formatNumber(data.projecao.periodoMedio.incrementoPopulacional)} por dia`],
+      ["Nascimentos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.nascimento)}`],
+      ["Óbitos", `1 a cada ${formatSeconds(data.projecao.periodoMedio.obito)}`],
+    ], { alignment: ["left", "right"] });
 
     output += "\n### Notas\n\n";
     output += "- Os dados são projeções em tempo real baseadas em modelos estatísticos do IBGE\n";
@@ -83,10 +84,6 @@ export async function ibgePopulacaoSidra(
     }
     return "Erro desconhecido ao buscar dados do SIDRA.";
   }
-}
-
-function formatNumber(num: number): string {
-  return num.toLocaleString("pt-BR");
 }
 
 function formatSeconds(seconds: number): string {

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, truncate } from "../utils/index.js";
 
 // Types for calendar data
 interface CalendarioItem {
@@ -140,17 +141,19 @@ function formatCalendarioResponse(data: CalendarioResponse, input: CalendarioInp
   for (const [monthKey, items] of Object.entries(byMonth).sort()) {
     const [year, month] = monthKey.split("-");
     output += `### ${monthNames[month]} ${year}\n\n`;
-    output += "| Data | Produto | Título | Tipo |\n";
-    output += "|:-----|:--------|:-------|:-----|\n";
 
-    for (const item of items) {
+    const rows = items.map((item) => {
       const startDate = new Date(item.data_inicio);
       const dateStr = `${String(startDate.getDate()).padStart(2, "0")}/${String(startDate.getMonth() + 1).padStart(2, "0")}`;
-      const titulo = item.titulo.length > 40 ? item.titulo.substring(0, 37) + "..." : item.titulo;
+      const titulo = truncate(item.titulo, 40);
       const produto = item.produto || "-";
       const tipo = item.tipo === "Divulgação" ? "📊" : "📋";
-      output += `| ${dateStr} | ${produto} | ${titulo} | ${tipo} |\n`;
-    }
+      return [dateStr, produto, titulo, tipo];
+    });
+
+    output += createMarkdownTable(["Data", "Produto", "Título", "Tipo"], rows, {
+      alignment: ["left", "left", "left", "left"],
+    });
     output += "\n";
   }
 

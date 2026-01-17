@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Health indicators available via IBGE SIDRA
 const INDICADORES_SAUDE: Record<string, {
@@ -189,38 +190,38 @@ function listHealthIndicators(): string {
   let output = "## Indicadores de Saúde Disponíveis\n\n";
 
   output += "### Mortalidade e Natalidade\n\n";
-  output += "| Indicador | Nome | Descrição |\n";
-  output += "|:----------|:-----|:----------|\n";
-  output += `| \`mortalidade_infantil\` | ${INDICADORES_SAUDE.mortalidade_infantil.nome} | ${INDICADORES_SAUDE.mortalidade_infantil.descricao} |\n`;
-  output += `| \`nascidos_vivos\` | ${INDICADORES_SAUDE.nascidos_vivos.nome} | ${INDICADORES_SAUDE.nascidos_vivos.descricao} |\n`;
-  output += `| \`obitos\` | ${INDICADORES_SAUDE.obitos.nome} | ${INDICADORES_SAUDE.obitos.descricao} |\n`;
-  output += `| \`obitos_causas\` | ${INDICADORES_SAUDE.obitos_causas.nome} | ${INDICADORES_SAUDE.obitos_causas.descricao} |\n`;
+  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
+    ["`mortalidade_infantil`", INDICADORES_SAUDE.mortalidade_infantil.nome, INDICADORES_SAUDE.mortalidade_infantil.descricao],
+    ["`nascidos_vivos`", INDICADORES_SAUDE.nascidos_vivos.nome, INDICADORES_SAUDE.nascidos_vivos.descricao],
+    ["`obitos`", INDICADORES_SAUDE.obitos.nome, INDICADORES_SAUDE.obitos.descricao],
+    ["`obitos_causas`", INDICADORES_SAUDE.obitos_causas.nome, INDICADORES_SAUDE.obitos_causas.descricao],
+  ], { alignment: ["left", "left", "left"] });
 
   output += "\n### Indicadores Demográficos\n\n";
-  output += "| Indicador | Nome | Descrição |\n";
-  output += "|:----------|:-----|:----------|\n";
-  output += `| \`esperanca_vida\` | ${INDICADORES_SAUDE.esperanca_vida.nome} | ${INDICADORES_SAUDE.esperanca_vida.descricao} |\n`;
-  output += `| \`fecundidade\` | ${INDICADORES_SAUDE.fecundidade.nome} | ${INDICADORES_SAUDE.fecundidade.descricao} |\n`;
+  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
+    ["`esperanca_vida`", INDICADORES_SAUDE.esperanca_vida.nome, INDICADORES_SAUDE.esperanca_vida.descricao],
+    ["`fecundidade`", INDICADORES_SAUDE.fecundidade.nome, INDICADORES_SAUDE.fecundidade.descricao],
+  ], { alignment: ["left", "left", "left"] });
 
   output += "\n### Saneamento\n\n";
-  output += "| Indicador | Nome | Descrição |\n";
-  output += "|:----------|:-----|:----------|\n";
-  output += `| \`saneamento_agua\` | ${INDICADORES_SAUDE.saneamento_agua.nome} | ${INDICADORES_SAUDE.saneamento_agua.descricao} |\n`;
-  output += `| \`saneamento_esgoto\` | ${INDICADORES_SAUDE.saneamento_esgoto.nome} | ${INDICADORES_SAUDE.saneamento_esgoto.descricao} |\n`;
+  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
+    ["`saneamento_agua`", INDICADORES_SAUDE.saneamento_agua.nome, INDICADORES_SAUDE.saneamento_agua.descricao],
+    ["`saneamento_esgoto`", INDICADORES_SAUDE.saneamento_esgoto.nome, INDICADORES_SAUDE.saneamento_esgoto.descricao],
+  ], { alignment: ["left", "left", "left"] });
 
   output += "\n### Cobertura de Saúde\n\n";
-  output += "| Indicador | Nome | Descrição |\n";
-  output += "|:----------|:-----|:----------|\n";
-  output += `| \`plano_saude\` | ${INDICADORES_SAUDE.plano_saude.nome} | ${INDICADORES_SAUDE.plano_saude.descricao} |\n`;
-  output += `| \`autoavaliacao_saude\` | ${INDICADORES_SAUDE.autoavaliacao_saude.nome} | ${INDICADORES_SAUDE.autoavaliacao_saude.descricao} |\n`;
+  output += createMarkdownTable(["Indicador", "Nome", "Descrição"], [
+    ["`plano_saude`", INDICADORES_SAUDE.plano_saude.nome, INDICADORES_SAUDE.plano_saude.descricao],
+    ["`autoavaliacao_saude`", INDICADORES_SAUDE.autoavaliacao_saude.nome, INDICADORES_SAUDE.autoavaliacao_saude.descricao],
+  ], { alignment: ["left", "left", "left"] });
 
   output += "\n### Níveis Territoriais\n\n";
-  output += "| Código | Descrição |\n";
-  output += "|:------:|:----------|\n";
-  output += "| 1 | Brasil |\n";
-  output += "| 2 | Grande Região |\n";
-  output += "| 3 | Unidade da Federação |\n";
-  output += "| 6 | Município |\n";
+  output += createMarkdownTable(["Código", "Descrição"], [
+    ["1", "Brasil"],
+    ["2", "Grande Região"],
+    ["3", "Unidade da Federação"],
+    ["6", "Município"],
+  ], { alignment: ["center", "left"] });
 
   output += "\n### Exemplos de Uso\n\n";
   output += "```\n";
@@ -251,12 +252,12 @@ function formatResponse(
   }
 
   // Get headers from first row
-  const headers = data[0];
-  const rows = data.slice(1);
+  const headerRow = data[0];
+  const dataRows = data.slice(1);
 
   if (input.formato === "json") {
     output += "### Dados\n\n```json\n";
-    output += JSON.stringify(rows, null, 2);
+    output += JSON.stringify(dataRows, null, 2);
     output += "\n```\n";
     return output;
   }
@@ -264,29 +265,27 @@ function formatResponse(
   // Table format
   output += "### Dados\n\n";
 
-  const columns = Object.keys(headers);
-
-  // Build table header
-  output += "| " + columns.map((col) => headers[col] || col).join(" | ") + " |\n";
-  output += "|" + columns.map(() => "---").join("|") + "|\n";
+  const columns = Object.keys(headerRow);
+  const headers = columns.map((col) => headerRow[col] || col);
 
   // Build table rows (limit to 30)
-  const displayRows = rows.slice(0, 30);
+  const displayRows = dataRows.slice(0, 30);
 
-  for (const row of displayRows) {
-    const values = columns.map((col) => {
+  const rows = displayRows.map((row) =>
+    columns.map((col) => {
       const value = row[col];
       // Format numbers
       if (value && !isNaN(Number(value)) && value.length > 3) {
-        return Number(value).toLocaleString("pt-BR");
+        return formatNumber(Number(value));
       }
       return value || "-";
-    });
-    output += "| " + values.join(" | ") + " |\n";
-  }
+    })
+  );
 
-  if (rows.length > 30) {
-    output += `\n_Mostrando 30 de ${rows.length} registros._\n`;
+  output += createMarkdownTable(headers, rows);
+
+  if (dataRows.length > 30) {
+    output += `\n_Mostrando 30 de ${dataRows.length} registros._\n`;
   }
 
   return output;

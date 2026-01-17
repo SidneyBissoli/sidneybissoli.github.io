@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Common indicators with their SIDRA tables
 const INDICADORES_CONHECIDOS: Record<string, {
@@ -306,12 +307,16 @@ function listIndicadores(categoria?: string): string {
     if (indicadoresCategoria.length === 0) continue;
 
     output += `### ${catNome}\n\n`;
-    output += "| Código | Nome | Periodicidade | Tabela SIDRA |\n";
-    output += "|:-------|:-----|:--------------|-------------:|\n";
 
-    for (const [codigo, info] of indicadoresCategoria) {
-      output += `| ${codigo} | ${info.nome} | ${info.periodicidade} | ${info.tabela} |\n`;
-    }
+    const rows = indicadoresCategoria.map(([codigo, info]) => [
+      codigo,
+      info.nome,
+      info.periodicidade,
+      info.tabela,
+    ]);
+    output += createMarkdownTable(["Código", "Nome", "Periodicidade", "Tabela SIDRA"], rows, {
+      alignment: ["left", "left", "left", "right"],
+    });
     output += "\n";
   }
 
@@ -334,29 +339,27 @@ function listIndicadores(categoria?: string): string {
 function formatIndicadorTable(data: Record<string, string>[]): string {
   if (data.length === 0) return "Nenhum dado encontrado.";
 
-  const headers = data[0];
-  const rows = data.slice(1);
+  const headerRow = data[0];
+  const dataRows = data.slice(1);
+  const columns = Object.keys(headerRow);
 
-  const columns = Object.keys(headers);
+  const displayRows = dataRows.slice(0, 30);
 
-  let output = "| " + columns.map(col => headers[col] || col).join(" | ") + " |\n";
-  output += "|" + columns.map(() => "---").join("|") + "|\n";
-
-  const displayRows = rows.slice(0, 30);
-
-  for (const row of displayRows) {
-    const values = columns.map(col => {
+  const headers = columns.map((col) => headerRow[col] || col);
+  const rows = displayRows.map((row) =>
+    columns.map((col) => {
       const value = row[col];
       if (value && !isNaN(Number(value)) && value.length > 3) {
-        return Number(value).toLocaleString("pt-BR");
+        return formatNumber(Number(value));
       }
       return value || "-";
-    });
-    output += "| " + values.join(" | ") + " |\n";
-  }
+    })
+  );
 
-  if (rows.length > 30) {
-    output += `\n_Mostrando 30 de ${rows.length} registros._\n`;
+  let output = createMarkdownTable(headers, rows);
+
+  if (dataRows.length > 30) {
+    output += `\n_Mostrando 30 de ${dataRows.length} registros._\n`;
   }
 
   return output;

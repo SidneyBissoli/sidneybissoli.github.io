@@ -2,6 +2,7 @@ import { z } from "zod";
 import { IBGE_API, type NomeFrequencia, type NomeRanking } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
+import { createMarkdownTable, formatNumber } from "../utils/index.js";
 
 // Schema for frequency search
 export const nomesFrequenciaSchema = z.object({
@@ -149,16 +150,16 @@ function formatFrequenciaResponse(data: NomeFrequencia[]): string {
       output += `**Localidade:** ${nome.localidade}\n`;
     }
 
-    output += "\n| Período | Frequência |\n";
-    output += "|:--------|----------:|\n";
-
     let total = 0;
-    for (const periodo of nome.res) {
+    const rows = nome.res.map((periodo) => {
       total += periodo.frequencia;
-      output += `| ${periodo.periodo} | ${formatNumber(periodo.frequencia)} |\n`;
-    }
+      return [periodo.periodo, formatNumber(periodo.frequencia)];
+    });
+    rows.push(["**Total**", `**${formatNumber(total)}**`]);
 
-    output += `| **Total** | **${formatNumber(total)}** |\n\n`;
+    output += "\n" + createMarkdownTable(["Período", "Frequência"], rows, {
+      alignment: ["left", "right"],
+    }) + "\n";
   }
 
   output += "\n**Fonte:** IBGE - Censo Demográfico\n";
@@ -186,23 +187,22 @@ function formatRankingResponse(data: NomeRanking[], input: NomesRankingInput): s
     output += `**Localidade:** ${ranking.localidade}\n`;
   }
 
-  output += "\n| Posição | Nome | Frequência |\n";
-  output += "|--------:|:-----|----------:|\n";
-
   const limit = input.limite || 20;
   const items = ranking.res.slice(0, limit);
 
-  for (const item of items) {
-    output += `| ${item.ranking}º | ${item.nome} | ${formatNumber(item.frequencia)} |\n`;
-  }
+  const rows = items.map((item) => [
+    `${item.ranking}º`,
+    item.nome,
+    formatNumber(item.frequencia),
+  ]);
+
+  output += "\n" + createMarkdownTable(["Posição", "Nome", "Frequência"], rows, {
+    alignment: ["right", "left", "right"],
+  });
 
   output += "\n**Fonte:** IBGE - Censo Demográfico\n";
 
   return output;
-}
-
-function formatNumber(num: number): string {
-  return num.toLocaleString("pt-BR");
 }
 
 // Combined schema for the main tool
