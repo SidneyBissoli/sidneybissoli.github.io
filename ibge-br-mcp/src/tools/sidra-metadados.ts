@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const sidraMetadadosSchema = z.object({
@@ -71,28 +72,27 @@ interface Periodo {
  */
 export async function ibgeSidraMetadados(input: SidraMetadadosInput): Promise<string> {
   try {
-    // Fetch main metadata
+    // Fetch main metadata with cache (24 hours TTL - static data)
     const metadadosUrl = `${IBGE_API.AGREGADOS}/${input.tabela}/metadados`;
-    const metadadosResponse = await fetch(metadadosUrl);
+    const metadadosKey = cacheKey(metadadosUrl);
+    let metadados: Metadados;
 
-    if (!metadadosResponse.ok) {
-      if (metadadosResponse.status === 404) {
+    try {
+      metadados = await cachedFetch<Metadados>(metadadosUrl, metadadosKey, CACHE_TTL.STATIC);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
         return `Tabela ${input.tabela} não encontrada. Use ibge_sidra_tabelas para listar tabelas disponíveis.`;
       }
-      throw new Error(`Erro na API do IBGE: ${metadadosResponse.status} ${metadadosResponse.statusText}`);
+      throw error;
     }
 
-    const metadados: Metadados = await metadadosResponse.json();
-
-    // Fetch periods if requested
+    // Fetch periods if requested with cache
     let periodos: Periodo[] = [];
     if (input.incluir_periodos) {
       try {
         const periodosUrl = `${IBGE_API.AGREGADOS}/${input.tabela}/periodos`;
-        const periodosResponse = await fetch(periodosUrl);
-        if (periodosResponse.ok) {
-          periodos = await periodosResponse.json();
-        }
+        const periodosKey = cacheKey(periodosUrl);
+        periodos = await cachedFetch<Periodo[]>(periodosUrl, periodosKey, CACHE_TTL.STATIC);
       } catch {
         // Ignore period fetch errors
       }

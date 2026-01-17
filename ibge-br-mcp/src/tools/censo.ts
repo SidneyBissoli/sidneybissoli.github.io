@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Mapping of census data themes to SIDRA tables
 const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: string }>> = {
@@ -236,18 +237,20 @@ export async function ibgeCenso(input: CensoInput): Promise<string> {
   try {
     const url = buildSidraUrl(tabelaInfo.tabela, input.nivel_territorial!, input.localidades!, periodos);
 
-    const response = await fetch(url);
+    // Use cache for census data (1 hour TTL - data doesn't change often but queries vary)
+    const key = cacheKey(url);
+    let data: Record<string, string>[];
 
-    if (!response.ok) {
-      if (response.status === 400) {
+    try {
+      data = await cachedFetch<Record<string, string>[]>(url, key, CACHE_TTL.MEDIUM);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("400")) {
         return `Erro na consulta: Parâmetros inválidos para a tabela ${tabelaInfo.tabela}.\n` +
                `Descrição: ${tabelaInfo.descricao}\n\n` +
                `Use ibge_sidra_metadados(tabela="${tabelaInfo.tabela}") para ver a estrutura da tabela.`;
       }
-      throw new Error(`Erro na API SIDRA: ${response.status}`);
+      throw error;
     }
-
-    const data = await response.json();
 
     if (!data || data.length === 0) {
       return "Nenhum dado encontrado para os parâmetros informados.";

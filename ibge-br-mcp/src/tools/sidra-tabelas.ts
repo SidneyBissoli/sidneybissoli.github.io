@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const sidraTabelasSchema = z.object({
@@ -40,13 +41,9 @@ export async function ibgeSidraTabelas(input: SidraTabelasInput): Promise<string
   try {
     const url = IBGE_API.AGREGADOS;
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
-    }
-
-    const data: PesquisaComAgregados[] = await response.json();
+    // Use cache for SIDRA tables (24 hours TTL - static data)
+    const key = cacheKey(url);
+    const data = await cachedFetch<PesquisaComAgregados[]>(url, key, CACHE_TTL.STATIC);
 
     // Filter by pesquisa if specified
     let filteredData = data;

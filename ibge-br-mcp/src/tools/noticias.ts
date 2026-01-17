@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API, type NoticiasResponse, type Noticia } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const noticiasSchema = z.object({
@@ -68,13 +69,9 @@ export async function ibgeNoticias(input: NoticiasInput): Promise<string> {
 
     const url = `${IBGE_API.NOTICIAS}?${params.toString()}`;
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
-    }
-
-    const data: NoticiasResponse = await response.json();
+    // Use cache for news data (5 minutes TTL - news updates frequently)
+    const key = cacheKey(url);
+    const data = await cachedFetch<NoticiasResponse>(url, key, CACHE_TTL.SHORT);
 
     if (!data.items || data.items.length === 0) {
       return input.busca

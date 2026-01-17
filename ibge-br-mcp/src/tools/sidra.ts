@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const sidraSchema = z.object({
@@ -80,16 +81,18 @@ export async function ibgeSidra(input: SidraInput): Promise<string> {
 
     const url = `${IBGE_API.SIDRA}${path}`;
 
-    const response = await fetch(url);
+    // Use cache for SIDRA data (5 minutes TTL - data updates frequently)
+    const key = cacheKey(url);
+    let data: SidraRecord[];
 
-    if (!response.ok) {
-      if (response.status === 400) {
+    try {
+      data = await cachedFetch<SidraRecord[]>(url, key, CACHE_TTL.SHORT);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("400")) {
         return `Erro na consulta SIDRA: Parâmetros inválidos. Verifique se a tabela ${input.tabela} existe e se os parâmetros estão corretos.`;
       }
-      throw new Error(`Erro na API SIDRA: ${response.status} ${response.statusText}`);
+      throw error;
     }
-
-    const data = await response.json();
 
     if (!data || data.length === 0) {
       return "Nenhum dado encontrado para os parâmetros informados.";
@@ -169,13 +172,10 @@ export async function listSidraTables(pesquisaId?: string): Promise<string> {
       url += `?pesquisa=${pesquisaId}`;
     }
 
-    const response = await fetch(url);
+    // Use cache for aggregates list (24 hours TTL - static data)
+    const key = cacheKey(url);
+    const data = await cachedFetch<unknown[]>(url, key, CACHE_TTL.STATIC);
 
-    if (!response.ok) {
-      throw new Error(`Erro na API: ${response.status}`);
-    }
-
-    const data = await response.json();
     return JSON.stringify(data, null, 2);
   } catch (error) {
     if (error instanceof Error) {

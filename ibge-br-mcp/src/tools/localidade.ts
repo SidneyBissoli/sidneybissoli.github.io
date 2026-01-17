@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API, type Municipio, type UF, type Distrito } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const localidadeSchema = z.object({
@@ -48,16 +49,18 @@ export async function ibgeLocalidade(input: LocalidadeInput): Promise<string> {
         return "Tipo de localidade inválido.";
     }
 
-    const response = await fetch(url);
+    // Use cache for static location data (24 hours TTL)
+    const key = cacheKey(url);
+    let data: unknown;
 
-    if (!response.ok) {
-      if (response.status === 404) {
+    try {
+      data = await cachedFetch<unknown>(url, key, CACHE_TTL.STATIC);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
         return `Localidade não encontrada com o código ${input.codigo}.`;
       }
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
+      throw error;
     }
-
-    const data = await response.json();
 
     // Check if empty response
     if (!data || (Array.isArray(data) && data.length === 0)) {

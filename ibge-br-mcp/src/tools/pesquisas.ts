@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const pesquisasSchema = z.object({
@@ -33,13 +34,9 @@ export async function ibgePesquisas(input: PesquisasInput): Promise<string> {
   try {
     const url = IBGE_API.AGREGADOS;
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
-    }
-
-    const data: PesquisaCompleta[] = await response.json();
+    // Use cache for surveys data (24 hours TTL - static data)
+    const key = cacheKey(url);
+    const data = await cachedFetch<PesquisaCompleta[]>(url, key, CACHE_TTL.STATIC);
 
     // If detalhes is specified, show details of a specific pesquisa
     if (input.detalhes) {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API, type NomeFrequencia, type NomeRanking } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for frequency search
 export const nomesFrequenciaSchema = z.object({
@@ -64,16 +65,18 @@ export async function ibgeNomesFrequencia(input: NomesFrequenciaInput): Promise<
       url += `?${params.toString()}`;
     }
 
-    const response = await fetch(url);
+    // Use cache for name frequency data (1 hour TTL)
+    const key = cacheKey(url);
+    let data: NomeFrequencia[];
 
-    if (!response.ok) {
-      if (response.status === 404) {
+    try {
+      data = await cachedFetch<NomeFrequencia[]>(url, key, CACHE_TTL.MEDIUM);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
         return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
       }
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
+      throw error;
     }
-
-    const data: NomeFrequencia[] = await response.json();
 
     if (!data || data.length === 0) {
       return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
@@ -111,13 +114,9 @@ export async function ibgeNomesRanking(input: NomesRankingInput): Promise<string
       url += `?${params.toString()}`;
     }
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
-    }
-
-    const data: NomeRanking[] = await response.json();
+    // Use cache for name ranking data (1 hour TTL)
+    const key = cacheKey(url);
+    const data = await cachedFetch<NomeRanking[]>(url, key, CACHE_TTL.MEDIUM);
 
     if (!data || data.length === 0) {
       return "Nenhum dado encontrado para o ranking.";

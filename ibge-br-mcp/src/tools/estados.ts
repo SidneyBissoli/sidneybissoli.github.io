@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API, type UF } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const estadosSchema = z.object({
@@ -43,13 +44,9 @@ export async function ibgeEstados(input: EstadosInput): Promise<string> {
       url += `?orderBy=${input.ordenar}`;
     }
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
-    }
-
-    const estados: UF[] = await response.json();
+    // Use cache for static state data (24 hours TTL)
+    const key = cacheKey(url);
+    const estados = await cachedFetch<UF[]>(url, key, CACHE_TTL.STATIC);
 
     if (estados.length === 0) {
       return "Nenhum estado encontrado.";

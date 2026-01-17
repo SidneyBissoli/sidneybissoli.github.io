@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 const MALHAS_API = "https://servicodados.ibge.gov.br/api/v3/malhas";
 
@@ -102,16 +103,18 @@ export async function ibgeMalhas(input: MalhasInput): Promise<string> {
       return formatSvgResponse(fullUrl, input);
     }
 
-    const response = await fetch(fullUrl);
+    // Use cache for geographic mesh data (24 hours TTL - static data)
+    const key = cacheKey(fullUrl);
+    let data: GeoJSONFeatureCollection | GeoJSONFeature;
 
-    if (!response.ok) {
-      if (response.status === 404) {
+    try {
+      data = await cachedFetch<GeoJSONFeatureCollection | GeoJSONFeature>(fullUrl, key, CACHE_TTL.STATIC);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("404")) {
         return `Malha não encontrada para localidade: ${input.localidade}`;
       }
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
+      throw error;
     }
-
-    const data = await response.json();
 
     return formatMalhasResponse(data, fullUrl, input);
   } catch (error) {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { IBGE_API, type Municipio, type MunicipioSimples } from "../types.js";
+import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 
 // Schema for the tool input
 export const municipiosSchema = z.object({
@@ -54,13 +55,9 @@ export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
 
     url += "?orderBy=nome";
 
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
-    }
-
-    let municipios: (Municipio | MunicipioSimples)[] = await response.json();
+    // Use cache for static municipality data (24 hours TTL)
+    const key = cacheKey(url);
+    let municipios = await cachedFetch<(Municipio | MunicipioSimples)[]>(url, key, CACHE_TTL.STATIC);
 
     // Filter by search term if provided
     if (input.busca) {
