@@ -1,0 +1,48 @@
+{
+  "name": "ibge-br-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server for IBGE (Instituto Brasileiro de Geografia e Estatística) APIs - Localidades, SIDRA, Nomes e Notícias",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "ibge-br-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "dev": "tsc && node dist/index.js",
+    "inspector": "npx @modelcontextprotocol/inspector dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ibge",
+    "brasil",
+    "brazil",
+    "localidades",
+    "sidra",
+    "nomes",
+    "estados",
+    "municipios",
+    "censo",
+    "populacao"
+  ],
+  "author": "Sidney Bissoli",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SidneyBissoli/ibge-br-mcp"
+  }
+}

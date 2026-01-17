@@ -1,0 +1,284 @@
+import { z } from "zod";
+import { IBGE_API, type NomeFrequencia, type NomeRanking } from "../types.js";
+
+// Schema for frequency search
+export const nomesFrequenciaSchema = z.object({
+  nomes: z
+    .string()
+    .describe("Nome ou nomes separados por vírgula (ex: 'Maria' ou 'João,José,Pedro')"),
+  sexo: z
+    .enum(["M", "F"])
+    .optional()
+    .describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
+  localidade: z
+    .string()
+    .optional()
+    .describe("Código IBGE da localidade (UF ou município). Ex: 33 para RJ, 3550308 para São Paulo capital"),
+});
+
+// Schema for ranking search
+export const nomesRankingSchema = z.object({
+  decada: z
+    .number()
+    .optional()
+    .describe("Década para o ranking (ex: 1990, 2000, 2010). Se não informado, retorna ranking geral."),
+  sexo: z
+    .enum(["M", "F"])
+    .optional()
+    .describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
+  localidade: z
+    .string()
+    .optional()
+    .describe("Código IBGE da localidade (UF ou município)"),
+  limite: z
+    .number()
+    .min(1)
+    .max(100)
+    .optional()
+    .default(20)
+    .describe("Número de nomes no ranking (padrão: 20, máximo: 100)"),
+});
+
+export type NomesFrequenciaInput = z.infer<typeof nomesFrequenciaSchema>;
+export type NomesRankingInput = z.infer<typeof nomesRankingSchema>;
+
+/**
+ * Fetches name frequency from IBGE API
+ */
+export async function ibgeNomesFrequencia(input: NomesFrequenciaInput): Promise<string> {
+  try {
+    // Build URL with names
+    const nomes = input.nomes.replace(/\s+/g, "").toUpperCase();
+    let url = `${IBGE_API.NOMES}/${encodeURIComponent(nomes)}`;
+
+    // Add query parameters
+    const params = new URLSearchParams();
+    if (input.sexo) {
+      params.append("sexo", input.sexo);
+    }
+    if (input.localidade) {
+      params.append("localidade", input.localidade);
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
+      }
+      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
+    }
+
+    const data: NomeFrequencia[] = await response.json();
+
+    if (!data || data.length === 0) {
+      return `Nenhum dado encontrado para o(s) nome(s): ${input.nomes}`;
+    }
+
+    return formatFrequenciaResponse(data);
+  } catch (error) {
+    if (error instanceof Error) {
+      return `Erro ao buscar frequência de nomes: ${error.message}`;
+    }
+    return "Erro desconhecido ao buscar frequência de nomes.";
+  }
+}
+
+/**
+ * Fetches name ranking from IBGE API
+ */
+export async function ibgeNomesRanking(input: NomesRankingInput): Promise<string> {
+  try {
+    let url = `${IBGE_API.NOMES}/ranking`;
+
+    // Add query parameters
+    const params = new URLSearchParams();
+    if (input.decada) {
+      params.append("decada", input.decada.toString());
+    }
+    if (input.sexo) {
+      params.append("sexo", input.sexo);
+    }
+    if (input.localidade) {
+      params.append("localidade", input.localidade);
+    }
+
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Erro na API do IBGE: ${response.status} ${response.statusText}`);
+    }
+
+    const data: NomeRanking[] = await response.json();
+
+    if (!data || data.length === 0) {
+      return "Nenhum dado encontrado para o ranking.";
+    }
+
+    return formatRankingResponse(data, input);
+  } catch (error) {
+    if (error instanceof Error) {
+      return `Erro ao buscar ranking de nomes: ${error.message}`;
+    }
+    return "Erro desconhecido ao buscar ranking de nomes.";
+  }
+}
+
+function formatFrequenciaResponse(data: NomeFrequencia[]): string {
+  let output = `## Frequência de Nomes no Brasil\n\n`;
+
+  for (const nome of data) {
+    output += `### ${nome.nome}\n\n`;
+
+    if (nome.sexo) {
+      output += `**Sexo:** ${nome.sexo === "M" ? "Masculino" : "Feminino"}\n`;
+    }
+    if (nome.localidade && nome.localidade !== "BR") {
+      output += `**Localidade:** ${nome.localidade}\n`;
+    }
+
+    output += "\n| Período | Frequência |\n";
+    output += "|:--------|----------:|\n";
+
+    let total = 0;
+    for (const periodo of nome.res) {
+      total += periodo.frequencia;
+      output += `| ${periodo.periodo} | ${formatNumber(periodo.frequencia)} |\n`;
+    }
+
+    output += `| **Total** | **${formatNumber(total)}** |\n\n`;
+  }
+
+  output += "\n**Fonte:** IBGE - Censo Demográfico\n";
+  output += "_Nota: Os dados são baseados nos registros de nascimentos dos Censos Demográficos._\n";
+
+  return output;
+}
+
+function formatRankingResponse(data: NomeRanking[], input: NomesRankingInput): string {
+  const ranking = data[0];
+
+  let output = `## Ranking de Nomes mais Frequentes\n\n`;
+
+  if (input.decada) {
+    output += `**Década:** ${input.decada}\n`;
+  } else {
+    output += `**Período:** Todas as décadas\n`;
+  }
+
+  if (input.sexo) {
+    output += `**Sexo:** ${input.sexo === "M" ? "Masculino" : "Feminino"}\n`;
+  }
+
+  if (ranking.localidade && ranking.localidade !== "BR") {
+    output += `**Localidade:** ${ranking.localidade}\n`;
+  }
+
+  output += "\n| Posição | Nome | Frequência |\n";
+  output += "|--------:|:-----|----------:|\n";
+
+  const limit = input.limite || 20;
+  const items = ranking.res.slice(0, limit);
+
+  for (const item of items) {
+    output += `| ${item.ranking}º | ${item.nome} | ${formatNumber(item.frequencia)} |\n`;
+  }
+
+  output += "\n**Fonte:** IBGE - Censo Demográfico\n";
+
+  return output;
+}
+
+function formatNumber(num: number): string {
+  return num.toLocaleString("pt-BR");
+}
+
+// Combined schema for the main tool
+export const nomesSchema = z.object({
+  tipo: z
+    .enum(["frequencia", "ranking"])
+    .describe("Tipo de consulta: 'frequencia' para buscar nomes específicos ou 'ranking' para ver os mais populares"),
+  nomes: z
+    .string()
+    .optional()
+    .describe("Para tipo='frequencia': Nome ou nomes separados por vírgula"),
+  decada: z
+    .number()
+    .optional()
+    .describe("Para tipo='ranking': Década do ranking (ex: 1990, 2000, 2010)"),
+  sexo: z
+    .enum(["M", "F"])
+    .optional()
+    .describe("Filtrar por sexo: M (masculino) ou F (feminino)"),
+  localidade: z
+    .string()
+    .optional()
+    .describe("Código IBGE da localidade (UF: 2 dígitos, Município: 7 dígitos)"),
+  limite: z
+    .number()
+    .min(1)
+    .max(100)
+    .optional()
+    .default(20)
+    .describe("Para tipo='ranking': Número de nomes (padrão: 20)"),
+});
+
+export type NomesInput = z.infer<typeof nomesSchema>;
+
+/**
+ * Main handler that routes to frequency or ranking
+ */
+export async function ibgeNomes(input: NomesInput): Promise<string> {
+  if (input.tipo === "frequencia") {
+    if (!input.nomes) {
+      return "Para consultar a frequência, informe o(s) nome(s) no parâmetro 'nomes'.";
+    }
+    return ibgeNomesFrequencia({
+      nomes: input.nomes,
+      sexo: input.sexo,
+      localidade: input.localidade,
+    });
+  } else {
+    return ibgeNomesRanking({
+      decada: input.decada,
+      sexo: input.sexo,
+      localidade: input.localidade,
+      limite: input.limite,
+    });
+  }
+}
+
+// Tool definition for MCP
+export const nomesTool = {
+  name: "ibge_nomes",
+  description: `Consulta frequência e ranking de nomes no Brasil (IBGE).
+
+Funcionalidades:
+1. **Frequência de nomes** (tipo='frequencia'):
+   - Busca a frequência de nascimentos por década
+   - Aceita múltiplos nomes separados por vírgula
+   - Filtra por sexo e localidade
+
+2. **Ranking de nomes** (tipo='ranking'):
+   - Lista os nomes mais populares
+   - Filtra por década, sexo e localidade
+
+Décadas disponíveis: 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010
+
+Exemplos de uso:
+- Frequência de "Maria": tipo="frequencia", nomes="Maria"
+- Comparar nomes: tipo="frequencia", nomes="João,José,Pedro"
+- Ranking anos 2000: tipo="ranking", decada=2000
+- Nomes femininos mais populares: tipo="ranking", sexo="F"
+- Nomes populares em SP: tipo="ranking", localidade="35"`,
+  inputSchema: nomesSchema,
+  handler: ibgeNomes,
+};

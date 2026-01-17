@@ -1,0 +1,215 @@
+import { z } from "zod";
+import { IBGE_API } from "../types.js";
+
+// Schema for the tool input
+export const sidraSchema = z.object({
+  tabela: z
+    .string()
+    .describe("Código da tabela SIDRA (ex: 6579 para estimativas de população, 9514 para censo 2022)"),
+  variaveis: z
+    .string()
+    .optional()
+    .default("allxp")
+    .describe("IDs das variáveis separados por vírgula, ou 'allxp' para todas"),
+  nivel_territorial: z
+    .enum(["1", "2", "3", "6", "7", "8", "9"])
+    .optional()
+    .default("1")
+    .describe("Nível territorial: 1=Brasil, 2=Região, 3=UF, 6=Município, 7=Região Metropolitana, 8=Mesorregião, 9=Microrregião"),
+  localidades: z
+    .string()
+    .optional()
+    .default("all")
+    .describe("Códigos das localidades separados por vírgula, ou 'all' para todas"),
+  periodos: z
+    .string()
+    .optional()
+    .default("last")
+    .describe("Períodos: 'last' para último, 'all' para todos, ou anos específicos (ex: 2020,2021,2022)"),
+  classificacoes: z
+    .string()
+    .optional()
+    .describe("Classificações no formato 'id[categorias]' (ex: '2[6794]' para sexo masculino)"),
+  formato: z
+    .enum(["json", "tabela"])
+    .optional()
+    .default("tabela")
+    .describe("Formato de saída: 'json' para dados brutos ou 'tabela' para formato legível"),
+});
+
+export type SidraInput = z.infer<typeof sidraSchema>;
+
+// Common SIDRA tables reference
+const TABELAS_COMUNS: Record<string, string> = {
+  "6579": "Estimativas de população",
+  "9514": "População residente (Censo 2022)",
+  "200": "População residente (Censos 1970-2010)",
+  "1705": "Área territorial",
+  "1712": "Densidade demográfica",
+  "4714": "PNAD Contínua - Taxa de desocupação",
+  "6381": "PNAD Contínua - Rendimento médio",
+  "6706": "PIB a preços correntes",
+  "5938": "Produto Interno Bruto per capita",
+};
+
+/**
+ * Fetches data from IBGE SIDRA API
+ */
+export async function ibgeSidra(input: SidraInput): Promise<string> {
+  try {
+    // Build the SIDRA API URL
+    // Format: /t/{tabela}/n{nivel}/{localidade}/v/{variaveis}/p/{periodos}/c{classificacao}/{categorias}
+    let path = `/t/${input.tabela}`;
+    path += `/n${input.nivel_territorial}/${input.localidades}`;
+    path += `/v/${input.variaveis}`;
+    path += `/p/${input.periodos}`;
+
+    if (input.classificacoes) {
+      // Parse classifications like "2[6794]" or "2[6794,6795]"
+      const classMatch = input.classificacoes.match(/(\d+)\[([^\]]+)\]/);
+      if (classMatch) {
+        path += `/c${classMatch[1]}/${classMatch[2]}`;
+      }
+    }
+
+    const url = `${IBGE_API.SIDRA}${path}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        return `Erro na consulta SIDRA: Parâmetros inválidos. Verifique se a tabela ${input.tabela} existe e se os parâmetros estão corretos.`;
+      }
+      throw new Error(`Erro na API SIDRA: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data || data.length === 0) {
+      return "Nenhum dado encontrado para os parâmetros informados.";
+    }
+
+    // Return based on format
+    if (input.formato === "json") {
+      return JSON.stringify(data, null, 2);
+    }
+
+    return formatSidraResponse(data, input.tabela);
+  } catch (error) {
+    if (error instanceof Error) {
+      return `Erro ao consultar SIDRA: ${error.message}`;
+    }
+    return "Erro desconhecido ao consultar SIDRA.";
+  }
+}
+
+interface SidraRecord {
+  [key: string]: string;
+}
+
+function formatSidraResponse(data: SidraRecord[], tabela: string): string {
+  if (data.length === 0) {
+    return "Nenhum dado encontrado.";
+  }
+
+  // First row contains headers
+  const headers = data[0];
+  const rows = data.slice(1);
+
+  const tabelaNome = TABELAS_COMUNS[tabela] || `Tabela ${tabela}`;
+  let output = `## SIDRA - ${tabelaNome}\n\n`;
+  output += `Total de registros: ${rows.length}\n\n`;
+
+  if (rows.length === 0) {
+    return output + "Nenhum dado encontrado para os filtros aplicados.";
+  }
+
+  // Get column names from headers
+  const columns = Object.keys(headers);
+
+  // Create markdown table
+  output += "| " + columns.map((col) => headers[col] || col).join(" | ") + " |\n";
+  output += "|" + columns.map(() => "---").join("|") + "|\n";
+
+  // Limit to first 50 rows for readability
+  const displayRows = rows.slice(0, 50);
+
+  for (const row of displayRows) {
+    const values = columns.map((col) => {
+      const value = row[col];
+      // Format numbers with thousand separators
+      if (value && !isNaN(Number(value)) && value.length > 3) {
+        return Number(value).toLocaleString("pt-BR");
+      }
+      return value || "-";
+    });
+    output += "| " + values.join(" | ") + " |\n";
+  }
+
+  if (rows.length > 50) {
+    output += `\n_Mostrando 50 de ${rows.length} registros. Use formato 'json' para dados completos._\n`;
+  }
+
+  return output;
+}
+
+/**
+ * Lists available SIDRA aggregates/tables for a given research
+ */
+export async function listSidraTables(pesquisaId?: string): Promise<string> {
+  try {
+    let url = `${IBGE_API.AGREGADOS}`;
+    if (pesquisaId) {
+      url += `?pesquisa=${pesquisaId}`;
+    }
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Erro na API: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return JSON.stringify(data, null, 2);
+  } catch (error) {
+    if (error instanceof Error) {
+      return `Erro: ${error.message}`;
+    }
+    return "Erro desconhecido.";
+  }
+}
+
+// Tool definition for MCP
+export const sidraTool = {
+  name: "ibge_sidra",
+  description: `Consulta tabelas do SIDRA (Sistema IBGE de Recuperação Automática).
+
+O SIDRA contém dados de pesquisas do IBGE como Censo, PNAD, PIB, etc.
+
+Tabelas mais utilizadas:
+- 6579: Estimativas de população (anual)
+- 9514: População do Censo 2022
+- 200: População dos Censos (1970-2010)
+- 4714: Taxa de desocupação (PNAD Contínua)
+- 6381: Rendimento médio (PNAD Contínua)
+- 6706: PIB a preços correntes
+- 5938: PIB per capita
+- 1705: Área territorial
+- 1712: Densidade demográfica
+
+Níveis territoriais:
+- 1: Brasil
+- 2: Região
+- 3: UF (Unidade da Federação)
+- 6: Município
+- 7: Região Metropolitana
+- 8: Mesorregião
+- 9: Microrregião
+
+Exemplo de uso:
+- População do Brasil 2023: tabela="6579", periodos="2023"
+- População de SP por município: tabela="6579", nivel_territorial="6", localidades="3500105,3550308"
+- PIB do Brasil: tabela="6706", periodos="last"`,
+  inputSchema: sidraSchema,
+  handler: ibgeSidra,
+};
