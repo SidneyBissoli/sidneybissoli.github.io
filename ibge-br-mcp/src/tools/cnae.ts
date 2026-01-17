@@ -3,6 +3,8 @@ import { IBGE_API } from "../types.js";
 import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, truncate } from "../utils/index.js";
+import { parseHttpError, ValidationErrors } from "../errors.js";
+import { isValidCnaeCode, formatValidationError } from "../validation.js";
 
 // Types for CNAE data
 interface CnaeSecao {
@@ -88,9 +90,12 @@ export async function ibgeCnae(input: CnaeInput): Promise<string> {
       return showCnaeStructure();
     } catch (error) {
       if (error instanceof Error) {
-        return formatCnaeError(error.message, input);
+        return parseHttpError(error, "ibge_cnae", {
+          codigo: input.codigo,
+          busca: input.busca,
+        });
       }
-      return "Erro desconhecido ao consultar CNAE.";
+      return ValidationErrors.emptyResult("ibge_cnae");
     }
   });
 }
@@ -98,6 +103,15 @@ export async function ibgeCnae(input: CnaeInput): Promise<string> {
 async function getCnaeByCode(codigo: string): Promise<string> {
   // Normalize code
   const normalized = codigo.replace(/[.\-/]/g, "").toUpperCase();
+
+  // Validate code format using centralized validation
+  if (!isValidCnaeCode(codigo)) {
+    return formatValidationError(
+      "codigo",
+      codigo,
+      "Seção (A-U), Divisão (2 dígitos), Grupo (3 dígitos), Classe (4-5 dígitos) ou Subclasse (7 dígitos)"
+    );
+  }
 
   // Determine the level based on code format
   let endpoint: string;
@@ -117,20 +131,10 @@ async function getCnaeByCode(codigo: string): Promise<string> {
     const classCode = normalized.slice(0, 4);
     endpoint = `${IBGE_API.CNAE}/classes/${classCode}`;
     level = "classe";
-  } else if (/^\d{7}$/.test(normalized)) {
+  } else {
     // Subclass is 7 digits
     endpoint = `${IBGE_API.CNAE}/subclasses/${normalized}`;
     level = "subclasse";
-  } else {
-    return (
-      `Código CNAE inválido: "${codigo}"\n\n` +
-      `Formatos aceitos:\n` +
-      `- Seção: letra de A a U (ex: "A")\n` +
-      `- Divisão: 2 dígitos (ex: "01")\n` +
-      `- Grupo: 3 dígitos (ex: "011")\n` +
-      `- Classe: 4-5 dígitos (ex: "0111" ou "01113")\n` +
-      `- Subclasse: 7 dígitos (ex: "0111301")`
-    );
   }
 
   const key = cacheKey("cnae", { codigo: normalized });
@@ -321,23 +325,6 @@ function formatCnaeDetail(
     for (const obs of data.observacoes) {
       output += `- ${obs}\n`;
     }
-  }
-
-  return output;
-}
-
-function formatCnaeError(message: string, input: CnaeInput): string {
-  let output = `## Erro ao consultar CNAE\n\n`;
-  output += `**Erro:** ${message}\n\n`;
-
-  if (input.codigo) {
-    output += `**Código buscado:** ${input.codigo}\n\n`;
-    output += `Verifique se o código está no formato correto:\n`;
-    output += `- Seção: letra (A-U)\n`;
-    output += `- Divisão: 2 dígitos\n`;
-    output += `- Grupo: 3 dígitos\n`;
-    output += `- Classe: 4-5 dígitos\n`;
-    output += `- Subclasse: 7 dígitos\n`;
   }
 
   return output;

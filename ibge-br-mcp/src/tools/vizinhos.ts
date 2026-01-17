@@ -4,6 +4,7 @@ import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { formatNumber } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
+import { isValidIbgeCode, normalizeUf, formatValidationError } from "../validation.js";
 
 // Schema for the tool input
 export const vizinhosSchema = z.object({
@@ -33,21 +34,45 @@ export async function ibgeVizinhos(input: VizinhosInput): Promise<string> {
       let municipioNome: string;
 
       if (/^\d{7}$/.test(input.municipio)) {
+        // Validate IBGE code format
+        if (!isValidIbgeCode(input.municipio)) {
+          return formatValidationError(
+            "municipio",
+            input.municipio,
+            "Código IBGE de município com 7 dígitos"
+          );
+        }
         municipioId = input.municipio;
         // Get municipality name
         const munInfo = await getMunicipioInfo(municipioId);
         if (!munInfo) {
-          return `Município com código ${municipioId} não encontrado.`;
+          return ValidationErrors.notFound(
+            `Município com código ${municipioId}`,
+            "ibge_vizinhos",
+            "ibge_municipios"
+          );
         }
         municipioNome = munInfo.nome;
       } else {
         // Search by name
         if (!input.uf) {
-          return "Para buscar por nome, informe também a UF (sigla do estado).";
+          return formatValidationError(
+            "uf",
+            "(não informado)",
+            "Sigla da UF é obrigatória ao buscar por nome de município"
+          );
+        }
+        // Validate UF
+        if (!normalizeUf(input.uf)) {
+          return formatValidationError("uf", input.uf, "Sigla de UF válida (ex: SP, RJ, MG)");
         }
         const munInfo = await findMunicipioByName(input.municipio, input.uf);
         if (!munInfo) {
-          return `Município "${input.municipio}" não encontrado em ${input.uf.toUpperCase()}.`;
+          return ValidationErrors.notFound(
+            `Município "${input.municipio}" em ${input.uf.toUpperCase()}`,
+            "ibge_vizinhos",
+            "ibge_municipios"
+          );
         }
         municipioId = String(munInfo.id);
         municipioNome = munInfo.nome;

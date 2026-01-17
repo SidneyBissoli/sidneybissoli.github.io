@@ -4,6 +4,7 @@ import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
+import { normalizeUf, formatValidationError } from "../validation.js";
 
 // Schema for the tool input
 export const municipiosSchema = z.object({
@@ -26,37 +27,6 @@ export const municipiosSchema = z.object({
 
 export type MunicipiosInput = z.infer<typeof municipiosSchema>;
 
-// Map of state abbreviations to IDs
-const UF_IDS: Record<string, number> = {
-  RO: 11,
-  AC: 12,
-  AM: 13,
-  RR: 14,
-  PA: 15,
-  AP: 16,
-  TO: 17,
-  MA: 21,
-  PI: 22,
-  CE: 23,
-  RN: 24,
-  PB: 25,
-  PE: 26,
-  AL: 27,
-  SE: 28,
-  BA: 29,
-  MG: 31,
-  ES: 32,
-  RJ: 33,
-  SP: 35,
-  PR: 41,
-  SC: 42,
-  RS: 43,
-  MS: 50,
-  MT: 51,
-  GO: 52,
-  DF: 53,
-};
-
 /**
  * Fetches municipalities from IBGE API
  */
@@ -66,14 +36,17 @@ export async function ibgeMunicipios(input: MunicipiosInput): Promise<string> {
       let url: string;
 
       if (input.uf) {
-        const ufUpper = input.uf.toUpperCase();
-        const ufId = UF_IDS[ufUpper];
+        const ufCode = normalizeUf(input.uf);
 
-        if (!ufId) {
-          return `UF inválida: ${input.uf}. Use a sigla do estado (ex: SP, RJ, MG).`;
+        if (!ufCode) {
+          return formatValidationError(
+            "uf",
+            input.uf,
+            "Sigla de UF válida (ex: SP, RJ, MG) ou código numérico (ex: 35, 33)"
+          );
         }
 
-        url = `${IBGE_API.LOCALIDADES}/estados/${ufId}/municipios`;
+        url = `${IBGE_API.LOCALIDADES}/estados/${ufCode}/municipios`;
       } else {
         url = `${IBGE_API.LOCALIDADES}/municipios`;
       }

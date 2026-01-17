@@ -4,6 +4,7 @@ import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createKeyValueTable } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
+import { isValidIbgeCode, formatValidationError } from "../validation.js";
 
 // Schema for the tool input
 export const localidadeSchema = z.object({
@@ -27,6 +28,16 @@ export async function ibgeLocalidade(input: LocalidadeInput): Promise<string> {
   return withMetrics("ibge_localidade", "localidades", async () => {
     try {
       const codigoStr = input.codigo.toString();
+
+      // Validate IBGE code format
+      if (!isValidIbgeCode(codigoStr)) {
+        return formatValidationError(
+          "codigo",
+          codigoStr,
+          "Código IBGE válido: 2 dígitos (UF), 7 dígitos (município) ou 9 dígitos (distrito)"
+        );
+      }
+
       let tipo = input.tipo;
 
       // Infer type from code length if not provided

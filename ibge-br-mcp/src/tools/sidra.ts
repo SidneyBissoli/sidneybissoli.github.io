@@ -4,6 +4,7 @@ import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
+import { isValidPeriod, isValidTerritorialLevel, formatValidationError } from "../validation.js";
 
 // Schema for the tool input
 export const sidraSchema = z.object({
@@ -69,6 +70,24 @@ const TABELAS_COMUNS: Record<string, string> = {
 export async function ibgeSidra(input: SidraInput): Promise<string> {
   return withMetrics("ibge_sidra", "sidra", async () => {
     try {
+      // Validate territorial level
+      if (input.nivel_territorial && !isValidTerritorialLevel(input.nivel_territorial)) {
+        return formatValidationError(
+          "nivel_territorial",
+          input.nivel_territorial,
+          "1 (Brasil), 2 (Região), 3 (UF), 6 (Município), etc. Use ibge_sidra_metadados para ver níveis disponíveis."
+        );
+      }
+
+      // Validate period format
+      if (input.periodos && !isValidPeriod(input.periodos)) {
+        return formatValidationError(
+          "periodos",
+          input.periodos,
+          "'last', 'all', ano (YYYY), intervalo (YYYY-YYYY), ou múltiplos separados por vírgula"
+        );
+      }
+
       // Build the SIDRA API URL
       // Format: /t/{tabela}/n{nivel}/{localidade}/v/{variaveis}/p/{periodos}/c{classificacao}/{categorias}
       let path = `/t/${input.tabela}`;
