@@ -23,6 +23,12 @@ export { geocodigoTool, ibgeGeocodigo, geocodigoSchema } from "./geocodigo.js";
 export { calendarioTool, ibgeCalendario, calendarioSchema } from "./calendario.js";
 export { compararTool, ibgeComparar, compararSchema } from "./comparar.js";
 
+// Phase 3 tools (v1.6.0)
+export { malhasTemaTool, ibgeMalhasTema, malhasTemaSchema } from "./malhas-tema.js";
+export { vizinhosTool, ibgeVizinhos, vizinhosSchema } from "./vizinhos.js";
+export { bcbTool, ibgeBcb, bcbSchema } from "./bcb.js";
+export { datasaudeTool, ibgeDatasaude, datasaudeSchema } from "./datasaude.js";
+
 // Tool definitions array for registration
 export const tools = [
   {
@@ -302,6 +308,76 @@ Funcionalidades:
 Exemplos:
 - Comparar capitais: localidades="3550308,3304557"
 - Ranking por área: formato="ranking"
+- Listar indicadores: indicador="listar"`,
+  },
+  {
+    name: "ibge_malhas_tema",
+    description: `Obtém malhas geográficas temáticas do IBGE.
+
+Temas disponíveis:
+- biomas: Biomas brasileiros (Amazônia, Cerrado, Mata Atlântica, etc.)
+- amazonia_legal: Área da Amazônia Legal
+- semiarido: Região do semiárido
+- costeiro: Zona costeira
+- fronteira: Faixa de fronteira
+- metropolitana: Regiões metropolitanas
+- ride: Regiões Integradas de Desenvolvimento
+
+Exemplos:
+- Todos os biomas: tema="biomas"
+- Bioma Amazônia: tema="biomas", codigo="1"
+- Listar temas: tema="listar"`,
+  },
+  {
+    name: "ibge_vizinhos",
+    description: `Busca municípios próximos/vizinhos de um município.
+
+Funcionalidades:
+- Busca por código IBGE ou nome do município
+- Retorna municípios da mesma mesorregião
+- Opcionalmente inclui dados populacionais
+
+Exemplos:
+- Por código: municipio="3550308"
+- Por nome: municipio="Campinas", uf="SP"
+- Com população: municipio="3550308", incluir_dados=true`,
+  },
+  {
+    name: "bcb",
+    description: `Consulta dados do Banco Central do Brasil.
+
+Indicadores disponíveis:
+- selic: Taxa SELIC
+- ipca/ipca_acum: Inflação IPCA
+- igpm/inpc: Outros índices de preços
+- dolar_compra/dolar_venda/euro: Câmbio
+- desemprego: Taxa de desemprego
+- cdi/tr: Outras taxas
+
+Também aceita códigos do Sistema SGS do BCB.
+
+Exemplos:
+- SELIC últimos 12 meses: indicador="selic", ultimos=12
+- IPCA de 2023: indicador="ipca", dataInicio="01/01/2023", dataFim="31/12/2023"
+- Listar indicadores: indicador="listar"`,
+  },
+  {
+    name: "datasaude",
+    description: `Consulta indicadores de saúde via IBGE/DataSUS.
+
+Indicadores disponíveis:
+- mortalidade_infantil: Taxa de mortalidade infantil
+- esperanca_vida: Esperança de vida ao nascer
+- nascidos_vivos/obitos: Estatísticas vitais
+- fecundidade: Taxa de fecundidade
+- saneamento_agua/saneamento_esgoto: Saneamento básico
+- plano_saude: Cobertura de planos de saúde
+
+Níveis territoriais: 1=Brasil, 2=Região, 3=UF, 6=Município
+
+Exemplos:
+- Mortalidade infantil: indicador="mortalidade_infantil"
+- Esperança de vida por UF: indicador="esperanca_vida", nivel_territorial="3"
 - Listar indicadores: indicador="listar"`,
   },
 ];

@@ -40,11 +40,20 @@ import {
   ibgeCalendario,
   compararSchema,
   ibgeComparar,
+  // Phase 3 tools (v1.6.0)
+  malhasTemaSchema,
+  ibgeMalhasTema,
+  vizinhosSchema,
+  ibgeVizinhos,
+  bcbSchema,
+  ibgeBcb,
+  datasaudeSchema,
+  ibgeDatasaude,
 } from "./tools/index.js";
 
 // Server metadata
 const SERVER_NAME = "ibge-br-mcp";
-const SERVER_VERSION = "1.5.0";
+const SERVER_VERSION = "1.6.0";
 
 /**
  * IBGE MCP Server
@@ -588,6 +597,142 @@ Exemplos de uso:
     compararSchema.shape,
     async (args) => {
       const result = await ibgeComparar(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_malhas_tema tool (Phase 3)
+  server.tool(
+    "ibge_malhas_tema",
+    `Obtém malhas geográficas temáticas do IBGE.
+
+Temas disponíveis:
+- biomas: Biomas brasileiros (Amazônia, Cerrado, Mata Atlântica, Caatinga, Pampa, Pantanal)
+- amazonia_legal: Área da Amazônia Legal
+- semiarido: Região do semiárido brasileiro
+- costeiro: Zona costeira
+- fronteira: Faixa de fronteira
+- metropolitana: Regiões metropolitanas
+- ride: Regiões Integradas de Desenvolvimento
+
+Códigos de Biomas:
+- 1: Amazônia
+- 2: Cerrado
+- 3: Mata Atlântica
+- 4: Caatinga
+- 5: Pampa
+- 6: Pantanal
+
+Exemplos de uso:
+- Todos os biomas: tema="biomas"
+- Bioma Amazônia: tema="biomas", codigo="1"
+- Amazônia Legal: tema="amazonia_legal"
+- Regiões metropolitanas: tema="metropolitana"
+- Com municípios: tema="biomas", resolucao="5"
+- Listar temas: tema="listar"`,
+    malhasTemaSchema.shape,
+    async (args) => {
+      const result = await ibgeMalhasTema(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_vizinhos tool (Phase 3)
+  server.tool(
+    "ibge_vizinhos",
+    `Busca municípios próximos/vizinhos de um município.
+
+Funcionalidades:
+- Busca por código IBGE (7 dígitos) ou nome do município
+- Retorna municípios da mesma mesorregião (aproximação de vizinhança)
+- Opcionalmente inclui dados populacionais
+
+Nota: A busca usa mesorregião como proxy de proximidade geográfica.
+Para vizinhança espacial exata, seria necessário processamento de malhas.
+
+Exemplos de uso:
+- Por código: municipio="3550308"
+- Por nome: municipio="Campinas", uf="SP"
+- Com população: municipio="3550308", incluir_dados=true`,
+    vizinhosSchema.shape,
+    async (args) => {
+      const result = await ibgeVizinhos(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register bcb tool (Phase 3)
+  server.tool(
+    "bcb",
+    `Consulta dados do Banco Central do Brasil (BCB).
+
+Indicadores de Taxas de Juros:
+- selic: Taxa SELIC acumulada
+- cdi: Taxa CDI
+- tr: Taxa Referencial
+
+Indicadores de Inflação:
+- ipca: IPCA mensal
+- ipca_acum: IPCA acumulado 12 meses
+- igpm: IGP-M
+- inpc: INPC
+
+Indicadores de Câmbio:
+- dolar_compra/dolar_venda: Dólar comercial
+- euro: Euro
+
+Indicadores Macroeconômicos:
+- desemprego: Taxa de desemprego
+- divida_pib: Dívida pública/PIB
+- reservas: Reservas internacionais
+
+Também aceita códigos numéricos do Sistema SGS do BCB.
+
+Exemplos de uso:
+- SELIC últimos 12 meses: indicador="selic", ultimos=12
+- IPCA de 2023: indicador="ipca", dataInicio="01/01/2023", dataFim="31/12/2023"
+- Dólar recente: indicador="dolar_venda", ultimos=30
+- Listar indicadores: indicador="listar"`,
+    bcbSchema.shape,
+    async (args) => {
+      const result = await ibgeBcb(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register datasaude tool (Phase 3)
+  server.tool(
+    "datasaude",
+    `Consulta indicadores de saúde do Brasil via IBGE/DataSUS.
+
+Mortalidade e Natalidade:
+- mortalidade_infantil: Taxa de mortalidade infantil
+- nascidos_vivos: Nascidos vivos por local
+- obitos: Óbitos por local de residência
+- obitos_causas: Óbitos por causas (CID-10)
+
+Indicadores Demográficos:
+- esperanca_vida: Esperança de vida ao nascer
+- fecundidade: Taxa de fecundidade
+
+Saneamento:
+- saneamento_agua: Abastecimento de água
+- saneamento_esgoto: Esgotamento sanitário
+
+Cobertura de Saúde:
+- plano_saude: Cobertura de plano de saúde
+- autoavaliacao_saude: Autoavaliação do estado de saúde
+
+Níveis territoriais: 1=Brasil, 2=Região, 3=UF, 6=Município
+
+Exemplos de uso:
+- Mortalidade infantil: indicador="mortalidade_infantil"
+- Esperança de vida por UF: indicador="esperanca_vida", nivel_territorial="3"
+- Óbitos em SP: indicador="obitos", nivel_territorial="3", localidade="35"
+- Listar indicadores: indicador="listar"`,
+    datasaudeSchema.shape,
+    async (args) => {
+      const result = await ibgeDatasaude(args);
       return { content: [{ type: "text", text: result }] };
     }
   );

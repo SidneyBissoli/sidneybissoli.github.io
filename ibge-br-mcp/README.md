@@ -52,6 +52,14 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 | Ferramenta | Descrição |
 |:-----------|:----------|
 | `ibge_malhas` | Malhas geográficas (GeoJSON, TopoJSON, SVG) |
+| `ibge_malhas_tema` | **NOVO** - Malhas temáticas (biomas, Amazônia Legal, semiárido, etc.) |
+| `ibge_vizinhos` | **NOVO** - Municípios próximos/vizinhos |
+
+### Dados Externos (BCB e Saúde)
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `bcb` | **NOVO** - Dados do Banco Central (SELIC, IPCA, câmbio, etc.) |
+| `datasaude` | **NOVO** - Indicadores de saúde via IBGE/DataSUS |
 
 ### Informações e Calendário
 | Ferramenta | Descrição |
@@ -652,9 +660,137 @@ ibge_comparar(localidades="35,33", indicador="alfabetizacao")
 ibge_comparar(indicador="listar")
 ```
 
-## APIs do IBGE Utilizadas
+### ibge_malhas_tema
 
-Este MCP Server utiliza as seguintes APIs públicas do IBGE:
+Obtém malhas geográficas temáticas do IBGE (biomas, regiões especiais).
+
+**Parâmetros:**
+- `tema` (obrigatório): Tema da malha:
+  - "biomas": Biomas brasileiros
+  - "amazonia_legal": Área da Amazônia Legal
+  - "semiarido": Região do semiárido
+  - "costeiro": Zona costeira
+  - "fronteira": Faixa de fronteira
+  - "metropolitana": Regiões metropolitanas
+  - "ride": Regiões Integradas de Desenvolvimento
+  - "listar": Lista temas disponíveis
+- `codigo` (opcional): Código específico do tema (ex: código do bioma)
+- `formato` (opcional): "geojson", "topojson" ou "svg" (padrão: "geojson")
+- `resolucao` (opcional): "0" = contorno, "5" = com municípios
+
+**Códigos de Biomas:** 1=Amazônia, 2=Cerrado, 3=Mata Atlântica, 4=Caatinga, 5=Pampa, 6=Pantanal
+
+**Exemplos:**
+```
+# Todos os biomas
+ibge_malhas_tema(tema="biomas")
+
+# Bioma Amazônia
+ibge_malhas_tema(tema="biomas", codigo="1")
+
+# Amazônia Legal com municípios
+ibge_malhas_tema(tema="amazonia_legal", resolucao="5")
+
+# Regiões metropolitanas
+ibge_malhas_tema(tema="metropolitana")
+
+# Listar temas
+ibge_malhas_tema(tema="listar")
+```
+
+### ibge_vizinhos
+
+Busca municípios próximos/vizinhos de um município.
+
+**Parâmetros:**
+- `municipio` (obrigatório): Código IBGE (7 dígitos) ou nome do município
+- `uf` (opcional): Sigla da UF (obrigatório se usar nome)
+- `incluir_dados` (opcional): Se true, inclui dados populacionais
+
+**Exemplos:**
+```
+# Por código IBGE
+ibge_vizinhos(municipio="3550308")
+
+# Por nome com UF
+ibge_vizinhos(municipio="Campinas", uf="SP")
+
+# Com dados populacionais
+ibge_vizinhos(municipio="3550308", incluir_dados=true)
+```
+
+### bcb
+
+Consulta dados do Banco Central do Brasil (taxas, câmbio, inflação).
+
+**Parâmetros:**
+- `indicador` (obrigatório): Nome ou código do indicador:
+  - Taxas: "selic", "cdi", "tr"
+  - Inflação: "ipca", "ipca_acum", "igpm", "inpc"
+  - Câmbio: "dolar_compra", "dolar_venda", "euro"
+  - Outros: "desemprego", "divida_pib", "reservas"
+  - "listar": Lista indicadores disponíveis
+- `dataInicio` (opcional): Data inicial no formato DD/MM/AAAA
+- `dataFim` (opcional): Data final no formato DD/MM/AAAA
+- `ultimos` (opcional): Retornar apenas os últimos N valores
+- `formato` (opcional): "tabela" ou "json" (padrão: "tabela")
+
+**Exemplos:**
+```
+# SELIC últimos 12 meses
+bcb(indicador="selic", ultimos=12)
+
+# IPCA de 2023
+bcb(indicador="ipca", dataInicio="01/01/2023", dataFim="31/12/2023")
+
+# Dólar últimos 30 dias
+bcb(indicador="dolar_venda", ultimos=30)
+
+# Listar indicadores
+bcb(indicador="listar")
+```
+
+### datasaude
+
+Consulta indicadores de saúde do Brasil via IBGE/DataSUS.
+
+**Parâmetros:**
+- `indicador` (obrigatório): Indicador de saúde:
+  - "mortalidade_infantil": Taxa de mortalidade infantil
+  - "esperanca_vida": Esperança de vida ao nascer
+  - "nascidos_vivos": Nascidos vivos
+  - "obitos": Óbitos por local
+  - "obitos_causas": Óbitos por causas (CID-10)
+  - "fecundidade": Taxa de fecundidade
+  - "saneamento_agua": Abastecimento de água
+  - "saneamento_esgoto": Esgotamento sanitário
+  - "plano_saude": Cobertura de plano de saúde
+  - "listar": Lista indicadores disponíveis
+- `nivel_territorial` (opcional): 1=Brasil, 2=Região, 3=UF, 6=Município
+- `localidade` (opcional): Código da localidade ou "all"
+- `periodo` (opcional): "last", "all" ou ano específico
+
+**Exemplos:**
+```
+# Mortalidade infantil no Brasil
+datasaude(indicador="mortalidade_infantil")
+
+# Esperança de vida por UF
+datasaude(indicador="esperanca_vida", nivel_territorial="3")
+
+# Óbitos em São Paulo
+datasaude(indicador="obitos", nivel_territorial="3", localidade="35")
+
+# Série histórica de nascidos vivos
+datasaude(indicador="nascidos_vivos", periodo="all")
+
+# Listar indicadores
+datasaude(indicador="listar")
+```
+
+## APIs Utilizadas
+
+### APIs do IBGE
 
 - **Localidades**: `https://servicodados.ibge.gov.br/api/v1/localidades`
 - **Nomes**: `https://servicodados.ibge.gov.br/api/v2/censos/nomes`
@@ -665,6 +801,10 @@ Este MCP Server utiliza as seguintes APIs públicas do IBGE:
 - **População**: `https://servicodados.ibge.gov.br/api/v1/projecoes/populacao`
 - **CNAE**: `https://servicodados.ibge.gov.br/api/v2/cnae`
 - **Calendário**: `https://servicodados.ibge.gov.br/api/v3/calendario`
+
+### APIs Externas
+
+- **Banco Central (BCB)**: `https://api.bcb.gov.br/dados/serie/bcdata.sgs` - Taxas de juros, câmbio, inflação
 
 ## Desenvolvimento
 
@@ -686,6 +826,7 @@ ibge-br-mcp/
 │   ├── cache.ts              # Sistema de cache de requisições
 │   ├── errors.ts             # Tratamento padronizado de erros
 │   ├── validation.ts         # Helpers de validação de entrada
+│   ├── metrics.ts            # Sistema de métricas e logging
 │   └── tools/
 │       ├── index.ts          # Exportação das ferramentas
 │       ├── estados.ts        # Tool: ibge_estados
@@ -702,6 +843,10 @@ ibge-br-mcp/
 │       ├── calendario.ts     # Tool: ibge_calendario
 │       ├── comparar.ts       # Tool: ibge_comparar
 │       ├── malhas.ts         # Tool: ibge_malhas
+│       ├── malhas-tema.ts    # Tool: ibge_malhas_tema
+│       ├── vizinhos.ts       # Tool: ibge_vizinhos
+│       ├── bcb.ts            # Tool: bcb
+│       ├── datasaude.ts      # Tool: datasaude
 │       ├── pesquisas.ts      # Tool: ibge_pesquisas
 │       ├── nomes.ts          # Tool: ibge_nomes
 │       └── noticias.ts       # Tool: ibge_noticias
