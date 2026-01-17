@@ -173,11 +173,35 @@ Consulta tabelas do SIDRA (Sistema IBGE de Recuperação Automática).
 **Parâmetros:**
 - `tabela` (obrigatório): Código da tabela SIDRA
 - `variaveis` (opcional): IDs das variáveis (padrão: "allxp")
-- `nivel_territorial` (opcional): 1=Brasil, 2=Região, 3=UF, 6=Município
+- `nivel_territorial` (opcional): Código do nível territorial (ver tabela abaixo)
 - `localidades` (opcional): Códigos das localidades (padrão: "all")
 - `periodos` (opcional): Períodos (padrão: "last")
 - `classificacoes` (opcional): Filtros de classificação
 - `formato` (opcional): "json" ou "tabela"
+
+**Níveis territoriais suportados:**
+
+| Código | Nível Territorial |
+|-------:|:------------------|
+| 1 | Brasil |
+| 2 | Grande Região (Norte, Nordeste, etc.) |
+| 3 | UF (Unidade da Federação) |
+| 6 | Município |
+| 7 | Região Metropolitana |
+| 8 | Mesorregião Geográfica |
+| 9 | Microrregião Geográfica |
+| 10 | Distrito |
+| 11 | Subdistrito |
+| 13 | Região Metropolitana e RIDE |
+| 14 | Região Integrada de Desenvolvimento |
+| 15 | Aglomeração Urbana |
+| 17 | Região Geográfica Imediata |
+| 18 | Região Geográfica Intermediária |
+| 105 | Macrorregião de Saúde |
+| 106 | Região de Saúde |
+| 114 | Aglomerado Subnormal |
+| 127 | Amazônia Legal |
+| 128 | Semiárido |
 
 **Tabelas mais utilizadas:**
 
@@ -200,6 +224,12 @@ ibge_sidra(tabela="6579", periodos="2023")
 
 # População por UF
 ibge_sidra(tabela="6579", nivel_territorial="3", periodos="2023")
+
+# População por Região de Saúde
+ibge_sidra(tabela="6579", nivel_territorial="106")
+
+# Censo 2022 por município de São Paulo
+ibge_sidra(tabela="9514", nivel_territorial="6", localidades="3550308")
 
 # PIB do Brasil
 ibge_sidra(tabela="6706", periodos="last")

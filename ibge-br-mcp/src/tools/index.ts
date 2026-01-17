@@ -84,27 +84,17 @@ O SIDRA contém dados de pesquisas do IBGE como Censo, PNAD, PIB, etc.
 Tabelas mais utilizadas:
 - 6579: Estimativas de população (anual)
 - 9514: População do Censo 2022
-- 200: População dos Censos (1970-2010)
 - 4714: Taxa de desocupação (PNAD Contínua)
-- 6381: Rendimento médio (PNAD Contínua)
 - 6706: PIB a preços correntes
-- 5938: PIB per capita
-- 1705: Área territorial
-- 1712: Densidade demográfica
 
-Níveis territoriais:
-- 1: Brasil
-- 2: Região
-- 3: UF (Unidade da Federação)
-- 6: Município
-- 7: Região Metropolitana
-- 8: Mesorregião
-- 9: Microrregião
+Níveis territoriais (todos suportados):
+1=Brasil, 2=Grande Região, 3=UF, 6=Município, 7=RM, 8=Meso, 9=Micro,
+10=Distrito, 13=RM/RIDE, 17=Região Imediata, 18=Região Intermediária,
+105=Macrorregião de Saúde, 106=Região de Saúde, 127=Amazônia Legal, 128=Semiárido
 
-Exemplo de uso:
-- População do Brasil 2023: tabela="6579", periodos="2023"
-- População de SP por município: tabela="6579", nivel_territorial="6", localidades="3500105,3550308"
-- PIB do Brasil: tabela="6706", periodos="last"`,
+Exemplos:
+- Censo 2022 por município: tabela="9514", nivel_territorial="6"
+- Dados por Região de Saúde: nivel_territorial="106"`,
   },
   {
     name: "ibge_nomes",

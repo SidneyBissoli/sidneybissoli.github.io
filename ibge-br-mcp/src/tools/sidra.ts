@@ -12,10 +12,16 @@ export const sidraSchema = z.object({
     .default("allxp")
     .describe("IDs das variáveis separados por vírgula, ou 'allxp' para todas"),
   nivel_territorial: z
-    .enum(["1", "2", "3", "6", "7", "8", "9"])
+    .string()
     .optional()
     .default("1")
-    .describe("Nível territorial: 1=Brasil, 2=Região, 3=UF, 6=Município, 7=Região Metropolitana, 8=Mesorregião, 9=Microrregião"),
+    .describe(`Nível territorial (código N sem o prefixo):
+1=Brasil, 2=Grande Região, 3=UF, 6=Município, 7=Região Metropolitana,
+8=Mesorregião, 9=Microrregião, 10=Distrito, 11=Subdistrito,
+13=RM e RIDE, 14=Região Integrada de Desenvolvimento, 15=Aglomeração Urbana,
+17=Região Geográfica Imediata, 18=Região Geográfica Intermediária,
+105=Macrorregião de Saúde, 106=Região de Saúde,
+114=Aglomerado Subnormal, 127=Amazônia Legal, 128=Semiárido`),
   localidades: z
     .string()
     .optional()
@@ -197,18 +203,32 @@ Tabelas mais utilizadas:
 - 1705: Área territorial
 - 1712: Densidade demográfica
 
-Níveis territoriais:
+Níveis territoriais (todos suportados):
 - 1: Brasil
-- 2: Região
+- 2: Grande Região (Norte, Nordeste, etc.)
 - 3: UF (Unidade da Federação)
 - 6: Município
 - 7: Região Metropolitana
-- 8: Mesorregião
-- 9: Microrregião
+- 8: Mesorregião Geográfica
+- 9: Microrregião Geográfica
+- 10: Distrito
+- 11: Subdistrito
+- 13: Região Metropolitana e RIDE
+- 14: Região Integrada de Desenvolvimento
+- 15: Aglomeração Urbana
+- 17: Região Geográfica Imediata
+- 18: Região Geográfica Intermediária
+- 105: Macrorregião de Saúde
+- 106: Região de Saúde
+- 114: Aglomerado Subnormal
+- 127: Amazônia Legal
+- 128: Semiárido
 
-Exemplo de uso:
+Exemplos de uso:
 - População do Brasil 2023: tabela="6579", periodos="2023"
-- População de SP por município: tabela="6579", nivel_territorial="6", localidades="3500105,3550308"
+- População por Região: tabela="6579", nivel_territorial="2"
+- População por Região de Saúde: tabela="6579", nivel_territorial="106"
+- Censo 2022 por município de SP: tabela="9514", nivel_territorial="6", localidades="3550308"
 - PIB do Brasil: tabela="6706", periodos="last"`,
   inputSchema: sidraSchema,
   handler: ibgeSidra,
