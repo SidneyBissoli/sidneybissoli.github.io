@@ -12,6 +12,7 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 | `ibge_estados` | Lista estados brasileiros com filtro por região |
 | `ibge_municipios` | Lista municípios por UF ou busca por nome |
 | `ibge_localidade` | Detalhes de uma localidade pelo código IBGE |
+| `ibge_geocodigo` | **NOVO** - Decodifica códigos IBGE ou busca por nome |
 
 ### Dados Estatísticos (SIDRA)
 | Ferramenta | Descrição |
@@ -21,10 +22,20 @@ Este servidor implementa o [Model Context Protocol (MCP)](https://modelcontextpr
 | `ibge_sidra_metadados` | Metadados de uma tabela (variáveis, períodos, níveis) |
 | `ibge_pesquisas` | Lista pesquisas do IBGE e suas tabelas |
 
+### Indicadores Econômicos e Sociais
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `ibge_indicadores` | **NOVO** - Indicadores econômicos e sociais (PIB, IPCA, desemprego, etc.) |
+
 ### Censos Demográficos
 | Ferramenta | Descrição |
 |:-----------|:----------|
-| `ibge_censo` | **NOVO** - Dados dos Censos 1970-2022 (interface simplificada) |
+| `ibge_censo` | Dados dos Censos 1970-2022 (interface simplificada) |
+
+### Classificações
+| Ferramenta | Descrição |
+|:-----------|:----------|
+| `ibge_cnae` | **NOVO** - CNAE (Classificação Nacional de Atividades Econômicas) |
 
 ### Demografia e População
 | Ferramenta | Descrição |
@@ -456,6 +467,120 @@ ibge_pesquisas(detalhes="pnad")
 ibge_pesquisas(detalhes="CD")
 ```
 
+### ibge_indicadores
+
+Consulta indicadores econômicos e sociais do IBGE.
+
+**Parâmetros:**
+- `indicador` (opcional): Nome do indicador (pib, ipca, desemprego, etc.) ou "listar"
+- `categoria` (opcional): Filtrar por categoria (economico, precos, trabalho, populacao, agropecuaria)
+- `nivel_territorial` (opcional): 1=Brasil, 2=Região, 3=UF
+- `localidades` (opcional): Códigos das localidades ou "all"
+- `periodos` (opcional): Períodos (padrão: "last")
+- `formato` (opcional): "tabela" ou "json"
+
+**Indicadores disponíveis:**
+
+| Categoria | Indicadores |
+|:----------|:------------|
+| Econômicos | pib, pib_variacao, pib_per_capita, industria, comercio, servicos |
+| Preços | ipca, ipca_acumulado, inpc |
+| Trabalho | desemprego, ocupacao, rendimento, informalidade |
+| População | populacao, densidade |
+| Agropecuária | agricultura, pecuaria |
+
+**Exemplos:**
+```
+# PIB do Brasil
+ibge_indicadores(indicador="pib")
+
+# IPCA dos últimos 12 meses
+ibge_indicadores(indicador="ipca", periodos="last 12")
+
+# Taxa de desemprego por UF
+ibge_indicadores(indicador="desemprego", nivel_territorial="3")
+
+# Listar todos os indicadores
+ibge_indicadores(indicador="listar")
+
+# Indicadores de preços
+ibge_indicadores(categoria="precos")
+```
+
+### ibge_cnae
+
+Consulta a CNAE (Classificação Nacional de Atividades Econômicas) do IBGE.
+
+**Parâmetros:**
+- `codigo` (opcional): Código CNAE (seção, divisão, grupo, classe ou subclasse)
+- `busca` (opcional): Termo para buscar na descrição das atividades
+- `nivel` (opcional): Nível hierárquico (secoes, divisoes, grupos, classes, subclasses)
+- `limite` (opcional): Número máximo de resultados (padrão: 20)
+
+**Estrutura hierárquica:**
+
+| Nível | Formato | Exemplo |
+|:------|:--------|:--------|
+| Seção | 1 letra | A |
+| Divisão | 2 dígitos | 01 |
+| Grupo | 3 dígitos | 01.1 |
+| Classe | 4-5 dígitos | 01.11-3 |
+| Subclasse | 7 dígitos | 0111-3/01 |
+
+**Exemplos:**
+```
+# Buscar atividades de software
+ibge_cnae(busca="software")
+
+# Detalhes de uma seção
+ibge_cnae(codigo="J")
+
+# Detalhes de um código específico
+ibge_cnae(codigo="6201-5/01")
+
+# Listar todas as divisões
+ibge_cnae(nivel="divisoes", limite=50)
+
+# Ver estrutura geral
+ibge_cnae()
+```
+
+### ibge_geocodigo
+
+Decodifica códigos IBGE ou busca códigos pelo nome da localidade.
+
+**Parâmetros:**
+- `codigo` (opcional): Código IBGE para decodificar (1, 2, 7 ou 9 dígitos)
+- `nome` (opcional): Nome da localidade para encontrar o código
+- `uf` (opcional): Sigla da UF para restringir a busca por município
+
+**Estrutura dos códigos:**
+
+| Dígitos | Nível | Exemplo |
+|:-------:|:------|:--------|
+| 1 | Região | 3 (Sudeste) |
+| 2 | UF | 35 (São Paulo) |
+| 7 | Município | 3550308 (São Paulo capital) |
+| 9 | Distrito | 355030805 (Sé) |
+
+**Exemplos:**
+```
+# Decodificar um código de município
+ibge_geocodigo(codigo="3550308")
+
+# Decodificar um código de UF
+ibge_geocodigo(codigo="35")
+
+# Buscar código pelo nome
+ibge_geocodigo(nome="São Paulo")
+
+# Buscar município em um estado específico
+ibge_geocodigo(nome="Campinas", uf="SP")
+
+# Ver ajuda
+ibge_geocodigo()
+```
+
 ## APIs do IBGE Utilizadas
 
 Este MCP Server utiliza as seguintes APIs públicas do IBGE:
@@ -467,6 +592,7 @@ Este MCP Server utiliza as seguintes APIs públicas do IBGE:
 - **Malhas**: `https://servicodados.ibge.gov.br/api/v3/malhas`
 - **Notícias**: `https://servicodados.ibge.gov.br/api/v3/noticias`
 - **População**: `https://servicodados.ibge.gov.br/api/v1/projecoes/populacao`
+- **CNAE**: `https://servicodados.ibge.gov.br/api/v2/cnae`
 
 ## Desenvolvimento
 
@@ -485,16 +611,21 @@ ibge-br-mcp/
 ├── src/
 │   ├── index.ts              # Servidor MCP principal
 │   ├── types.ts              # Tipos TypeScript
+│   ├── cache.ts              # Sistema de cache de requisições
+│   ├── errors.ts             # Tratamento padronizado de erros
 │   └── tools/
 │       ├── index.ts          # Exportação das ferramentas
 │       ├── estados.ts        # Tool: ibge_estados
 │       ├── municipios.ts     # Tool: ibge_municipios
 │       ├── localidade.ts     # Tool: ibge_localidade
-│       ├── censo.ts          # Tool: ibge_censo (Censos 1970-2022)
+│       ├── geocodigo.ts      # Tool: ibge_geocodigo
+│       ├── censo.ts          # Tool: ibge_censo
 │       ├── populacao.ts      # Tool: ibge_populacao
 │       ├── sidra.ts          # Tool: ibge_sidra
 │       ├── sidra-tabelas.ts  # Tool: ibge_sidra_tabelas
 │       ├── sidra-metadados.ts# Tool: ibge_sidra_metadados
+│       ├── indicadores.ts    # Tool: ibge_indicadores
+│       ├── cnae.ts           # Tool: ibge_cnae
 │       ├── malhas.ts         # Tool: ibge_malhas
 │       ├── pesquisas.ts      # Tool: ibge_pesquisas
 │       ├── nomes.ts          # Tool: ibge_nomes

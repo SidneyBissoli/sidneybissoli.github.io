@@ -7,12 +7,17 @@ export { sidraTool, ibgeSidra, sidraSchema } from "./sidra.js";
 export { nomesTool, ibgeNomes, nomesSchema } from "./nomes.js";
 export { noticiasTool, ibgeNoticias, noticiasSchema } from "./noticias.js";
 
-// New tools
+// SIDRA tools
 export { sidraTabelasTool, ibgeSidraTabelas, sidraTabelasSchema } from "./sidra-tabelas.js";
 export { sidraMetadadosTool, ibgeSidraMetadados, sidraMetadadosSchema } from "./sidra-metadados.js";
 export { malhasTool, ibgeMalhas, malhasSchema } from "./malhas.js";
 export { pesquisasTool, ibgePesquisas, pesquisasSchema } from "./pesquisas.js";
 export { censoTool, ibgeCenso, censoSchema } from "./censo.js";
+
+// Phase 1 tools (v1.4.0)
+export { indicadoresTool, ibgeIndicadores, indicadoresSchema } from "./indicadores.js";
+export { cnaeTool, ibgeCnae, cnaeSchema } from "./cnae.js";
+export { geocodigoTool, ibgeGeocodigo, geocodigoSchema } from "./geocodigo.js";
 
 // Tool definitions array for registration
 export const tools = [
@@ -215,5 +220,53 @@ Exemplos:
 - População 2022: ano="2022", tema="populacao"
 - Série histórica: ano="todos", tema="populacao"
 - Listar tabelas: tema="listar"`,
+  },
+  {
+    name: "ibge_indicadores",
+    description: `Consulta indicadores econômicos e sociais do IBGE.
+
+Indicadores disponíveis:
+- pib, pib_variacao, pib_per_capita: Produto Interno Bruto
+- ipca, ipca_acumulado, inpc: Índices de preços
+- desemprego, ocupacao, rendimento, informalidade: Trabalho
+- populacao, densidade: Demografia
+- industria, comercio, servicos: Atividade econômica
+- agricultura, pecuaria: Agropecuária
+
+Exemplos:
+- PIB: indicador="pib"
+- IPCA 12 meses: indicador="ipca", periodos="last 12"
+- Listar indicadores: indicador="listar"`,
+  },
+  {
+    name: "ibge_cnae",
+    description: `Consulta a CNAE (Classificação Nacional de Atividades Econômicas).
+
+Estrutura hierárquica:
+- Seção (A-U): 21 categorias
+- Divisão (2 dígitos): 87 divisões
+- Grupo (3 dígitos): 285 grupos
+- Classe (4-5 dígitos): 673 classes
+- Subclasse (7 dígitos): 1.332 subclasses
+
+Exemplos:
+- Buscar: busca="software"
+- Código: codigo="6201-5/01"
+- Listar divisões: nivel="divisoes"`,
+  },
+  {
+    name: "ibge_geocodigo",
+    description: `Decodifica códigos IBGE ou busca códigos pelo nome.
+
+Estrutura dos códigos:
+- 1 dígito: Região (1-5)
+- 2 dígitos: UF (11-53)
+- 7 dígitos: Município
+- 9 dígitos: Distrito
+
+Exemplos:
+- Decodificar: codigo="3550308"
+- Buscar: nome="São Paulo"
+- Buscar em UF: nome="Campinas", uf="SP"`,
   },
 ];

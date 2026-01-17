@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IBGE_API, type UF, type Regiao } from "../types.js";
+import { IBGE_API, type UF } from "../types.js";
 
 // Schema for the tool input
 export const estadosSchema = z.object({

@@ -66,9 +66,6 @@ const CENSO_TABELAS: Record<string, Record<string, { tabela: string; descricao: 
   },
 };
 
-// Available census years
-const ANOS_CENSO = ["1970", "1980", "1991", "2000", "2010", "2022"] as const;
-
 // Available themes
 const TEMAS_CENSO = [
   "populacao",

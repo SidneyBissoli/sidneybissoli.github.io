@@ -110,7 +110,7 @@ export async function ibgeSidraMetadados(input: SidraMetadadosInput): Promise<st
 function formatMetadadosResponse(
   meta: Metadados,
   periodos: Periodo[],
-  input: SidraMetadadosInput
+  _input: SidraMetadadosInput
 ): string {
   let output = `## Metadados da Tabela ${meta.id}\n\n`;
 

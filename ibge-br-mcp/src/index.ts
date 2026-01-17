@@ -28,11 +28,18 @@ import {
   ibgePesquisas,
   censoSchema,
   ibgeCenso,
+  // Phase 1 tools (v1.4.0)
+  indicadoresSchema,
+  ibgeIndicadores,
+  cnaeSchema,
+  ibgeCnae,
+  geocodigoSchema,
+  ibgeGeocodigo,
 } from "./tools/index.js";
 
 // Server metadata
 const SERVER_NAME = "ibge-br-mcp";
-const SERVER_VERSION = "1.3.0";
+const SERVER_VERSION = "1.4.0";
 
 /**
  * IBGE MCP Server
@@ -408,6 +415,115 @@ Exemplos de uso:
     censoSchema.shape,
     async (args) => {
       const result = await ibgeCenso(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_indicadores tool (Phase 1)
+  server.tool(
+    "ibge_indicadores",
+    `Consulta indicadores econômicos e sociais do IBGE.
+
+Indicadores disponíveis:
+
+**Econômicos:**
+- pib: PIB a preços correntes
+- pib_variacao: Variação do PIB (%)
+- pib_per_capita: PIB per capita
+- industria: Produção industrial
+- comercio: Vendas do comércio
+- servicos: Volume de serviços
+
+**Preços:**
+- ipca: IPCA mensal
+- ipca_acumulado: IPCA 12 meses
+- inpc: INPC mensal
+
+**Trabalho:**
+- desemprego: Taxa de desocupação
+- ocupacao: Pessoas ocupadas
+- rendimento: Rendimento médio
+- informalidade: Taxa de informalidade
+
+**População:**
+- populacao: Estimativa populacional
+- densidade: Densidade demográfica
+
+**Agropecuária:**
+- agricultura: Produção agrícola
+- pecuaria: Efetivo de rebanhos
+
+Exemplos de uso:
+- PIB: indicador="pib"
+- IPCA últimos 12 meses: indicador="ipca", periodos="last 12"
+- Desemprego por UF: indicador="desemprego", nivel_territorial="3"
+- Listar indicadores: indicador="listar"
+- Indicadores de preços: categoria="precos"`,
+    indicadoresSchema.shape,
+    async (args) => {
+      const result = await ibgeIndicadores(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_cnae tool (Phase 1)
+  server.tool(
+    "ibge_cnae",
+    `Consulta a CNAE (Classificação Nacional de Atividades Econômicas) do IBGE.
+
+A CNAE é a classificação oficial para identificar atividades econômicas no Brasil.
+
+Estrutura hierárquica:
+- Seção (letra A-U): 21 categorias principais
+- Divisão (2 dígitos): 87 divisões
+- Grupo (3 dígitos): 285 grupos
+- Classe (4-5 dígitos): 673 classes
+- Subclasse (7 dígitos): 1.332 subclasses
+
+Funcionalidades:
+- Busca por código CNAE
+- Busca por descrição da atividade
+- Listagem por nível hierárquico
+- Mostra hierarquia completa
+
+Exemplos de uso:
+- Buscar software: busca="software"
+- Código específico: codigo="6201-5/01"
+- Ver seção: codigo="J"
+- Listar divisões: nivel="divisoes"
+- Ver estrutura: (sem parâmetros)`,
+    cnaeSchema.shape,
+    async (args) => {
+      const result = await ibgeCnae(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_geocodigo tool (Phase 1)
+  server.tool(
+    "ibge_geocodigo",
+    `Decodifica códigos IBGE ou busca códigos pelo nome da localidade.
+
+Funcionalidades:
+- Decodifica códigos de região, UF, município ou distrito
+- Busca código IBGE pelo nome
+- Mostra hierarquia geográfica completa
+- Retorna códigos relacionados
+
+Estrutura dos códigos:
+- 1 dígito: Região (1=Norte, 2=Nordeste, 3=Sudeste, 4=Sul, 5=Centro-Oeste)
+- 2 dígitos: UF (11-53)
+- 7 dígitos: Município
+- 9 dígitos: Distrito
+
+Exemplos de uso:
+- Decodificar município: codigo="3550308"
+- Decodificar UF: codigo="35"
+- Buscar por nome: nome="São Paulo"
+- Buscar município em UF: nome="Campinas", uf="SP"`,
+    geocodigoSchema.shape,
+    async (args) => {
+      const result = await ibgeGeocodigo(args);
       return { content: [{ type: "text", text: result }] };
     }
   );
