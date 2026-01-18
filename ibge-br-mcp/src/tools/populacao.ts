@@ -4,6 +4,7 @@ import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
+import { fetchWithRetry } from "../retry.js";
 
 // Schema for the tool input
 export const populacaoSchema = z.object({
@@ -78,7 +79,7 @@ export async function ibgePopulacaoSidra(
     // SIDRA table 9514 = 2022 census population
     const url = `${IBGE_API.SIDRA}/t/${tabela}/n${localidade}/p/${periodo}/v/all`;
 
-    const response = await fetch(url);
+    const response = await fetchWithRetry(url);
 
     if (!response.ok) {
       throw new Error(`Erro na API SIDRA: ${response.status} ${response.statusText}`);

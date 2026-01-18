@@ -5,6 +5,7 @@ import { withMetrics } from "../metrics.js";
 import { formatNumber } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
 import { isValidIbgeCode, normalizeUf, formatValidationError } from "../validation.js";
+import { fetchWithRetry, RETRY_PRESETS } from "../retry.js";
 
 // Schema for the tool input
 export const vizinhosSchema = z.object({
@@ -198,7 +199,7 @@ async function getVizinhosFromMalha(municipioId: string): Promise<VizinhoBasico[
     // Get municipality mesh with neighbors info if available
     const malhaUrl = `${IBGE_API.MALHAS}/municipios/${municipioId}?formato=application/json`;
 
-    const response = await fetch(malhaUrl);
+    const response = await fetchWithRetry(malhaUrl, undefined, RETRY_PRESETS.QUICK);
     if (!response.ok) {
       return [];
     }
@@ -237,7 +238,7 @@ async function enrichVizinhosData(vizinhos: VizinhoInfo[]): Promise<VizinhoInfo[
       // Try to get population from SIDRA
       const popUrl = `${IBGE_API.SIDRA}/t/4709/n6/${v.codigo}/v/93/p/last/f/n`;
 
-      const response = await fetch(popUrl);
+      const response = await fetchWithRetry(popUrl, undefined, RETRY_PRESETS.QUICK);
       if (response.ok) {
         const data = await response.json();
         if (data && data.length > 1 && data[1].V) {

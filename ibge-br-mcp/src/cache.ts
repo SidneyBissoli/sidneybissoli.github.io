@@ -2,6 +2,8 @@
  * Simple in-memory cache with TTL support for IBGE API requests
  */
 
+import { fetchWithRetry, type RetryOptions } from "./retry.js";
+
 interface CacheEntry<T> {
   data: T;
   expiresAt: number;
@@ -116,12 +118,13 @@ export function cacheKey(
 }
 
 /**
- * Fetch with cache support
+ * Fetch with cache support and automatic retry on network failures
  */
 export async function cachedFetch<T>(
   url: string,
   cacheKeyStr: string,
-  ttlMinutes?: number
+  ttlMinutes?: number,
+  retryOptions?: RetryOptions
 ): Promise<T> {
   // Check cache first
   const cached = cache.get<T>(cacheKeyStr);
@@ -129,8 +132,8 @@ export async function cachedFetch<T>(
     return cached;
   }
 
-  // Fetch from API
-  const response = await fetch(url);
+  // Fetch from API with retry support
+  const response = await fetchWithRetry(url, undefined, retryOptions);
 
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);

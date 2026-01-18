@@ -4,6 +4,7 @@ import { cacheKey, CACHE_TTL, cachedFetch } from "../cache.js";
 import { withMetrics } from "../metrics.js";
 import { createMarkdownTable, formatNumber } from "../utils/index.js";
 import { parseHttpError, ValidationErrors } from "../errors.js";
+import { fetchWithRetry } from "../retry.js";
 
 // Health indicators available via IBGE SIDRA
 const INDICADORES_SAUDE: Record<
@@ -142,8 +143,8 @@ export async function ibgeDatasaude(input: DatasaudeInput): Promise<string> {
       try {
         data = await cachedFetch<SidraData[]>(url, key, CACHE_TTL.SHORT);
       } catch {
-        // Fallback without cache
-        const response = await fetch(url);
+        // Fallback without cache (with retry)
+        const response = await fetchWithRetry(url);
         if (!response.ok) {
           throw new Error(`Erro na API SIDRA: ${response.status}`);
         }
