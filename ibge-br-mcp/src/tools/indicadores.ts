@@ -211,9 +211,9 @@ export async function ibgeIndicadores(input: IndicadoresInput): Promise<string> 
       // Build SIDRA URL
       const url = buildSidraUrl(
         indicador.tabela,
-        input.nivel_territorial!,
-        input.localidades!,
-        input.periodos!,
+        input.nivel_territorial ?? "1",
+        input.localidades ?? "all",
+        input.periodos ?? "last",
         indicador.variavel
       );
 
@@ -265,8 +265,8 @@ export async function ibgeIndicadores(input: IndicadoresInput): Promise<string> 
       if (error instanceof Error) {
         return formatErrorMessage(
           error.message,
-          INDICADORES_CONHECIDOS[indicadorKey!],
-          indicadorKey!,
+          indicadorKey ? INDICADORES_CONHECIDOS[indicadorKey] : undefined,
+          indicadorKey ?? "unknown",
           "Verifique sua conexão ou tente novamente mais tarde."
         );
       }
@@ -366,7 +366,7 @@ function formatIndicadorTable(data: Record<string, string>[]): string {
 
 function formatErrorMessage(
   error: string,
-  indicador: (typeof INDICADORES_CONHECIDOS)[string],
+  indicador: (typeof INDICADORES_CONHECIDOS)[string] | undefined,
   indicadorKey: string,
   dica: string
 ): string {

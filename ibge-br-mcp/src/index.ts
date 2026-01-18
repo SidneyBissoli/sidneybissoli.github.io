@@ -49,11 +49,16 @@ import {
   ibgeBcb,
   datasaudeSchema,
   ibgeDatasaude,
+  // Phase 4 tools (v1.9.0)
+  paisesSchema,
+  ibgePaises,
+  cidadesSchema,
+  ibgeCidades,
 } from "./tools/index.js";
 
 // Server metadata
 const SERVER_NAME = "ibge-br-mcp";
-const SERVER_VERSION = "1.6.0";
+const SERVER_VERSION = "1.9.0";
 
 /**
  * IBGE MCP Server
@@ -733,6 +738,60 @@ Exemplos de uso:
     datasaudeSchema.shape,
     async (args) => {
       const result = await ibgeDatasaude(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_paises tool (Phase 4)
+  server.tool(
+    "ibge_paises",
+    `Consulta dados de países e territórios internacionais via IBGE.
+
+Funcionalidades:
+- Lista todos os países (seguindo metodologia M49 da ONU)
+- Detalhes de um país específico (área, línguas, moeda, localização)
+- Busca países por nome
+- Filtra por região/continente
+
+Regiões disponíveis: americas, europa, africa, asia, oceania
+
+Códigos de países: Use ISO-ALPHA-2 (ex: BR, US, AR, PT, JP)
+
+Exemplos de uso:
+- Listar todos: tipo="listar"
+- Detalhes do Brasil: tipo="detalhes", pais="BR"
+- Buscar: tipo="buscar", busca="Argentina"
+- Países da América: tipo="listar", regiao="americas"
+- Indicadores disponíveis: tipo="indicadores"`,
+    paisesSchema.shape,
+    async (args) => {
+      const result = await ibgePaises(args);
+      return { content: [{ type: "text", text: result }] };
+    }
+  );
+
+  // Register ibge_cidades tool (Phase 4)
+  server.tool(
+    "ibge_cidades",
+    `Consulta indicadores municipais do IBGE (similar ao portal Cidades@).
+
+Funcionalidades:
+- Panorama geral de um município (população, IDH, PIB, etc.)
+- Consulta indicadores específicos
+- Histórico de indicadores ao longo dos anos
+- Lista pesquisas e indicadores disponíveis
+
+Indicadores disponíveis: populacao, area, densidade, pib_per_capita, idh,
+escolarizacao, mortalidade, salario_medio, receitas, despesas
+
+Exemplos de uso:
+- Panorama de São Paulo: tipo="panorama", municipio="3550308"
+- Histórico de população: tipo="historico", municipio="3550308", indicador="populacao"
+- Ver pesquisas: tipo="pesquisas"
+- Indicadores disponíveis: tipo="indicador"`,
+    cidadesSchema.shape,
+    async (args) => {
+      const result = await ibgeCidades(args);
       return { content: [{ type: "text", text: result }] };
     }
   );

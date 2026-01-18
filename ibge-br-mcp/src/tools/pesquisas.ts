@@ -41,10 +41,11 @@ export async function ibgePesquisas(input: PesquisasInput): Promise<string> {
 
       // If detalhes is specified, show details of a specific pesquisa
       if (input.detalhes) {
+        const detalhes = input.detalhes;
         const pesquisa = data.find(
           (p) =>
-            p.id.toLowerCase() === input.detalhes!.toLowerCase() ||
-            p.nome.toLowerCase().includes(input.detalhes!.toLowerCase())
+            p.id.toLowerCase() === detalhes.toLowerCase() ||
+            p.nome.toLowerCase().includes(detalhes.toLowerCase())
         );
 
         if (!pesquisa) {

@@ -133,7 +133,7 @@ function formatTabelasResponse(
     if (!byPesquisa.has(key)) {
       byPesquisa.set(key, []);
     }
-    byPesquisa.get(key)!.push(t);
+    byPesquisa.get(key)?.push(t);
   }
 
   for (const [pesquisa, tabs] of byPesquisa) {

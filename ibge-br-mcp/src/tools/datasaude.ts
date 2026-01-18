@@ -131,9 +131,9 @@ export async function ibgeDatasaude(input: DatasaudeInput): Promise<string> {
       // Build SIDRA query
       const url = buildSidraUrl(
         indicadorInfo.tabela,
-        input.nivel_territorial!,
-        input.localidade!,
-        input.periodo!
+        input.nivel_territorial ?? "1",
+        input.localidade ?? "all",
+        input.periodo ?? "last"
       );
 
       const key = cacheKey(url);

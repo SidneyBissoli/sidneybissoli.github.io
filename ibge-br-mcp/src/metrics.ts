@@ -153,7 +153,7 @@ class MetricsCollector {
   }
 
   private updateApiMetrics(entry: MetricEntry): void {
-    const api = entry.api!;
+    const api = entry.api ?? "unknown";
 
     if (!this.metrics.byApi[api]) {
       this.metrics.byApi[api] = {

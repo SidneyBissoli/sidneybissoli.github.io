@@ -252,8 +252,8 @@ export async function ibgeCenso(input: CensoInput): Promise<string> {
     try {
       const url = buildSidraUrl(
         tabelaInfo.tabela,
-        input.nivel_territorial!,
-        input.localidades!,
+        input.nivel_territorial ?? "1",
+        input.localidades ?? "all",
         periodos
       );
 
