@@ -63,5 +63,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/SidneyBissoli/ibge-br-mcp"
+  },
+  "homepage": "https://github.com/SidneyBissoli/ibge-br-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/SidneyBissoli/ibge-br-mcp/issues"
   }
 }

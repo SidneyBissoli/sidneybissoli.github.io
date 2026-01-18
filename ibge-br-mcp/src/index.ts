@@ -63,12 +63,12 @@ const SERVER_VERSION = "1.9.0";
 /**
  * IBGE MCP Server
  *
- * Provides tools to access IBGE (Instituto Brasileiro de Geografia e Estatística) APIs:
- * - Localidades: Estados, Municípios, Distritos
- * - SIDRA: Dados agregados de pesquisas (Censo, PNAD, PIB, etc.)
- * - Nomes: Frequência e ranking de nomes no Brasil
- * - Notícias: Releases e notícias do IBGE
- * - População: Projeção populacional em tempo real
+ * Provides tools to access IBGE (Brazilian Institute of Geography and Statistics) APIs:
+ * - Localities: States, Municipalities, Districts
+ * - SIDRA: Aggregated research data (Census, PNAD, GDP, etc.)
+ * - Names: Name frequency and rankings in Brazil
+ * - News: IBGE news and press releases
+ * - Population: Real-time population projection
  */
 async function main() {
   // Create MCP server instance
@@ -80,17 +80,17 @@ async function main() {
   // Register ibge_estados tool
   server.tool(
     "ibge_estados",
-    `Lista todos os estados brasileiros do IBGE.
+    `Lists all Brazilian states from IBGE.
 
-Funcionalidades:
-- Lista todos os 27 estados (26 estados + DF)
-- Filtra por região (Norte, Nordeste, Sudeste, Sul, Centro-Oeste)
-- Ordena por ID, nome ou sigla
+Features:
+- Lists all 27 states (26 states + Federal District)
+- Filter by region (North, Northeast, Southeast, South, Central-West)
+- Sort by ID, name, or abbreviation
 
-Exemplo de uso:
-- Listar todos os estados
-- Listar estados do Nordeste
-- Listar estados ordenados por sigla`,
+Examples:
+- List all states: (no parameters)
+- Northeast states: regiao="NE"
+- Sorted by abbreviation: ordenar="sigla"`,
     estadosSchema.shape,
     async (args) => {
       const result = await ibgeEstados(args);
@@ -101,18 +101,18 @@ Exemplo de uso:
   // Register ibge_municipios tool
   server.tool(
     "ibge_municipios",
-    `Lista municípios brasileiros do IBGE.
+    `Lists Brazilian municipalities from IBGE.
 
-Funcionalidades:
-- Lista municípios de um estado específico (usando a sigla da UF)
-- Lista todos os municípios do Brasil (5.570 municípios)
-- Busca por nome do município
-- Retorna código IBGE de 7 dígitos
+Features:
+- List municipalities by state (using state abbreviation)
+- List all municipalities in Brazil (5,570 municipalities)
+- Search by municipality name
+- Returns 7-digit IBGE code
 
-Exemplo de uso:
-- Listar municípios de São Paulo: uf="SP"
-- Buscar município por nome: busca="Campinas"
-- Listar municípios de MG que contenham "Belo": uf="MG", busca="Belo"`,
+Examples:
+- São Paulo municipalities: uf="SP"
+- Search by name: busca="Campinas"
+- MG municipalities containing "Belo": uf="MG", busca="Belo"`,
     municipiosSchema.shape,
     async (args) => {
       const result = await ibgeMunicipios(args);
@@ -123,18 +123,18 @@ Exemplo de uso:
   // Register ibge_localidade tool
   server.tool(
     "ibge_localidade",
-    `Retorna detalhes de uma localidade específica pelo código IBGE.
+    `Returns details of a specific locality by IBGE code.
 
-Funcionalidades:
-- Busca informações de estados (código de 2 dígitos)
-- Busca informações de municípios (código de 7 dígitos)
-- Busca informações de distritos (código de 9 dígitos)
-- Retorna hierarquia completa (região, mesorregião, microrregião)
+Features:
+- State information (2-digit code)
+- Municipality information (7-digit code)
+- District information (9-digit code)
+- Complete hierarchy (region, mesoregion, microregion)
 
-Exemplo de uso:
-- Detalhes de São Paulo (estado): codigo=35
-- Detalhes de São Paulo (município): codigo=3550308
-- Detalhes de um distrito: codigo=355030805`,
+Examples:
+- São Paulo state: codigo=35
+- São Paulo city: codigo=3550308
+- District: codigo=355030805`,
     localidadeSchema.shape,
     async (args) => {
       const result = await ibgeLocalidade(args);
@@ -145,19 +145,19 @@ Exemplo de uso:
   // Register ibge_populacao tool
   server.tool(
     "ibge_populacao",
-    `Retorna a projeção da população brasileira em tempo real.
+    `Returns real-time Brazilian population projection.
 
-Funcionalidades:
-- Estimativa da população atual do Brasil
-- Taxa de nascimentos (tempo médio entre nascimentos)
-- Taxa de óbitos (tempo médio entre óbitos)
-- Incremento populacional diário
+Features:
+- Current population estimate
+- Birth rate (average time between births)
+- Death rate (average time between deaths)
+- Daily population increment
 
-Fonte: IBGE - Projeção da População do Brasil
+Source: IBGE - Brazilian Population Projection
 
-Nota: Para dados históricos ou por município, use a ferramenta ibge_sidra com as tabelas:
-- 6579: Estimativas de população
-- 9514: População do Censo 2022`,
+Note: For historical data or by municipality, use ibge_sidra with tables:
+- 6579: Population estimates
+- 9514: Census 2022 population`,
     populacaoSchema.shape,
     async (args) => {
       const result = await ibgePopulacao(args);
@@ -168,47 +168,30 @@ Nota: Para dados históricos ou por município, use a ferramenta ibge_sidra com 
   // Register ibge_sidra tool
   server.tool(
     "ibge_sidra",
-    `Consulta tabelas do SIDRA (Sistema IBGE de Recuperação Automática).
+    `Queries SIDRA tables (IBGE's Automatic Recovery System).
 
-O SIDRA contém dados de pesquisas do IBGE como Censo, PNAD, PIB, etc.
+SIDRA contains data from IBGE surveys like Census, PNAD, GDP, etc.
 
-Tabelas mais utilizadas:
-- 6579: Estimativas de população (anual)
-- 9514: População do Censo 2022
-- 200: População dos Censos (1970-2010)
-- 4714: Taxa de desocupação (PNAD Contínua)
-- 6381: Rendimento médio (PNAD Contínua)
-- 6706: PIB a preços correntes
-- 5938: PIB per capita
-- 1705: Área territorial
-- 1712: Densidade demográfica
+Common tables:
+- 6579: Population estimates (annual)
+- 9514: Census 2022 population
+- 200: Census population (1970-2010)
+- 4714: Unemployment rate (PNAD Contínua)
+- 6381: Average income (PNAD Contínua)
+- 6706: GDP at current prices
+- 5938: GDP per capita
 
-Níveis territoriais (todos suportados):
-- 1: Brasil
-- 2: Grande Região (Norte, Nordeste, etc.)
-- 3: UF (Unidade da Federação)
-- 6: Município
-- 7: Região Metropolitana
-- 8: Mesorregião Geográfica
-- 9: Microrregião Geográfica
-- 10: Distrito
-- 11: Subdistrito
-- 13: Região Metropolitana e RIDE
-- 14: Região Integrada de Desenvolvimento
-- 15: Aglomeração Urbana
-- 17: Região Geográfica Imediata
-- 18: Região Geográfica Intermediária
-- 105: Macrorregião de Saúde
-- 106: Região de Saúde
-- 114: Aglomerado Subnormal
-- 127: Amazônia Legal
-- 128: Semiárido
+Territorial levels:
+- 1: Brazil
+- 2: Region (North, Northeast, etc.)
+- 3: State (UF)
+- 6: Municipality
+- 7: Metropolitan Region
 
-Exemplos de uso:
-- População do Brasil 2023: tabela="6579", periodos="2023"
-- População por Região de Saúde: tabela="6579", nivel_territorial="106"
-- Censo 2022 por município: tabela="9514", nivel_territorial="6", localidades="3550308"
-- PIB do Brasil: tabela="6706", periodos="last"`,
+Examples:
+- Brazil population 2023: tabela="6579", periodos="2023"
+- Population by state: tabela="6579", nivel_territorial="3"
+- Census 2022 by municipality: tabela="9514", nivel_territorial="6", localidades="3550308"`,
     sidraSchema.shape,
     async (args) => {
       const result = await ibgeSidra(args);
@@ -219,26 +202,25 @@ Exemplos de uso:
   // Register ibge_nomes tool
   server.tool(
     "ibge_nomes",
-    `Consulta frequência e ranking de nomes no Brasil (IBGE).
+    `Queries name frequency and rankings in Brazil (IBGE).
 
-Funcionalidades:
-1. **Frequência de nomes** (tipo='frequencia'):
-   - Busca a frequência de nascimentos por década
-   - Aceita múltiplos nomes separados por vírgula
-   - Filtra por sexo e localidade
+Features:
+1. **Name frequency** (tipo='frequencia'):
+   - Birth frequency by decade
+   - Multiple names separated by comma
+   - Filter by sex and locality
 
-2. **Ranking de nomes** (tipo='ranking'):
-   - Lista os nomes mais populares
-   - Filtra por década, sexo e localidade
+2. **Name ranking** (tipo='ranking'):
+   - Most popular names
+   - Filter by decade, sex, and locality
 
-Décadas disponíveis: 1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000, 2010
+Available decades: 1930-2010
 
-Exemplos de uso:
-- Frequência de "Maria": tipo="frequencia", nomes="Maria"
-- Comparar nomes: tipo="frequencia", nomes="João,José,Pedro"
-- Ranking anos 2000: tipo="ranking", decada=2000
-- Nomes femininos mais populares: tipo="ranking", sexo="F"
-- Nomes populares em SP: tipo="ranking", localidade="35"`,
+Examples:
+- Frequency of "Maria": tipo="frequencia", nomes="Maria"
+- Compare names: tipo="frequencia", nomes="João,José,Pedro"
+- 2000s ranking: tipo="ranking", decada=2000
+- Female names: tipo="ranking", sexo="F"`,
     nomesSchema.shape,
     async (args) => {
       const result = await ibgeNomes(args);
@@ -249,23 +231,21 @@ Exemplos de uso:
   // Register ibge_noticias tool
   server.tool(
     "ibge_noticias",
-    `Busca notícias e releases do IBGE.
+    `Searches IBGE news and press releases.
 
-Funcionalidades:
-- Lista as últimas notícias e releases do IBGE
-- Busca por termo específico
-- Filtra por período (data inicial e final)
-- Filtra por tipo (release ou notícia)
-- Filtra notícias em destaque
-- Suporta paginação
+Features:
+- Latest news and releases
+- Search by specific term
+- Filter by period (start and end date)
+- Filter by type (release or news)
+- Filter featured news
+- Pagination support
 
-Exemplos de uso:
-- Últimas 10 notícias: (sem parâmetros)
-- Buscar sobre censo: busca="censo"
-- Notícias de 2024: de="01-01-2024", ate="12-31-2024"
-- Apenas releases: tipo="release"
-- Apenas destaques: destaque=true
-- Segunda página: pagina=2`,
+Examples:
+- Latest 10 news: (no parameters)
+- Search census: busca="censo"
+- 2024 news: de="01-01-2024", ate="12-31-2024"
+- Releases only: tipo="release"`,
     noticiasSchema.shape,
     async (args) => {
       const result = await ibgeNoticias(args);
@@ -276,27 +256,25 @@ Exemplos de uso:
   // Register ibge_sidra_tabelas tool
   server.tool(
     "ibge_sidra_tabelas",
-    `Lista e busca tabelas disponíveis no SIDRA (Sistema IBGE de Recuperação Automática).
+    `Lists and searches available SIDRA tables.
 
-Funcionalidades:
-- Lista todas as tabelas (agregados) do SIDRA
-- Busca por termo no nome da tabela
-- Filtra por pesquisa (Censo, PNAD, PIB, etc.)
-- Mostra o código e nome de cada tabela
+Features:
+- List all SIDRA tables (aggregates)
+- Search by table name
+- Filter by survey (Census, PNAD, GDP, etc.)
+- Shows code and name of each table
 
-O SIDRA contém dados de diversas pesquisas:
-- Censo Demográfico
-- PNAD Contínua (emprego, renda)
-- Contas Nacionais (PIB)
-- Pesquisa Industrial
-- Pesquisa Agrícola
-- E muitas outras
+SIDRA contains data from various surveys:
+- Demographic Census
+- PNAD Contínua (employment, income)
+- National Accounts (GDP)
+- Industrial Survey
+- Agricultural Survey
 
-Exemplos de uso:
-- Listar tabelas: (sem parâmetros)
-- Buscar tabelas de população: busca="população"
-- Tabelas do Censo: pesquisa="censo"
-- Tabelas de emprego: busca="desocupação"`,
+Examples:
+- List tables: (no parameters)
+- Search population tables: busca="população"
+- Census tables: pesquisa="censo"`,
     sidraTabelasSchema.shape,
     async (args) => {
       const result = await ibgeSidraTabelas(args);
@@ -307,23 +285,21 @@ Exemplos de uso:
   // Register ibge_sidra_metadados tool
   server.tool(
     "ibge_sidra_metadados",
-    `Retorna os metadados de uma tabela SIDRA específica.
+    `Returns metadata for a specific SIDRA table.
 
-Funcionalidades:
-- Informações gerais (nome, pesquisa, assunto, periodicidade)
-- Níveis territoriais disponíveis (Brasil, UF, município, etc.)
-- Lista de variáveis com unidades
-- Classificações e categorias de cada variável
-- Períodos disponíveis
+Features:
+- General info (name, survey, subject, periodicity)
+- Available territorial levels
+- Variable list with units
+- Classifications and categories
+- Available periods
 
-Use esta ferramenta para entender a estrutura de uma tabela
-ANTES de consultar os dados com ibge_sidra.
+Use this tool to understand table structure BEFORE querying data with ibge_sidra.
 
-Exemplos de uso:
-- Metadados da tabela de população: tabela="6579"
-- Metadados do Censo 2022: tabela="9514"
-- Metadados da PNAD (desocupação): tabela="4714"
-- Sem períodos: tabela="6579", incluir_periodos=false`,
+Examples:
+- Population table metadata: tabela="6579"
+- Census 2022 metadata: tabela="9514"
+- PNAD unemployment: tabela="4714"`,
     sidraMetadadosSchema.shape,
     async (args) => {
       const result = await ibgeSidraMetadados(args);
@@ -334,37 +310,29 @@ Exemplos de uso:
   // Register ibge_malhas tool
   server.tool(
     "ibge_malhas",
-    `Obtém malhas geográficas (mapas) do IBGE em formato GeoJSON, TopoJSON ou SVG.
+    `Gets geographic meshes (maps) from IBGE in GeoJSON, TopoJSON, or SVG format.
 
-Funcionalidades:
-- Malhas do Brasil, regiões, estados, municípios, etc.
-- Diferentes níveis de resolução (divisões internas)
-- Diferentes níveis de qualidade do traçado
-- Formatos: GeoJSON (dados), TopoJSON (compacto), SVG (imagem)
+Features:
+- Meshes for Brazil, regions, states, municipalities
+- Different resolution levels (internal divisions)
+- Different quality levels
+- Formats: GeoJSON (data), TopoJSON (compact), SVG (image)
 
-Tipos de localidade:
-- "BR" ou "1" = Brasil inteiro
-- Sigla do estado (ex: "SP", "RJ", "MG")
-- Código do estado (ex: "35" para SP)
-- Código do município (7 dígitos, ex: "3550308" para São Paulo)
+Locality types:
+- "BR" or "1" = Entire Brazil
+- State abbreviation (e.g., "SP", "RJ")
+- State code (e.g., "35" for SP)
+- Municipality code (7 digits)
 
-Resolução (divisões internas):
-- 0 = Apenas o contorno
-- 1 = Macrorregiões (só para BR)
-- 2 = Unidades da Federação
-- 3 = Mesorregiões
-- 4 = Microrregiões
-- 5 = Municípios
+Resolution (internal divisions):
+- 0 = Outline only
+- 2 = States
+- 5 = Municipalities
 
-Qualidade:
-- 1 = Mínima (menor arquivo)
-- 4 = Máxima (mais detalhado)
-
-Exemplos de uso:
-- Brasil com estados: localidade="BR", resolucao="2"
-- São Paulo com municípios: localidade="SP", resolucao="5"
-- Município específico: localidade="3550308"
-- Em formato SVG: localidade="BR", formato="svg"`,
+Examples:
+- Brazil with states: localidade="BR", resolucao="2"
+- São Paulo with municipalities: localidade="SP", resolucao="5"
+- SVG format: localidade="BR", formato="svg"`,
     malhasSchema.shape,
     async (args) => {
       const result = await ibgeMalhas(args);
@@ -375,27 +343,25 @@ Exemplos de uso:
   // Register ibge_pesquisas tool
   server.tool(
     "ibge_pesquisas",
-    `Lista as pesquisas disponíveis no IBGE e suas tabelas.
+    `Lists available IBGE surveys and their tables.
 
-Funcionalidades:
-- Lista todas as pesquisas do IBGE (Censos, PNAD, PIB, etc.)
-- Busca por nome ou código da pesquisa
-- Mostra detalhes e tabelas de uma pesquisa específica
-- Categoriza pesquisas por tema
+Features:
+- List all IBGE surveys (Census, PNAD, GDP, etc.)
+- Search by name or code
+- Show details and tables of a specific survey
+- Categorize surveys by theme
 
-Principais pesquisas:
-- **Censos**: Demográfico, Agropecuário, MUNIC
-- **PNAD Contínua**: Trabalho, renda, educação
-- **Contas Nacionais**: PIB, investimentos
-- **Pesquisas Econômicas**: Indústria, Comércio, Serviços
-- **Pesquisas Agropecuárias**: Produção, safras, abate
-- **Índices de Preços**: IPCA, INPC, custos
+Main surveys:
+- **Census**: Demographic, Agricultural, MUNIC
+- **PNAD Contínua**: Employment, income, education
+- **National Accounts**: GDP, investments
+- **Economic Surveys**: Industry, Commerce, Services
+- **Price Indices**: IPCA, INPC
 
-Exemplos de uso:
-- Listar todas as pesquisas: (sem parâmetros)
-- Buscar pesquisas de população: busca="população"
-- Detalhes da PNAD: detalhes="pnad"
-- Detalhes do Censo: detalhes="CD"`,
+Examples:
+- List all: (no parameters)
+- Search population: busca="população"
+- PNAD details: detalhes="pnad"`,
     pesquisasSchema.shape,
     async (args) => {
       const result = await ibgePesquisas(args);
@@ -406,31 +372,28 @@ Exemplos de uso:
   // Register ibge_censo tool
   server.tool(
     "ibge_censo",
-    `Consulta dados dos Censos Demográficos do IBGE (1970-2022).
+    `Queries IBGE Demographic Census data (1970-2022).
 
-Ferramenta simplificada para acessar dados censitários sem precisar saber os códigos das tabelas SIDRA.
+Simplified tool to access census data without knowing SIDRA table codes.
 
-Anos disponíveis: 1970, 1980, 1991, 2000, 2010, 2022
+Available years: 1970, 1980, 1991, 2000, 2010, 2022
 
-Temas disponíveis:
-- populacao: População residente por sexo e situação
-- alfabetizacao: Taxa de alfabetização
-- domicilios: Características dos domicílios
-- idade_sexo: Pirâmide etária / grupos de idade
-- religiao: Distribuição por religião
-- cor_raca: Cor ou raça
-- rendimento: Rendimento mensal
-- migracao: Migração
-- educacao: Nível de instrução
-- trabalho: Ocupação e trabalho
-- listar: Lista todas as tabelas disponíveis
+Available themes:
+- populacao: Resident population
+- alfabetizacao: Literacy rate
+- domicilios: Housing characteristics
+- idade_sexo: Age pyramid
+- religiao: Religion distribution
+- cor_raca: Race/color
+- rendimento: Monthly income
+- educacao: Education level
+- trabalho: Employment
 
-Exemplos de uso:
-- População 2022: ano="2022", tema="populacao"
-- Série histórica: ano="todos", tema="populacao"
-- Alfabetização 2010 por UF: ano="2010", tema="alfabetizacao", nivel_territorial="3"
-- Ver tabelas disponíveis: tema="listar"
-- População de um município: ano="2022", nivel_territorial="6", localidades="3550308"`,
+Examples:
+- Population 2022: ano="2022", tema="populacao"
+- Historical series: ano="todos", tema="populacao"
+- Literacy 2010 by state: ano="2010", tema="alfabetizacao", nivel_territorial="3"
+- List tables: tema="listar"`,
     censoSchema.shape,
     async (args) => {
       const result = await ibgeCenso(args);
@@ -441,43 +404,38 @@ Exemplos de uso:
   // Register ibge_indicadores tool (Phase 1)
   server.tool(
     "ibge_indicadores",
-    `Consulta indicadores econômicos e sociais do IBGE.
+    `Queries IBGE economic and social indicators.
 
-Indicadores disponíveis:
+Available indicators:
 
-**Econômicos:**
-- pib: PIB a preços correntes
-- pib_variacao: Variação do PIB (%)
-- pib_per_capita: PIB per capita
-- industria: Produção industrial
-- comercio: Vendas do comércio
-- servicos: Volume de serviços
+**Economic:**
+- pib: GDP at current prices
+- pib_variacao: GDP variation (%)
+- pib_per_capita: GDP per capita
+- industria: Industrial production
+- comercio: Retail sales
+- servicos: Services volume
 
-**Preços:**
-- ipca: IPCA mensal
-- ipca_acumulado: IPCA 12 meses
-- inpc: INPC mensal
+**Prices:**
+- ipca: Monthly IPCA
+- ipca_acumulado: 12-month IPCA
+- inpc: Monthly INPC
 
-**Trabalho:**
-- desemprego: Taxa de desocupação
-- ocupacao: Pessoas ocupadas
-- rendimento: Rendimento médio
-- informalidade: Taxa de informalidade
+**Labor:**
+- desemprego: Unemployment rate
+- ocupacao: Employed people
+- rendimento: Average income
+- informalidade: Informality rate
 
-**População:**
-- populacao: Estimativa populacional
-- densidade: Densidade demográfica
+**Population:**
+- populacao: Population estimate
+- densidade: Population density
 
-**Agropecuária:**
-- agricultura: Produção agrícola
-- pecuaria: Efetivo de rebanhos
-
-Exemplos de uso:
-- PIB: indicador="pib"
-- IPCA últimos 12 meses: indicador="ipca", periodos="last 12"
-- Desemprego por UF: indicador="desemprego", nivel_territorial="3"
-- Listar indicadores: indicador="listar"
-- Indicadores de preços: categoria="precos"`,
+Examples:
+- GDP: indicador="pib"
+- IPCA last 12 months: indicador="ipca", periodos="last 12"
+- Unemployment by state: indicador="desemprego", nivel_territorial="3"
+- List indicators: indicador="listar"`,
     indicadoresSchema.shape,
     async (args) => {
       const result = await ibgeIndicadores(args);
@@ -488,29 +446,28 @@ Exemplos de uso:
   // Register ibge_cnae tool (Phase 1)
   server.tool(
     "ibge_cnae",
-    `Consulta a CNAE (Classificação Nacional de Atividades Econômicas) do IBGE.
+    `Queries CNAE (National Classification of Economic Activities) from IBGE.
 
-A CNAE é a classificação oficial para identificar atividades econômicas no Brasil.
+CNAE is the official classification for economic activities in Brazil.
 
-Estrutura hierárquica:
-- Seção (letra A-U): 21 categorias principais
-- Divisão (2 dígitos): 87 divisões
-- Grupo (3 dígitos): 285 grupos
-- Classe (4-5 dígitos): 673 classes
-- Subclasse (7 dígitos): 1.332 subclasses
+Hierarchical structure:
+- Section (letter A-U): 21 main categories
+- Division (2 digits): 87 divisions
+- Group (3 digits): 285 groups
+- Class (4-5 digits): 673 classes
+- Subclass (7 digits): 1,332 subclasses
 
-Funcionalidades:
-- Busca por código CNAE
-- Busca por descrição da atividade
-- Listagem por nível hierárquico
-- Mostra hierarquia completa
+Features:
+- Search by CNAE code
+- Search by activity description
+- List by hierarchical level
+- Show complete hierarchy
 
-Exemplos de uso:
-- Buscar software: busca="software"
-- Código específico: codigo="6201-5/01"
-- Ver seção: codigo="J"
-- Listar divisões: nivel="divisoes"
-- Ver estrutura: (sem parâmetros)`,
+Examples:
+- Search software: busca="software"
+- Specific code: codigo="6201-5/01"
+- View section: codigo="J"
+- List divisions: nivel="divisoes"`,
     cnaeSchema.shape,
     async (args) => {
       const result = await ibgeCnae(args);
@@ -521,25 +478,25 @@ Exemplos de uso:
   // Register ibge_geocodigo tool (Phase 1)
   server.tool(
     "ibge_geocodigo",
-    `Decodifica códigos IBGE ou busca códigos pelo nome da localidade.
+    `Decodes IBGE codes or searches codes by locality name.
 
-Funcionalidades:
-- Decodifica códigos de região, UF, município ou distrito
-- Busca código IBGE pelo nome
-- Mostra hierarquia geográfica completa
-- Retorna códigos relacionados
+Features:
+- Decode region, state, municipality, or district codes
+- Search IBGE code by name
+- Show complete geographic hierarchy
+- Return related codes
 
-Estrutura dos códigos:
-- 1 dígito: Região (1=Norte, 2=Nordeste, 3=Sudeste, 4=Sul, 5=Centro-Oeste)
-- 2 dígitos: UF (11-53)
-- 7 dígitos: Município
-- 9 dígitos: Distrito
+Code structure:
+- 1 digit: Region (1=North, 2=Northeast, 3=Southeast, 4=South, 5=Central-West)
+- 2 digits: State (11-53)
+- 7 digits: Municipality
+- 9 digits: District
 
-Exemplos de uso:
-- Decodificar município: codigo="3550308"
-- Decodificar UF: codigo="35"
-- Buscar por nome: nome="São Paulo"
-- Buscar município em UF: nome="Campinas", uf="SP"`,
+Examples:
+- Decode municipality: codigo="3550308"
+- Decode state: codigo="35"
+- Search by name: nome="São Paulo"
+- Municipality in state: nome="Campinas", uf="SP"`,
     geocodigoSchema.shape,
     async (args) => {
       const result = await ibgeGeocodigo(args);
@@ -550,23 +507,23 @@ Exemplos de uso:
   // Register ibge_calendario tool (Phase 2)
   server.tool(
     "ibge_calendario",
-    `Consulta o calendário de divulgações e coletas do IBGE.
+    `Queries IBGE release and collection calendar.
 
-Funcionalidades:
-- Lista próximas divulgações de pesquisas
-- Filtra por produto (IPCA, PNAD, PIB, etc.)
-- Filtra por período
-- Diferencia divulgações e coletas de campo
+Features:
+- List upcoming survey releases
+- Filter by product (IPCA, PNAD, GDP, etc.)
+- Filter by period
+- Distinguish releases from field collections
 
-Tipos de eventos:
-- **Divulgação**: Publicação de resultados de pesquisas
-- **Coleta**: Período de pesquisa de campo
+Event types:
+- **Release**: Publication of survey results
+- **Collection**: Field research period
 
-Exemplos de uso:
-- Próximas divulgações: (sem parâmetros)
-- Divulgações do IPCA: produto="IPCA"
-- Calendário 2024: de="01-01-2024", ate="12-31-2024"
-- Coletas de campo: tipo="coleta"`,
+Examples:
+- Upcoming releases: (no parameters)
+- IPCA releases: produto="IPCA"
+- 2024 calendar: de="01-01-2024", ate="12-31-2024"
+- Field collections: tipo="coleta"`,
     calendarioSchema.shape,
     async (args) => {
       const result = await ibgeCalendario(args);
@@ -577,28 +534,28 @@ Exemplos de uso:
   // Register ibge_comparar tool (Phase 2)
   server.tool(
     "ibge_comparar",
-    `Compara dados entre localidades (municípios ou UFs).
+    `Compares data between localities (municipalities or states).
 
-Indicadores disponíveis:
-- populacao: Estimativa populacional atual
-- populacao_censo: População do Censo 2022
-- pib: PIB per capita
-- area: Área territorial (km²)
-- densidade: Densidade demográfica (hab/km²)
-- alfabetizacao: Taxa de alfabetização
-- domicilios: Número de domicílios
+Available indicators:
+- populacao: Current population estimate
+- populacao_censo: Census 2022 population
+- pib: GDP per capita
+- area: Territorial area (km²)
+- densidade: Population density (inhab/km²)
+- alfabetizacao: Literacy rate
+- domicilios: Number of households
 
-Funcionalidades:
-- Compara até 10 localidades de uma vez
-- Calcula estatísticas (maior, menor, média, variação)
-- Gera ranking ordenado por valor
-- Aceita códigos de municípios (7 dígitos) ou UFs (2 dígitos)
+Features:
+- Compare up to 10 localities at once
+- Calculate statistics (max, min, average, variation)
+- Generate ranked output
+- Accept municipality codes (7 digits) or state codes (2 digits)
 
-Exemplos de uso:
-- Comparar capitais: localidades="3550308,3304557,4106902", indicador="populacao"
-- Comparar estados: localidades="35,33,41", indicador="pib"
-- Ranking por área: localidades="3550308,3304557", formato="ranking"
-- Listar indicadores: indicador="listar"`,
+Examples:
+- Compare capitals: localidades="3550308,3304557,4106902", indicador="populacao"
+- Compare states: localidades="35,33,41", indicador="pib"
+- Area ranking: localidades="3550308,3304557", formato="ranking"
+- List indicators: indicador="listar"`,
     compararSchema.shape,
     async (args) => {
       const result = await ibgeComparar(args);
@@ -609,32 +566,32 @@ Exemplos de uso:
   // Register ibge_malhas_tema tool (Phase 3)
   server.tool(
     "ibge_malhas_tema",
-    `Obtém malhas geográficas temáticas do IBGE.
+    `Gets thematic geographic meshes from IBGE.
 
-Temas disponíveis:
-- biomas: Biomas brasileiros (Amazônia, Cerrado, Mata Atlântica, Caatinga, Pampa, Pantanal)
-- amazonia_legal: Área da Amazônia Legal
-- semiarido: Região do semiárido brasileiro
-- costeiro: Zona costeira
-- fronteira: Faixa de fronteira
-- metropolitana: Regiões metropolitanas
-- ride: Regiões Integradas de Desenvolvimento
+Available themes:
+- biomas: Brazilian biomes (Amazon, Cerrado, Atlantic Forest, Caatinga, Pampa, Pantanal)
+- amazonia_legal: Legal Amazon area
+- semiarido: Semi-arid region
+- costeiro: Coastal zone
+- fronteira: Border strip
+- metropolitana: Metropolitan regions
+- ride: Integrated Development Regions
 
-Códigos de Biomas:
-- 1: Amazônia
+Biome codes:
+- 1: Amazon
 - 2: Cerrado
-- 3: Mata Atlântica
+- 3: Atlantic Forest
 - 4: Caatinga
 - 5: Pampa
 - 6: Pantanal
 
-Exemplos de uso:
-- Todos os biomas: tema="biomas"
-- Bioma Amazônia: tema="biomas", codigo="1"
-- Amazônia Legal: tema="amazonia_legal"
-- Regiões metropolitanas: tema="metropolitana"
-- Com municípios: tema="biomas", resolucao="5"
-- Listar temas: tema="listar"`,
+Examples:
+- All biomes: tema="biomas"
+- Amazon biome: tema="biomas", codigo="1"
+- Legal Amazon: tema="amazonia_legal"
+- Metropolitan regions: tema="metropolitana"
+- With municipalities: tema="biomas", resolucao="5"
+- List themes: tema="listar"`,
     malhasTemaSchema.shape,
     async (args) => {
       const result = await ibgeMalhasTema(args);
@@ -645,20 +602,20 @@ Exemplos de uso:
   // Register ibge_vizinhos tool (Phase 3)
   server.tool(
     "ibge_vizinhos",
-    `Busca municípios próximos/vizinhos de um município.
+    `Finds nearby/neighboring municipalities.
 
-Funcionalidades:
-- Busca por código IBGE (7 dígitos) ou nome do município
-- Retorna municípios da mesma mesorregião (aproximação de vizinhança)
-- Opcionalmente inclui dados populacionais
+Features:
+- Search by IBGE code (7 digits) or municipality name
+- Returns municipalities in the same mesoregion (proximity approximation)
+- Optionally includes population data
 
-Nota: A busca usa mesorregião como proxy de proximidade geográfica.
-Para vizinhança espacial exata, seria necessário processamento de malhas.
+Note: Uses mesoregion as geographic proximity proxy.
+For exact spatial neighborhood, mesh processing would be required.
 
-Exemplos de uso:
-- Por código: municipio="3550308"
-- Por nome: municipio="Campinas", uf="SP"
-- Com população: municipio="3550308", incluir_dados=true`,
+Examples:
+- By code: municipio="3550308"
+- By name: municipio="Campinas", uf="SP"
+- With population: municipio="3550308", incluir_dados=true`,
     vizinhosSchema.shape,
     async (args) => {
       const result = await ibgeVizinhos(args);
@@ -669,35 +626,35 @@ Exemplos de uso:
   // Register bcb tool (Phase 3)
   server.tool(
     "bcb",
-    `Consulta dados do Banco Central do Brasil (BCB).
+    `Queries Central Bank of Brazil (BCB) data.
 
-Indicadores de Taxas de Juros:
-- selic: Taxa SELIC acumulada
-- cdi: Taxa CDI
-- tr: Taxa Referencial
+Interest Rate Indicators:
+- selic: Accumulated SELIC rate
+- cdi: CDI rate
+- tr: Reference Rate
 
-Indicadores de Inflação:
-- ipca: IPCA mensal
-- ipca_acum: IPCA acumulado 12 meses
+Inflation Indicators:
+- ipca: Monthly IPCA
+- ipca_acum: 12-month accumulated IPCA
 - igpm: IGP-M
 - inpc: INPC
 
-Indicadores de Câmbio:
-- dolar_compra/dolar_venda: Dólar comercial
+Exchange Rate Indicators:
+- dolar_compra/dolar_venda: Commercial dollar
 - euro: Euro
 
-Indicadores Macroeconômicos:
-- desemprego: Taxa de desemprego
-- divida_pib: Dívida pública/PIB
-- reservas: Reservas internacionais
+Macroeconomic Indicators:
+- desemprego: Unemployment rate
+- divida_pib: Public debt/GDP
+- reservas: International reserves
 
-Também aceita códigos numéricos do Sistema SGS do BCB.
+Also accepts numeric codes from BCB's SGS System.
 
-Exemplos de uso:
-- SELIC últimos 12 meses: indicador="selic", ultimos=12
-- IPCA de 2023: indicador="ipca", dataInicio="01/01/2023", dataFim="31/12/2023"
-- Dólar recente: indicador="dolar_venda", ultimos=30
-- Listar indicadores: indicador="listar"`,
+Examples:
+- SELIC last 12 months: indicador="selic", ultimos=12
+- IPCA for 2023: indicador="ipca", dataInicio="01/01/2023", dataFim="31/12/2023"
+- Recent dollar: indicador="dolar_venda", ultimos=30
+- List indicators: indicador="listar"`,
     bcbSchema.shape,
     async (args) => {
       const result = await ibgeBcb(args);
@@ -708,33 +665,33 @@ Exemplos de uso:
   // Register datasaude tool (Phase 3)
   server.tool(
     "datasaude",
-    `Consulta indicadores de saúde do Brasil via IBGE/DataSUS.
+    `Queries Brazil health indicators via IBGE/DataSUS.
 
-Mortalidade e Natalidade:
-- mortalidade_infantil: Taxa de mortalidade infantil
-- nascidos_vivos: Nascidos vivos por local
-- obitos: Óbitos por local de residência
-- obitos_causas: Óbitos por causas (CID-10)
+Mortality and Birth:
+- mortalidade_infantil: Infant mortality rate
+- nascidos_vivos: Live births by location
+- obitos: Deaths by residence
+- obitos_causas: Deaths by cause (ICD-10)
 
-Indicadores Demográficos:
-- esperanca_vida: Esperança de vida ao nascer
-- fecundidade: Taxa de fecundidade
+Demographic Indicators:
+- esperanca_vida: Life expectancy at birth
+- fecundidade: Fertility rate
 
-Saneamento:
-- saneamento_agua: Abastecimento de água
-- saneamento_esgoto: Esgotamento sanitário
+Sanitation:
+- saneamento_agua: Water supply
+- saneamento_esgoto: Sewage system
 
-Cobertura de Saúde:
-- plano_saude: Cobertura de plano de saúde
-- autoavaliacao_saude: Autoavaliação do estado de saúde
+Health Coverage:
+- plano_saude: Health insurance coverage
+- autoavaliacao_saude: Self-rated health status
 
-Níveis territoriais: 1=Brasil, 2=Região, 3=UF, 6=Município
+Territorial levels: 1=Brazil, 2=Region, 3=State, 6=Municipality
 
-Exemplos de uso:
-- Mortalidade infantil: indicador="mortalidade_infantil"
-- Esperança de vida por UF: indicador="esperanca_vida", nivel_territorial="3"
-- Óbitos em SP: indicador="obitos", nivel_territorial="3", localidade="35"
-- Listar indicadores: indicador="listar"`,
+Examples:
+- Infant mortality: indicador="mortalidade_infantil"
+- Life expectancy by state: indicador="esperanca_vida", nivel_territorial="3"
+- Deaths in SP: indicador="obitos", nivel_territorial="3", localidade="35"
+- List indicators: indicador="listar"`,
     datasaudeSchema.shape,
     async (args) => {
       const result = await ibgeDatasaude(args);
@@ -745,24 +702,24 @@ Exemplos de uso:
   // Register ibge_paises tool (Phase 4)
   server.tool(
     "ibge_paises",
-    `Consulta dados de países e territórios internacionais via IBGE.
+    `Queries international country data via IBGE.
 
-Funcionalidades:
-- Lista todos os países (seguindo metodologia M49 da ONU)
-- Detalhes de um país específico (área, línguas, moeda, localização)
-- Busca países por nome
-- Filtra por região/continente
+Features:
+- List all countries (following UN M49 methodology)
+- Country details (area, languages, currency, location)
+- Search countries by name
+- Filter by region/continent
 
-Regiões disponíveis: americas, europa, africa, asia, oceania
+Available regions: americas, europa, africa, asia, oceania
 
-Códigos de países: Use ISO-ALPHA-2 (ex: BR, US, AR, PT, JP)
+Country codes: Use ISO-ALPHA-2 (e.g., BR, US, AR, PT, JP)
 
-Exemplos de uso:
-- Listar todos: tipo="listar"
-- Detalhes do Brasil: tipo="detalhes", pais="BR"
-- Buscar: tipo="buscar", busca="Argentina"
-- Países da América: tipo="listar", regiao="americas"
-- Indicadores disponíveis: tipo="indicadores"`,
+Examples:
+- List all: tipo="listar"
+- Brazil details: tipo="detalhes", pais="BR"
+- Search: tipo="buscar", busca="Argentina"
+- Americas countries: tipo="listar", regiao="americas"
+- Available indicators: tipo="indicadores"`,
     paisesSchema.shape,
     async (args) => {
       const result = await ibgePaises(args);
@@ -773,22 +730,22 @@ Exemplos de uso:
   // Register ibge_cidades tool (Phase 4)
   server.tool(
     "ibge_cidades",
-    `Consulta indicadores municipais do IBGE (similar ao portal Cidades@).
+    `Queries municipal indicators from IBGE (similar to Cidades@ portal).
 
-Funcionalidades:
-- Panorama geral de um município (população, IDH, PIB, etc.)
-- Consulta indicadores específicos
-- Histórico de indicadores ao longo dos anos
-- Lista pesquisas e indicadores disponíveis
+Features:
+- General overview of a municipality (population, HDI, GDP, etc.)
+- Query specific indicators
+- Historical indicator data over years
+- List available surveys and indicators
 
-Indicadores disponíveis: populacao, area, densidade, pib_per_capita, idh,
+Available indicators: populacao, area, densidade, pib_per_capita, idh,
 escolarizacao, mortalidade, salario_medio, receitas, despesas
 
-Exemplos de uso:
-- Panorama de São Paulo: tipo="panorama", municipio="3550308"
-- Histórico de população: tipo="historico", municipio="3550308", indicador="populacao"
-- Ver pesquisas: tipo="pesquisas"
-- Indicadores disponíveis: tipo="indicador"`,
+Examples:
+- São Paulo overview: tipo="panorama", municipio="3550308"
+- Population history: tipo="historico", municipio="3550308", indicador="populacao"
+- View surveys: tipo="pesquisas"
+- Available indicators: tipo="indicador"`,
     cidadesSchema.shape,
     async (args) => {
       const result = await ibgeCidades(args);
