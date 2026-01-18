@@ -1,6 +1,6 @@
 {
   "name": "ibge-br-mcp",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "MCP Server for IBGE (Instituto Brasileiro de Geografia e Estatística) APIs - Localidades, SIDRA, Nomes, Notícias, Malhas e Pesquisas",
   "type": "module",
   "main": "dist/index.js",
@@ -16,7 +16,10 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format:check": "prettier --check src/",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [
     "mcp",
@@ -51,7 +54,8 @@
     "eslint-plugin-prettier": "^5.5.5",
     "prettier": "^3.8.0",
     "typescript": "^5.3.3",
-    "typescript-eslint": "^8.53.0"
+    "typescript-eslint": "^8.53.0",
+    "vitest": "^4.0.17"
   },
   "engines": {
     "node": ">=18.0.0"
