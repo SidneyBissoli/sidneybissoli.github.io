@@ -2,6 +2,8 @@
 
 MCP Server for IBGE (Brazilian Institute of Geography and Statistics) APIs.
 
+🇧🇷 [Leia em Português](README.pt-BR.md)
+
 This server implements the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) to provide access to IBGE's public APIs, enabling AI assistants to query geographic, demographic, and statistical data from Brazil.
 
 ## Features
@@ -468,13 +470,14 @@ ibge-br-mcp/
 
 ## Testing
 
-The project includes a comprehensive test suite with 173 tests covering:
+The project includes a comprehensive test suite with 227 tests covering:
 
 - Validation functions
 - Retry mechanism
 - Formatting utilities
 - Error handling
 - Cache operations
+- Integration tests with mocks
 
 ```bash
 npm test
