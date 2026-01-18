@@ -198,6 +198,112 @@ export interface PopulacaoEstimativa {
 }
 
 // ============================================================================
+// IBGE API Types - Países (Countries)
+// ============================================================================
+
+export interface PaisLocalizacao {
+  regiao: {
+    id: number;
+    nome: string;
+  };
+  "sub-regiao"?: {
+    id: number;
+    nome: string;
+  };
+  "regiao-intermediaria"?: {
+    id: number;
+    nome: string;
+  };
+}
+
+export interface Pais {
+  id: {
+    M49: number;
+    "ISO-ALPHA-2": string;
+    "ISO-ALPHA-3": string;
+  };
+  nome: string;
+  area?: {
+    total?: string;
+    unidade?: {
+      id: string;
+      classe: string;
+      multiplicador: number;
+    };
+  };
+  localizacao?: PaisLocalizacao;
+  linguas?: Array<{
+    nome: string;
+  }>;
+  "unidades-monetarias"?: Array<{
+    id: string;
+    nome: string;
+  }>;
+  historico?: string;
+}
+
+export interface PaisIndicador {
+  id: number;
+  indicador: string;
+  unidade?: {
+    id: string;
+    classe: string;
+    multiplicador: number;
+  };
+}
+
+export interface PaisIndicadorResultado {
+  id: number;
+  indicador: string;
+  series: Array<{
+    pais: string;
+    serie: Record<string, string | number>;
+  }>;
+}
+
+// ============================================================================
+// IBGE API Types - Pesquisas/Cidades
+// ============================================================================
+
+export interface PesquisaIndicador {
+  id: number;
+  posicao: string;
+  indicador: string;
+  classe?: string;
+  unidade?: {
+    id: string;
+    classe: string;
+    multiplicador: number;
+  };
+  children?: PesquisaIndicador[];
+}
+
+export interface PesquisaResultado {
+  id: number;
+  indicador?: string;
+  posicao?: string;
+  unidade?: {
+    id: string;
+    classe: string;
+    multiplicador: number;
+  };
+  res: Array<{
+    localidade: string;
+    res: Record<string, string | number | null>;
+  }>;
+}
+
+export interface PesquisaDetalhe {
+  id: string;
+  nome: string;
+  periodicidade?: string;
+  periodos?: Array<{
+    id: string;
+    nome?: string;
+  }>;
+}
+
+// ============================================================================
 // API Base URLs (re-exported from config.ts for backward compatibility)
 // ============================================================================
 
@@ -217,6 +323,8 @@ export const IBGE_API = {
   MALHAS: API_ENDPOINTS.IBGE.MALHAS,
   CNAE: API_ENDPOINTS.IBGE.CNAE,
   CALENDARIO: API_ENDPOINTS.IBGE.CALENDARIO,
+  PAISES: API_ENDPOINTS.IBGE.PAISES,
+  PESQUISAS: API_ENDPOINTS.IBGE.PESQUISAS,
   // SIDRA (external)
   SIDRA: API_ENDPOINTS.SIDRA,
 } as const;

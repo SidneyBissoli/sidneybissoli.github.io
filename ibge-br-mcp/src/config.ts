@@ -18,6 +18,8 @@ export const API_ENDPOINTS = {
     POPULACAO: "https://servicodados.ibge.gov.br/api/v1/projecoes/populacao",
     CNAE: "https://servicodados.ibge.gov.br/api/v2/cnae",
     CALENDARIO: "https://servicodados.ibge.gov.br/api/v3/calendario",
+    PAISES: "https://servicodados.ibge.gov.br/api/v1/paises",
+    PESQUISAS: "https://servicodados.ibge.gov.br/api/v1/pesquisas",
   },
   SIDRA: "https://apisidra.ibge.gov.br/values",
   // External APIs

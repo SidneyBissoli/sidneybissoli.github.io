@@ -29,6 +29,10 @@ export { vizinhosTool, ibgeVizinhos, vizinhosSchema } from "./vizinhos.js";
 export { bcbTool, ibgeBcb, bcbSchema } from "./bcb.js";
 export { datasaudeTool, ibgeDatasaude, datasaudeSchema } from "./datasaude.js";
 
+// Phase 4 tools (v1.9.0)
+export { paisesTool, ibgePaises, paisesSchema } from "./paises.js";
+export { cidadesTool, ibgeCidades, cidadesSchema } from "./cidades.js";
+
 // Tool definitions array for registration
 export const tools = [
   {
@@ -379,5 +383,44 @@ Exemplos:
 - Mortalidade infantil: indicador="mortalidade_infantil"
 - Esperança de vida por UF: indicador="esperanca_vida", nivel_territorial="3"
 - Listar indicadores: indicador="listar"`,
+  },
+  {
+    name: "ibge_paises",
+    description: `Consulta dados de países e territórios internacionais via IBGE.
+
+Funcionalidades:
+- Lista todos os países (seguindo metodologia M49 da ONU)
+- Detalhes de um país específico (área, línguas, moeda, localização)
+- Busca países por nome
+- Filtra por região/continente
+
+Regiões disponíveis: americas, europa, africa, asia, oceania
+
+Códigos de países: Use ISO-ALPHA-2 (ex: BR, US, AR, PT, JP)
+
+Exemplos:
+- Listar todos: tipo="listar"
+- Detalhes do Brasil: tipo="detalhes", pais="BR"
+- Buscar: tipo="buscar", busca="Argentina"
+- Países da América: tipo="listar", regiao="americas"`,
+  },
+  {
+    name: "ibge_cidades",
+    description: `Consulta indicadores municipais do IBGE (similar ao portal Cidades@).
+
+Funcionalidades:
+- Panorama geral de um município (população, IDH, PIB, etc.)
+- Consulta indicadores específicos
+- Histórico de indicadores ao longo dos anos
+- Lista pesquisas e indicadores disponíveis
+
+Indicadores disponíveis: populacao, area, densidade, pib_per_capita, idh,
+escolarizacao, mortalidade, salario_medio, receitas, despesas
+
+Exemplos:
+- Panorama de São Paulo: tipo="panorama", municipio="3550308"
+- Histórico de população: tipo="historico", municipio="3550308", indicador="populacao"
+- Ver pesquisas: tipo="pesquisas"
+- Detalhes de pesquisa: tipo="pesquisas", pesquisa="33"`,
   },
 ];
