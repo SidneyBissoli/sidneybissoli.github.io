@@ -1,0 +1,491 @@
+---
+title: "Immunization"
+subtitle: "National Immunization Program Information System (SI-PNI)"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Show code"
+lang: en
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(crosstalk)
+library(plotly)
+library(reactable)
+library(readr)
+library(dplyr, warn.conflicts = FALSE)
+
+source("_viz_utils.R")
+
+# read pre-processed data
+dados_brasil <- tryCatch(
+  read_csv("data/imunizacao/brasil.csv", show_col_types = FALSE),
+  error = function(e) tibble()
+)
+dados_uf <- tryCatch(
+  read_csv("data/imunizacao/uf.csv", show_col_types = FALSE),
+  error = function(e) tibble()
+)
+dados_municipal <- tryCatch(
+  read_csv("data/imunizacao/municipal.csv", show_col_types = FALSE),
+  error = function(e) tibble()
+)
+
+ultimo_ano <- if (nrow(dados_brasil) > 0) max(dados_brasil$ano, na.rm = TRUE) else NA
+has_data <- nrow(dados_brasil) > 0
+```
+
+Vaccination coverage data for the main immunobiologicals in Brazil's national vaccination schedule, based on SI-PNI (DATASUS). Indicators include vaccination coverage by immunobiological, state and municipality comparisons.
+
+**Source:** SI-PNI/DATASUS | **Period:** 2010-2024 | **Updates:** subject to data availability
+
+::: {.panel-tabset}
+
+## Brazil
+
+```{r}
+#| label: setup-brasil
+#| include: false
+
+br <- dados_brasil |> filter(desagregacao == "imunobiologico")
+```
+
+::: {.panel-tabset}
+
+### Overview
+
+```{r}
+#| label: brasil-overview
+
+if (has_data && nrow(br) > 0) {
+  br_wide <- br |>
+    select(ano, categoria, taxa) |>
+    filter(!is.na(taxa))
+
+  if (nrow(br_wide) > 0) {
+    plot_ly(
+      br_wide,
+      x = ~ano,
+      y = ~categoria,
+      z = ~taxa,
+      type = "heatmap",
+      colorscale = list(
+        list(0, "#DBEAFE"),
+        list(0.5, "#3B82F6"),
+        list(1, "#1E3A8A")
+      ),
+      hovertemplate = paste(
+        "<b>%{y}</b><br>",
+        "Year: %{x}<br>",
+        "Coverage: %{z:.1f}%",
+        "<extra></extra>"
+      )
+    ) |>
+      layout_padrao(
+        titulo = "Vaccination coverage by immunobiological and year",
+        eixo_x = "Year",
+        eixo_y = "Immunobiological"
+      )
+  } else {
+    plot_ly() |> layout(title = "Data not available")
+  }
+} else {
+  plot_ly() |> layout(title = "Run prep_imunizacao.R to generate data")
+}
+```
+
+```{r}
+#| label: brasil-table-overview
+
+if (has_data && nrow(br) > 0) {
+  tab_br <- br |>
+    filter(!is.na(taxa)) |>
+    select(Year = ano, Immunobiological = categoria, `Coverage (%)` = taxa) |>
+    mutate(`Coverage (%)` = round(`Coverage (%)`, 1)) |>
+    arrange(desc(Year), Immunobiological)
+
+  reactable(
+    tab_br,
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 10,
+    columns = list(
+      `Coverage (%)` = colDef(
+        style = function(value) {
+          if (is.na(value)) return()
+          color <- if (value >= 95) "#16A34A" else if (value >= 80) "#EAB308" else "#DC2626"
+          list(color = color, fontWeight = "bold")
+        }
+      )
+    )
+  )
+}
+```
+
+### By Immunobiological
+
+```{r}
+#| label: brasil-by-imuno
+
+if (has_data && nrow(br) > 0) {
+  sd_br_imuno <- SharedData$new(
+    br |> filter(!is.na(taxa)),
+    key = ~paste(ano, categoria)
+  )
+
+  filter_select("filtro_imuno_br_en", "Select immunobiological:", sd_br_imuno, ~categoria)
+
+  plot_ly(
+    sd_br_imuno,
+    x = ~ano,
+    y = ~taxa,
+    color = ~categoria,
+    colors = cores_imuno,
+    type = "scatter",
+    mode = "lines+markers",
+    hovertemplate = paste(
+      "<b>%{fullData.name}</b><br>",
+      "Year: %{x}<br>",
+      "Coverage: %{y:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = "Vaccination coverage time series",
+      eixo_x = "Year",
+      eixo_y = "Coverage (%)"
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 0, x1 = 1,
+          y0 = 95, y1 = 95,
+          xref = "paper", yref = "y",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      ),
+      annotations = list(
+        list(
+          x = 1, y = 95, xref = "paper", yref = "y",
+          text = "Target 95%", showarrow = FALSE,
+          font = list(color = "#DC2626", size = 10),
+          xanchor = "right"
+        )
+      )
+    )
+
+  reactable(
+    sd_br_imuno,
+    columns = list(
+      ano = colDef(name = "Year"),
+      categoria = colDef(name = "Immunobiological"),
+      taxa = colDef(name = "Coverage (%)", format = colFormat(digits = 1)),
+      periodo = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      cod_local = colDef(show = FALSE),
+      nome_local = colDef(show = FALSE),
+      uf = colDef(show = FALSE),
+      regiao = colDef(show = FALSE),
+      populacao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 10
+  )
+} else {
+  cat("Run `source('data-prep/prep_imunizacao.R')` to generate data.")
+}
+```
+
+:::
+
+## By State
+
+```{r}
+#| label: setup-uf
+#| include: false
+
+uf <- dados_uf |> filter(desagregacao == "imunobiologico")
+has_uf <- nrow(uf) > 0
+```
+
+::: {.panel-tabset}
+
+### Overview
+
+```{r}
+#| label: uf-overview
+
+if (has_uf) {
+  uf_ultimo <- uf |>
+    filter(ano == max(ano, na.rm = TRUE), !is.na(taxa))
+
+  sd_uf_geral <- SharedData$new(
+    uf_ultimo,
+    key = ~paste(uf, categoria)
+  )
+
+  filter_select("filtro_imuno_uf_g_en", "Select immunobiological:", sd_uf_geral, ~categoria)
+
+  plot_ly(
+    sd_uf_geral,
+    y = ~reorder(uf, taxa),
+    x = ~taxa,
+    color = ~categoria,
+    colors = cores_imuno,
+    type = "bar",
+    orientation = "h",
+    hovertemplate = paste(
+      "<b>%{y}</b><br>",
+      "Coverage: %{x:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = paste("Vaccination coverage by state -", max(uf$ano, na.rm = TRUE)),
+      eixo_x = "Coverage (%)",
+      eixo_y = ""
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 95, x1 = 95,
+          y0 = 0, y1 = 1,
+          xref = "x", yref = "paper",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      ),
+      margin = list(l = 50)
+    )
+
+  reactable(
+    sd_uf_geral,
+    columns = list(
+      uf = colDef(name = "State"),
+      categoria = colDef(name = "Immunobiological"),
+      taxa = colDef(name = "Coverage (%)", format = colFormat(digits = 1)),
+      regiao = colDef(name = "Region"),
+      ano = colDef(show = FALSE),
+      periodo = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      cod_local = colDef(show = FALSE),
+      nome_local = colDef(show = FALSE),
+      populacao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 27
+  )
+} else {
+  cat("State-level data not available.")
+}
+```
+
+### By Immunobiological
+
+```{r}
+#| label: uf-by-imuno
+
+if (has_uf) {
+  sd_uf_imuno <- SharedData$new(
+    uf |> filter(!is.na(taxa)),
+    key = ~paste(ano, uf, categoria)
+  )
+
+  bscols(
+    widths = c(6, 6),
+    filter_select("filtro_uf_imuno_en", "Select state:", sd_uf_imuno, ~uf),
+    filter_select("filtro_imuno_uf_en", "Select immunobiological:", sd_uf_imuno, ~categoria)
+  )
+
+  plot_ly(
+    sd_uf_imuno,
+    x = ~ano,
+    y = ~taxa,
+    color = ~categoria,
+    colors = cores_imuno,
+    type = "scatter",
+    mode = "lines+markers",
+    hovertemplate = paste(
+      "<b>%{fullData.name}</b><br>",
+      "Year: %{x}<br>",
+      "Coverage: %{y:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = "Vaccination coverage time series by state",
+      eixo_x = "Year",
+      eixo_y = "Coverage (%)"
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 0, x1 = 1,
+          y0 = 95, y1 = 95,
+          xref = "paper", yref = "y",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      )
+    )
+
+  reactable(
+    sd_uf_imuno,
+    columns = list(
+      ano = colDef(name = "Year"),
+      uf = colDef(name = "State"),
+      categoria = colDef(name = "Immunobiological"),
+      taxa = colDef(name = "Coverage (%)", format = colFormat(digits = 1)),
+      regiao = colDef(name = "Region"),
+      periodo = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      cod_local = colDef(show = FALSE),
+      nome_local = colDef(show = FALSE),
+      populacao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 15
+  )
+} else {
+  cat("State-level data not available.")
+}
+```
+
+:::
+
+## By Municipality
+
+```{r}
+#| label: setup-municipal
+#| include: false
+
+mun <- dados_municipal |> filter(desagregacao == "imunobiologico")
+has_mun <- nrow(mun) > 0
+```
+
+::: {.panel-tabset}
+
+### Overview
+
+```{r}
+#| label: mun-overview
+
+if (has_mun) {
+  ultimo_periodo <- max(mun$periodo, na.rm = TRUE)
+
+  mun_ultimo <- mun |>
+    filter(periodo == ultimo_periodo, !is.na(taxa))
+
+  sd_mun <- SharedData$new(
+    mun_ultimo,
+    key = ~paste(cod_local, categoria)
+  )
+
+  bscols(
+    widths = c(4, 4, 4),
+    filter_select("filtro_uf_mun_en", "Select state:", sd_mun, ~uf),
+    filter_select("filtro_imuno_mun_en", "Select immunobiological:", sd_mun, ~categoria),
+    filter_slider("filtro_pop_mun_en", "Minimum population:", sd_mun, ~populacao, width = "100%")
+  )
+
+  plot_ly(
+    sd_mun,
+    y = ~reorder(nome_local, taxa),
+    x = ~taxa,
+    type = "bar",
+    orientation = "h",
+    marker = list(color = cores_dashboard$primaria),
+    hovertemplate = paste(
+      "<b>%{y}</b><br>",
+      "Coverage: %{x:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = paste("Vaccination coverage by municipality -", ultimo_periodo),
+      eixo_x = "Coverage (%)",
+      eixo_y = ""
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 95, x1 = 95,
+          y0 = 0, y1 = 1,
+          xref = "x", yref = "paper",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      ),
+      margin = list(l = 120)
+    )
+
+  reactable(
+    sd_mun,
+    columns = list(
+      cod_local = colDef(name = "IBGE Code"),
+      nome_local = colDef(name = "Municipality"),
+      uf = colDef(name = "State"),
+      categoria = colDef(name = "Immunobiological"),
+      taxa = colDef(name = "Coverage (%)", format = colFormat(digits = 1)),
+      populacao = colDef(name = "Population"),
+      periodo = colDef(name = "Period"),
+      ano = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      regiao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 20
+  )
+} else {
+  cat("Municipal data not available. Select a state to filter.")
+}
+```
+
+:::
+
+:::
+
+---
+
+### Technical notes
+
+**Indicators:**
+
+- **Vaccination coverage (IMU-01):** proportion of the target population that received the complete vaccination schedule for each immunobiological, calculated as (doses applied / target population) x 100.
+- **PNI target:** 95% for most immunobiologicals; 90% for BCG; 80% for HPV.
+
+**Limitations:**
+
+- Data from 2020 onwards may present inconsistencies due to the SI-PNI system migration to the new e-SUS system.
+- Vaccination coverage may exceed 100% in small municipalities due to vaccination of residents from other municipalities.
+- Municipal data is presented as three-year averages for greater statistical stability.
+
+**Source:** SI-PNI/DATASUS, processed with the [healthbR](https://github.com/SidneyBissoli/healthbR) package.

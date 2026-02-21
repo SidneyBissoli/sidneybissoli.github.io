@@ -1,0 +1,811 @@
+---
+title: "Vigitel Brasil"
+subtitle: "Vigilância de Fatores de Risco para Doenças Crônicas por Inquérito Telefônico"
+date: "2025-02-15"
+categories: [Saúde Pública, R, Dashboard]
+image: thumbnail.png
+format:
+  dashboard:
+    orientation: columns
+    nav-buttons: [github]
+    theme: cosmo
+lang: pt
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(dplyr, warn.conflicts = FALSE)
+library(plotly)
+library(DT)
+library(bslib)
+
+# Load pre-aggregated data
+dat <- readRDS("vigitel_aggregated.rds")
+
+# Latest year in the dataset
+latest_year <- max(dat$year)
+
+# Helper: filter overall estimates (no demographic breakdown)
+overall <- function(d) {
+  d |> filter(capital == "Total", sex == "Total",
+              age_group == "Total", education == "Total")
+}
+
+# Color palette
+pal <- c("#2C3E50", "#E74C3C", "#3498DB", "#2ECC71",
+         "#F39C12", "#9B59B6", "#1ABC9C", "#E67E22")
+```
+
+# Visão Geral
+
+## Row {height=20%}
+
+```{r}
+#| label: vb-overview
+#| content: valuebox
+#| title: "Fumantes"
+v <- overall(dat) |> filter(year == latest_year, indicator == "smoking")
+list(
+  icon = "lungs",
+  color = "danger",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Obesidade"
+v <- overall(dat) |> filter(year == latest_year, indicator == "obesity")
+list(
+  icon = "heart-pulse",
+  color = "warning",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Diabetes"
+v <- overall(dat) |> filter(year == latest_year, indicator == "diabetes")
+list(
+  icon = "activity",
+  color = "info",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Inatividade Física"
+v <- overall(dat) |> filter(year == latest_year, indicator == "physical_inactivity")
+list(
+  icon = "person-standing",
+  color = "secondary",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+## Row {height=50%}
+
+### Column {width=60%}
+
+```{r}
+#| label: overview-trend
+#| title: "Tendência Temporal — Indicadores-Chave"
+
+key_indicators <- c("smoking", "obesity", "diabetes",
+                     "physical_inactivity", "hypertension")
+key_labels <- c("Fumante", "Obesidade", "Diabetes",
+                "Inatividade Física", "Hipertensão")
+
+trend <- overall(dat) |>
+  filter(indicator %in% key_indicators) |>
+  mutate(label = factor(label_pt, levels = unique(label_pt)))
+
+if (nrow(trend) > 0) {
+  plot_ly(trend, x = ~year, y = ~prevalence, color = ~label_pt,
+          colors = pal, type = "scatter", mode = "lines+markers",
+          hovertemplate = paste(
+            "<b>%{fullData.name}</b><br>",
+            "Ano: %{x}<br>",
+            "Prevalência: %{y:.1f}%<br>",
+            "<extra></extra>"
+          )) |>
+    layout(
+      xaxis = list(title = "Ano", dtick = 2),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2),
+      hovermode = "x unified"
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+### Column {width=40%}
+
+```{r}
+#| label: overview-table
+#| title: "Prevalência por Capital (Último Ano)"
+
+cap_data <- dat |>
+  filter(year == latest_year, capital != "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator %in% c("smoking", "obesity", "diabetes", "hypertension")) |>
+  select(Capital = capital, Indicador = label_pt,
+         `Prevalência (%)` = prevalence) |>
+  mutate(`Prevalência (%)` = round(`Prevalência (%)`, 1)) |>
+  tidyr::pivot_wider(names_from = Indicador, values_from = `Prevalência (%)`)
+
+datatable(cap_data, rownames = FALSE,
+          options = list(pageLength = 10, scrollX = TRUE,
+                         dom = "ftip", language = list(
+                           search = "Buscar:",
+                           lengthMenu = "Mostrar _MENU_ registros",
+                           info = "Mostrando _START_ a _END_ de _TOTAL_ registros"
+                         )))
+```
+
+## Row {height=30%}
+
+```{r}
+#| label: overview-region
+#| title: "Prevalência por Região (Último Ano)"
+
+reg_data <- dat |>
+  filter(year == latest_year, region != "Total", capital == "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator %in% key_indicators)
+
+if (nrow(reg_data) > 0) {
+  plot_ly(reg_data, x = ~region, y = ~prevalence, color = ~label_pt,
+          colors = pal, type = "bar",
+          hovertemplate = paste(
+            "<b>%{fullData.name}</b><br>",
+            "Região: %{x}<br>",
+            "Prevalência: %{y:.1f}%<br>",
+            "<extra></extra>"
+          )) |>
+    layout(
+      barmode = "group",
+      xaxis = list(title = ""),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.3)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+
+# Tabagismo e Álcool {orientation="columns"}
+
+## Column {width=25%}
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Fumante Atual"
+v <- overall(dat) |> filter(year == latest_year, indicator == "smoking")
+list(
+  icon = "lungs",
+  color = "danger",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Consumo Abusivo de Álcool"
+v <- overall(dat) |> filter(year == latest_year, indicator == "abusive_alcohol")
+list(
+  icon = "cup-straw",
+  color = "warning",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+Indicadores de tabagismo e consumo de álcool entre adultos (≥ 18 anos) das 27 capitais brasileiras, com base no inquérito Vigitel.
+
+## Column {width=75%}
+
+### Row {height=50%}
+
+```{r}
+#| label: smoking-trend
+#| title: "Tendência Temporal"
+
+smoking_ids <- c("smoking", "former_smoker", "abusive_alcohol")
+
+trend_sa <- overall(dat) |>
+  filter(indicator %in% smoking_ids)
+
+if (nrow(trend_sa) > 0) {
+  plot_ly(trend_sa, x = ~year, y = ~prevalence, color = ~label_pt,
+          colors = pal, type = "scatter", mode = "lines+markers",
+          hovertemplate = "<b>%{fullData.name}</b><br>Ano: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Ano", dtick = 2),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2),
+      hovermode = "x unified"
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+### Row {height=50%}
+
+#### Column
+
+```{r}
+#| label: smoking-capital
+#| title: "Comparação por Capital (Último Ano)"
+
+cap_sa <- dat |>
+  filter(year == latest_year, capital != "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator == "smoking") |>
+  arrange(desc(prevalence))
+
+if (nrow(cap_sa) > 0) {
+  plot_ly(cap_sa, y = ~reorder(capital, prevalence), x = ~prevalence,
+          type = "bar", orientation = "h",
+          marker = list(color = pal[1]),
+          error_x = list(type = "data",
+                         symmetric = FALSE,
+                         array = cap_sa$ci_upper - cap_sa$prevalence,
+                         arrayminus = cap_sa$prevalence - cap_sa$ci_lower),
+          hovertemplate = "<b>%{y}</b><br>Prevalência: %{x:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Prevalência (%)"),
+      yaxis = list(title = ""),
+      margin = list(l = 120)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+#### Column
+
+```{r}
+#| label: smoking-demog
+#| title: "Por Sexo e Faixa Etária (Último Ano)"
+
+demog_sa <- dat |>
+  filter(year == latest_year, capital == "Total",
+         sex != "Total", age_group != "Total",
+         education == "Total", region == "Total",
+         indicator == "smoking")
+
+if (nrow(demog_sa) > 0) {
+  plot_ly(demog_sa, x = ~age_group, y = ~prevalence, color = ~sex,
+          colors = c("Masculino" = "#3498DB", "Feminino" = "#E74C3C"),
+          type = "bar",
+          hovertemplate = "<b>%{fullData.name}</b><br>Faixa etária: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      barmode = "group",
+      xaxis = list(title = "Faixa Etária"),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+
+# Atividade Física e Alimentação {orientation="columns"}
+
+## Column {width=25%}
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Atividade Física no Lazer"
+v <- overall(dat) |> filter(year == latest_year, indicator == "physical_activity")
+list(
+  icon = "bicycle",
+  color = "success",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Consumo de Frutas/Hortaliças"
+v <- overall(dat) |> filter(year == latest_year, indicator == "fruit_vegetable")
+list(
+  icon = "tree",
+  color = "success",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+Indicadores de atividade física e alimentação entre adultos (≥ 18 anos) das 27 capitais brasileiras.
+
+## Column {width=75%}
+
+### Row {height=50%}
+
+```{r}
+#| label: activity-trend
+#| title: "Tendência Temporal"
+
+activity_ids <- c("physical_activity", "physical_inactivity",
+                   "fruit_vegetable", "soft_drink")
+
+trend_af <- overall(dat) |>
+  filter(indicator %in% activity_ids)
+
+if (nrow(trend_af) > 0) {
+  plot_ly(trend_af, x = ~year, y = ~prevalence, color = ~label_pt,
+          colors = pal, type = "scatter", mode = "lines+markers",
+          hovertemplate = "<b>%{fullData.name}</b><br>Ano: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Ano", dtick = 2),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2),
+      hovermode = "x unified"
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+### Row {height=50%}
+
+#### Column
+
+```{r}
+#| label: activity-capital
+#| title: "Atividade Física por Capital (Último Ano)"
+
+cap_af <- dat |>
+  filter(year == latest_year, capital != "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator == "physical_activity") |>
+  arrange(desc(prevalence))
+
+if (nrow(cap_af) > 0) {
+  plot_ly(cap_af, y = ~reorder(capital, prevalence), x = ~prevalence,
+          type = "bar", orientation = "h",
+          marker = list(color = pal[4]),
+          error_x = list(type = "data",
+                         symmetric = FALSE,
+                         array = cap_af$ci_upper - cap_af$prevalence,
+                         arrayminus = cap_af$prevalence - cap_af$ci_lower),
+          hovertemplate = "<b>%{y}</b><br>Prevalência: %{x:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Prevalência (%)"),
+      yaxis = list(title = ""),
+      margin = list(l = 120)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+#### Column
+
+```{r}
+#| label: activity-demog
+#| title: "Atividade Física por Sexo e Faixa Etária (Último Ano)"
+
+demog_af <- dat |>
+  filter(year == latest_year, capital == "Total",
+         sex != "Total", age_group != "Total",
+         education == "Total", region == "Total",
+         indicator == "physical_activity")
+
+if (nrow(demog_af) > 0) {
+  plot_ly(demog_af, x = ~age_group, y = ~prevalence, color = ~sex,
+          colors = c("Masculino" = "#3498DB", "Feminino" = "#E74C3C"),
+          type = "bar",
+          hovertemplate = "<b>%{fullData.name}</b><br>Faixa etária: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      barmode = "group",
+      xaxis = list(title = "Faixa Etária"),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+
+# Obesidade {orientation="columns"}
+
+## Column {width=25%}
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Excesso de Peso"
+v <- overall(dat) |> filter(year == latest_year, indicator == "overweight")
+list(
+  icon = "heart-pulse",
+  color = "warning",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Obesidade"
+v <- overall(dat) |> filter(year == latest_year, indicator == "obesity")
+list(
+  icon = "heart-pulse",
+  color = "danger",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+Indicadores de excesso de peso (IMC ≥ 25) e obesidade (IMC ≥ 30) entre adultos (≥ 18 anos) das 27 capitais brasileiras.
+
+## Column {width=75%}
+
+### Row {height=50%}
+
+```{r}
+#| label: obesity-trend
+#| title: "Tendência Temporal"
+
+obesity_ids <- c("overweight", "obesity")
+
+trend_ob <- overall(dat) |>
+  filter(indicator %in% obesity_ids)
+
+if (nrow(trend_ob) > 0) {
+  plot_ly(trend_ob, x = ~year, y = ~prevalence, color = ~label_pt,
+          colors = c(pal[5], pal[2]), type = "scatter", mode = "lines+markers",
+          hovertemplate = "<b>%{fullData.name}</b><br>Ano: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Ano", dtick = 2),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2),
+      hovermode = "x unified"
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+### Row {height=50%}
+
+#### Column
+
+```{r}
+#| label: obesity-capital
+#| title: "Obesidade por Capital (Último Ano)"
+
+cap_ob <- dat |>
+  filter(year == latest_year, capital != "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator == "obesity") |>
+  arrange(desc(prevalence))
+
+if (nrow(cap_ob) > 0) {
+  plot_ly(cap_ob, y = ~reorder(capital, prevalence), x = ~prevalence,
+          type = "bar", orientation = "h",
+          marker = list(color = pal[2]),
+          error_x = list(type = "data",
+                         symmetric = FALSE,
+                         array = cap_ob$ci_upper - cap_ob$prevalence,
+                         arrayminus = cap_ob$prevalence - cap_ob$ci_lower),
+          hovertemplate = "<b>%{y}</b><br>Prevalência: %{x:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Prevalência (%)"),
+      yaxis = list(title = ""),
+      margin = list(l = 120)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+#### Column
+
+```{r}
+#| label: obesity-demog
+#| title: "Obesidade por Sexo e Faixa Etária (Último Ano)"
+
+demog_ob <- dat |>
+  filter(year == latest_year, capital == "Total",
+         sex != "Total", age_group != "Total",
+         education == "Total", region == "Total",
+         indicator == "obesity")
+
+if (nrow(demog_ob) > 0) {
+  plot_ly(demog_ob, x = ~age_group, y = ~prevalence, color = ~sex,
+          colors = c("Masculino" = "#3498DB", "Feminino" = "#E74C3C"),
+          type = "bar",
+          hovertemplate = "<b>%{fullData.name}</b><br>Faixa etária: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      barmode = "group",
+      xaxis = list(title = "Faixa Etária"),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+
+# Doenças Crônicas {orientation="columns"}
+
+## Column {width=25%}
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Diabetes"
+v <- overall(dat) |> filter(year == latest_year, indicator == "diabetes")
+list(
+  icon = "droplet",
+  color = "info",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Hipertensão"
+v <- overall(dat) |> filter(year == latest_year, indicator == "hypertension")
+list(
+  icon = "heart",
+  color = "danger",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+Prevalência autorreferida de diabetes e hipertensão arterial entre adultos (≥ 18 anos) das 27 capitais brasileiras.
+
+## Column {width=75%}
+
+### Row {height=50%}
+
+```{r}
+#| label: chronic-trend
+#| title: "Tendência Temporal"
+
+chronic_ids <- c("diabetes", "hypertension")
+
+trend_cd <- overall(dat) |>
+  filter(indicator %in% chronic_ids)
+
+if (nrow(trend_cd) > 0) {
+  plot_ly(trend_cd, x = ~year, y = ~prevalence, color = ~label_pt,
+          colors = c(pal[3], pal[2]), type = "scatter", mode = "lines+markers",
+          hovertemplate = "<b>%{fullData.name}</b><br>Ano: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Ano", dtick = 2),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2),
+      hovermode = "x unified"
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+### Row {height=50%}
+
+#### Column
+
+```{r}
+#| label: chronic-capital
+#| title: "Diabetes por Capital (Último Ano)"
+
+cap_cd <- dat |>
+  filter(year == latest_year, capital != "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator == "diabetes") |>
+  arrange(desc(prevalence))
+
+if (nrow(cap_cd) > 0) {
+  plot_ly(cap_cd, y = ~reorder(capital, prevalence), x = ~prevalence,
+          type = "bar", orientation = "h",
+          marker = list(color = pal[3]),
+          error_x = list(type = "data",
+                         symmetric = FALSE,
+                         array = cap_cd$ci_upper - cap_cd$prevalence,
+                         arrayminus = cap_cd$prevalence - cap_cd$ci_lower),
+          hovertemplate = "<b>%{y}</b><br>Prevalência: %{x:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Prevalência (%)"),
+      yaxis = list(title = ""),
+      margin = list(l = 120)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+#### Column
+
+```{r}
+#| label: chronic-demog
+#| title: "Diabetes por Sexo e Faixa Etária (Último Ano)"
+
+demog_cd <- dat |>
+  filter(year == latest_year, capital == "Total",
+         sex != "Total", age_group != "Total",
+         education == "Total", region == "Total",
+         indicator == "diabetes")
+
+if (nrow(demog_cd) > 0) {
+  plot_ly(demog_cd, x = ~age_group, y = ~prevalence, color = ~sex,
+          colors = c("Masculino" = "#3498DB", "Feminino" = "#E74C3C"),
+          type = "bar",
+          hovertemplate = "<b>%{fullData.name}</b><br>Faixa etária: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      barmode = "group",
+      xaxis = list(title = "Faixa Etária"),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+
+# Acesso e Prevenção {orientation="columns"}
+
+## Column {width=25%}
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Plano de Saúde"
+v <- overall(dat) |> filter(year == latest_year, indicator == "health_insurance")
+list(
+  icon = "shield-check",
+  color = "primary",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Mamografia"
+v <- overall(dat) |> filter(year == latest_year, indicator == "mammography")
+list(
+  icon = "clipboard2-pulse",
+  color = "info",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+### Row
+
+```{r}
+#| content: valuebox
+#| title: "Papanicolau"
+v <- overall(dat) |> filter(year == latest_year, indicator == "pap_smear")
+list(
+  icon = "clipboard2-pulse",
+  color = "info",
+  value = if (nrow(v) > 0) paste0(round(v$prevalence, 1), "%") else "N/D"
+)
+```
+
+## Column {width=75%}
+
+### Row {height=50%}
+
+```{r}
+#| label: access-trend
+#| title: "Tendência Temporal"
+
+access_ids <- c("health_insurance", "mammography", "pap_smear")
+
+trend_ap <- overall(dat) |>
+  filter(indicator %in% access_ids)
+
+if (nrow(trend_ap) > 0) {
+  plot_ly(trend_ap, x = ~year, y = ~prevalence, color = ~label_pt,
+          colors = pal, type = "scatter", mode = "lines+markers",
+          hovertemplate = "<b>%{fullData.name}</b><br>Ano: %{x}<br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Ano", dtick = 2),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero"),
+      legend = list(orientation = "h", y = -0.2),
+      hovermode = "x unified"
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+### Row {height=50%}
+
+#### Column
+
+```{r}
+#| label: access-capital
+#| title: "Plano de Saúde por Capital (Último Ano)"
+
+cap_ap <- dat |>
+  filter(year == latest_year, capital != "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator == "health_insurance") |>
+  arrange(desc(prevalence))
+
+if (nrow(cap_ap) > 0) {
+  plot_ly(cap_ap, y = ~reorder(capital, prevalence), x = ~prevalence,
+          type = "bar", orientation = "h",
+          marker = list(color = pal[3]),
+          error_x = list(type = "data",
+                         symmetric = FALSE,
+                         array = cap_ap$ci_upper - cap_ap$prevalence,
+                         arrayminus = cap_ap$prevalence - cap_ap$ci_lower),
+          hovertemplate = "<b>%{y}</b><br>Prevalência: %{x:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = "Prevalência (%)"),
+      yaxis = list(title = ""),
+      margin = list(l = 120)
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```
+
+#### Column
+
+```{r}
+#| label: access-region
+#| title: "Plano de Saúde por Região (Último Ano)"
+
+reg_ap <- dat |>
+  filter(year == latest_year, region != "Total", capital == "Total",
+         sex == "Total", age_group == "Total", education == "Total",
+         indicator == "health_insurance")
+
+if (nrow(reg_ap) > 0) {
+  plot_ly(reg_ap, x = ~region, y = ~prevalence,
+          type = "bar",
+          marker = list(color = pal[3]),
+          error_y = list(type = "data",
+                         symmetric = FALSE,
+                         array = reg_ap$ci_upper - reg_ap$prevalence,
+                         arrayminus = reg_ap$prevalence - reg_ap$ci_lower),
+          hovertemplate = "<b>%{x}</b><br>Prevalência: %{y:.1f}%<extra></extra>") |>
+    layout(
+      xaxis = list(title = ""),
+      yaxis = list(title = "Prevalência (%)", rangemode = "tozero")
+    )
+} else {
+  plot_ly() |> layout(title = "Dados não disponíveis")
+}
+```

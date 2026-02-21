@@ -1,0 +1,87 @@
+---
+title: "Dashboard de Saude Publica do Brasil"
+subtitle: "Indicadores epidemiologicos a partir de dados oficiais do Ministerio da Saude e IBGE"
+page-layout: full
+toc: false
+---
+
+Explore paineis interativos com visualizacoes dinamicas e dados atualizados. Cada painel permite filtrar, comparar e analisar indicadores por diferentes dimensoes e niveis geograficos (Brasil, UF, municipio).
+
+::: {.grid}
+
+::: {.g-col-4}
+::: {.card .border-primary .h-100}
+::: {.card-header .bg-primary .text-white}
+**Imunizacao (SI-PNI)**
+:::
+::: {.card-body}
+Cobertura vacinal, taxa de abandono e homogeneidade da cobertura para os principais imunobiologicos do calendario nacional.
+
+[Acessar](imunizacao.qmd){.btn .btn-primary .btn-sm}
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-secondary .h-100}
+::: {.card-header .bg-secondary .text-white}
+**Vigitel**
+:::
+::: {.card-body}
+Vigilancia de fatores de risco e protecao para doencas cronicas por inquerito telefonico nas 27 capitais brasileiras.
+
+[Acessar](vigitel/index.qmd){.btn .btn-secondary .btn-sm}
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Mortalidade (SIM)** -- em breve
+:::
+::: {.card-body}
+Taxa de mortalidade geral e por causas especificas, mortalidade proporcional e anos potenciais de vida perdidos.
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Mortalidade Materno-Infantil** -- em breve
+:::
+::: {.card-body}
+Razao de mortalidade materna, taxa de mortalidade infantil (neonatal e pos-neonatal) e mortalidade na infancia.
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Natalidade (SINASC)** -- em breve
+:::
+::: {.card-body}
+Nascidos vivos, baixo peso ao nascer, prematuridade, proporcao de cesareas e pre-natal adequado.
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Morbidade Hospitalar (SIH)** -- em breve
+:::
+::: {.card-body}
+Internacoes por condicoes sensiveis a atencao primaria, tempo de permanencia e mortalidade hospitalar.
+:::
+:::
+:::
+
+:::
+
+::: {.callout-note}
+## Sobre os dados
+Os indicadores sao calculados a partir de dados oficiais do Ministerio da Saude (DATASUS) e do IBGE, processados com o pacote [healthbR](https://github.com/SidneyBissoli/healthbR). Os dados sao atualizados periodicamente conforme novas bases se tornam disponiveis.
+:::

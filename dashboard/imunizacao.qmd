@@ -1,0 +1,507 @@
+---
+title: "Imunizacao"
+subtitle: "Sistema de Informacoes do Programa Nacional de Imunizacoes (SI-PNI)"
+format:
+  html:
+    page-layout: full
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    code-summary: "Ver codigo"
+lang: pt
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(crosstalk)
+library(plotly)
+library(reactable)
+library(readr)
+library(dplyr, warn.conflicts = FALSE)
+
+source("_viz_utils.R")
+
+# ler dados pre-processados
+dados_brasil <- tryCatch(
+  read_csv("data/imunizacao/brasil.csv", show_col_types = FALSE),
+  error = function(e) tibble()
+)
+dados_uf <- tryCatch(
+  read_csv("data/imunizacao/uf.csv", show_col_types = FALSE),
+  error = function(e) tibble()
+)
+dados_municipal <- tryCatch(
+  read_csv("data/imunizacao/municipal.csv", show_col_types = FALSE),
+  error = function(e) tibble()
+)
+
+# ultimo ano disponivel
+ultimo_ano <- if (nrow(dados_brasil) > 0) max(dados_brasil$ano, na.rm = TRUE) else NA
+has_data <- nrow(dados_brasil) > 0
+```
+
+Dados de cobertura vacinal dos principais imunobiologicos do calendario nacional de vacinacao, com base no SI-PNI (DATASUS). Os indicadores incluem cobertura vacinal por imunobiologico, comparacoes entre UFs e municipios.
+
+**Fonte:** SI-PNI/DATASUS | **Periodo:** 2010-2024 | **Atualizacao:** sujeita a disponibilidade dos dados
+
+::: {.panel-tabset}
+
+## Brasil
+
+```{r}
+#| label: setup-brasil
+#| include: false
+
+# dados para aba Brasil
+br <- dados_brasil |> filter(desagregacao == "imunobiologico")
+```
+
+::: {.panel-tabset}
+
+### Visao Geral
+
+```{r}
+#| label: brasil-visao-geral
+
+if (has_data && nrow(br) > 0) {
+  # heatmap: imunobiologico x ano, cor = cobertura
+  br_wide <- br |>
+    select(ano, categoria, taxa) |>
+    filter(!is.na(taxa))
+
+  if (nrow(br_wide) > 0) {
+    plot_ly(
+      br_wide,
+      x = ~ano,
+      y = ~categoria,
+      z = ~taxa,
+      type = "heatmap",
+      colorscale = list(
+        list(0, "#DBEAFE"),
+        list(0.5, "#3B82F6"),
+        list(1, "#1E3A8A")
+      ),
+      hovertemplate = paste(
+        "<b>%{y}</b><br>",
+        "Ano: %{x}<br>",
+        "Cobertura: %{z:.1f}%",
+        "<extra></extra>"
+      )
+    ) |>
+      layout_padrao(
+        titulo = "Cobertura vacinal por imunobiologico e ano",
+        eixo_x = "Ano",
+        eixo_y = "Imunobiologico"
+      ) |>
+      layout(
+        shapes = list(
+          list(
+            type = "line", x0 = 0, x1 = 1,
+            y0 = -0.5, y1 = -0.5,
+            xref = "paper", yref = "y",
+            line = list(color = "#DC2626", dash = "dash", width = 1)
+          )
+        )
+      )
+  } else {
+    plot_ly() |> layout(title = "Dados nao disponiveis")
+  }
+} else {
+  plot_ly() |> layout(title = "Execute prep_imunizacao.R para gerar os dados")
+}
+```
+
+```{r}
+#| label: brasil-tabela-geral
+
+if (has_data && nrow(br) > 0) {
+  tab_br <- br |>
+    filter(!is.na(taxa)) |>
+    select(Ano = ano, Imunobiologico = categoria, `Cobertura (%)` = taxa) |>
+    mutate(`Cobertura (%)` = round(`Cobertura (%)`, 1)) |>
+    arrange(desc(Ano), Imunobiologico)
+
+  reactable(
+    tab_br,
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 10,
+    columns = list(
+      `Cobertura (%)` = colDef(
+        style = function(value) {
+          if (is.na(value)) return()
+          color <- if (value >= 95) "#16A34A" else if (value >= 80) "#EAB308" else "#DC2626"
+          list(color = color, fontWeight = "bold")
+        }
+      )
+    )
+  )
+}
+```
+
+### Por Imunobiologico
+
+```{r}
+#| label: brasil-por-imuno
+
+if (has_data && nrow(br) > 0) {
+  sd_br_imuno <- SharedData$new(
+    br |> filter(!is.na(taxa)),
+    key = ~paste(ano, categoria)
+  )
+
+  filter_select("filtro_imuno_br", "Selecione o imunobiologico:", sd_br_imuno, ~categoria)
+
+  plot_ly(
+    sd_br_imuno,
+    x = ~ano,
+    y = ~taxa,
+    color = ~categoria,
+    colors = cores_imuno,
+    type = "scatter",
+    mode = "lines+markers",
+    hovertemplate = paste(
+      "<b>%{fullData.name}</b><br>",
+      "Ano: %{x}<br>",
+      "Cobertura: %{y:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = "Serie temporal da cobertura vacinal",
+      eixo_x = "Ano",
+      eixo_y = "Cobertura (%)"
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 0, x1 = 1,
+          y0 = 95, y1 = 95,
+          xref = "paper", yref = "y",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      ),
+      annotations = list(
+        list(
+          x = 1, y = 95, xref = "paper", yref = "y",
+          text = "Meta 95%", showarrow = FALSE,
+          font = list(color = "#DC2626", size = 10),
+          xanchor = "right"
+        )
+      )
+    )
+
+  reactable(
+    sd_br_imuno,
+    columns = list(
+      ano = colDef(name = "Ano"),
+      categoria = colDef(name = "Imunobiologico"),
+      taxa = colDef(name = "Cobertura (%)", format = colFormat(digits = 1)),
+      periodo = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      cod_local = colDef(show = FALSE),
+      nome_local = colDef(show = FALSE),
+      uf = colDef(show = FALSE),
+      regiao = colDef(show = FALSE),
+      populacao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 10
+  )
+} else {
+  cat("Execute `source('data-prep/prep_imunizacao.R')` para gerar os dados.")
+}
+```
+
+:::
+
+## Por UF
+
+```{r}
+#| label: setup-uf
+#| include: false
+
+uf <- dados_uf |> filter(desagregacao == "imunobiologico")
+has_uf <- nrow(uf) > 0
+```
+
+::: {.panel-tabset}
+
+### Visao Geral
+
+```{r}
+#| label: uf-visao-geral
+
+if (has_uf) {
+  # ranking de barras horizontais das UFs (ultimo ano)
+  uf_ultimo <- uf |>
+    filter(ano == max(ano, na.rm = TRUE), !is.na(taxa))
+
+  sd_uf_geral <- SharedData$new(
+    uf_ultimo,
+    key = ~paste(uf, categoria)
+  )
+
+  filter_select("filtro_imuno_uf_g", "Selecione o imunobiologico:", sd_uf_geral, ~categoria)
+
+  plot_ly(
+    sd_uf_geral,
+    y = ~reorder(uf, taxa),
+    x = ~taxa,
+    color = ~categoria,
+    colors = cores_imuno,
+    type = "bar",
+    orientation = "h",
+    hovertemplate = paste(
+      "<b>%{y}</b><br>",
+      "Cobertura: %{x:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = paste("Cobertura vacinal por UF -", max(uf$ano, na.rm = TRUE)),
+      eixo_x = "Cobertura (%)",
+      eixo_y = ""
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 95, x1 = 95,
+          y0 = 0, y1 = 1,
+          xref = "x", yref = "paper",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      ),
+      margin = list(l = 50)
+    )
+
+  reactable(
+    sd_uf_geral,
+    columns = list(
+      uf = colDef(name = "UF"),
+      categoria = colDef(name = "Imunobiologico"),
+      taxa = colDef(name = "Cobertura (%)", format = colFormat(digits = 1)),
+      regiao = colDef(name = "Regiao"),
+      ano = colDef(show = FALSE),
+      periodo = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      cod_local = colDef(show = FALSE),
+      nome_local = colDef(show = FALSE),
+      populacao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 27
+  )
+} else {
+  cat("Dados por UF nao disponiveis.")
+}
+```
+
+### Por Imunobiologico
+
+```{r}
+#| label: uf-por-imuno
+
+if (has_uf) {
+  sd_uf_imuno <- SharedData$new(
+    uf |> filter(!is.na(taxa)),
+    key = ~paste(ano, uf, categoria)
+  )
+
+  bscols(
+    widths = c(6, 6),
+    filter_select("filtro_uf_imuno", "Selecione a UF:", sd_uf_imuno, ~uf),
+    filter_select("filtro_imuno_uf", "Selecione o imunobiologico:", sd_uf_imuno, ~categoria)
+  )
+
+  plot_ly(
+    sd_uf_imuno,
+    x = ~ano,
+    y = ~taxa,
+    color = ~categoria,
+    colors = cores_imuno,
+    type = "scatter",
+    mode = "lines+markers",
+    hovertemplate = paste(
+      "<b>%{fullData.name}</b><br>",
+      "UF: ", "selecionada", "<br>",
+      "Ano: %{x}<br>",
+      "Cobertura: %{y:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = "Serie temporal da cobertura vacinal por UF",
+      eixo_x = "Ano",
+      eixo_y = "Cobertura (%)"
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 0, x1 = 1,
+          y0 = 95, y1 = 95,
+          xref = "paper", yref = "y",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      )
+    )
+
+  reactable(
+    sd_uf_imuno,
+    columns = list(
+      ano = colDef(name = "Ano"),
+      uf = colDef(name = "UF"),
+      categoria = colDef(name = "Imunobiologico"),
+      taxa = colDef(name = "Cobertura (%)", format = colFormat(digits = 1)),
+      regiao = colDef(name = "Regiao"),
+      periodo = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      cod_local = colDef(show = FALSE),
+      nome_local = colDef(show = FALSE),
+      populacao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 15
+  )
+} else {
+  cat("Dados por UF nao disponiveis.")
+}
+```
+
+:::
+
+## Por Municipio
+
+```{r}
+#| label: setup-municipal
+#| include: false
+
+mun <- dados_municipal |> filter(desagregacao == "imunobiologico")
+has_mun <- nrow(mun) > 0
+```
+
+::: {.panel-tabset}
+
+### Visao Geral
+
+```{r}
+#| label: mun-visao-geral
+
+if (has_mun) {
+  # ultimo trienio disponivel
+  ultimo_periodo <- max(mun$periodo, na.rm = TRUE)
+
+  mun_ultimo <- mun |>
+    filter(periodo == ultimo_periodo, !is.na(taxa))
+
+  sd_mun <- SharedData$new(
+    mun_ultimo,
+    key = ~paste(cod_local, categoria)
+  )
+
+  bscols(
+    widths = c(4, 4, 4),
+    filter_select("filtro_uf_mun", "Selecione a UF:", sd_mun, ~uf),
+    filter_select("filtro_imuno_mun", "Selecione o imunobiologico:", sd_mun, ~categoria),
+    filter_slider("filtro_pop_mun", "Populacao minima:", sd_mun, ~populacao, width = "100%")
+  )
+
+  plot_ly(
+    sd_mun,
+    y = ~reorder(nome_local, taxa),
+    x = ~taxa,
+    type = "bar",
+    orientation = "h",
+    marker = list(color = cores_dashboard$primaria),
+    hovertemplate = paste(
+      "<b>%{y}</b><br>",
+      "Cobertura: %{x:.1f}%",
+      "<extra></extra>"
+    )
+  ) |>
+    layout_padrao(
+      titulo = paste("Cobertura vacinal por municipio -", ultimo_periodo),
+      eixo_x = "Cobertura (%)",
+      eixo_y = ""
+    ) |>
+    layout(
+      shapes = list(
+        list(
+          type = "line", x0 = 95, x1 = 95,
+          y0 = 0, y1 = 1,
+          xref = "x", yref = "paper",
+          line = list(color = "#DC2626", dash = "dash", width = 1)
+        )
+      ),
+      margin = list(l = 120)
+    )
+
+  reactable(
+    sd_mun,
+    columns = list(
+      cod_local = colDef(name = "Codigo IBGE"),
+      nome_local = colDef(name = "Municipio"),
+      uf = colDef(name = "UF"),
+      categoria = colDef(name = "Imunobiologico"),
+      taxa = colDef(name = "Cobertura (%)", format = colFormat(digits = 1)),
+      populacao = colDef(name = "Populacao"),
+      periodo = colDef(name = "Periodo"),
+      ano = colDef(show = FALSE),
+      nivel_geo = colDef(show = FALSE),
+      regiao = colDef(show = FALSE),
+      desagregacao = colDef(show = FALSE),
+      numerador = colDef(show = FALSE),
+      denominador = colDef(show = FALSE),
+      unidade = colDef(show = FALSE)
+    ),
+    searchable = TRUE,
+    striped = TRUE,
+    highlight = TRUE,
+    defaultPageSize = 20
+  )
+} else {
+  cat("Dados municipais nao disponiveis. Selecione uma UF para filtrar.")
+}
+```
+
+:::
+
+:::
+
+---
+
+### Notas tecnicas
+
+**Indicadores:**
+
+- **Cobertura vacinal (IMU-01):** proporcao da populacao-alvo que recebeu o esquema vacinal completo para cada imunobiologico, calculada como (doses aplicadas / populacao-alvo) x 100.
+- **Meta do PNI:** 95% para a maioria dos imunobiologicos; 90% para BCG; 80% para HPV.
+
+**Limitacoes:**
+
+- Dados de 2020 em diante podem apresentar inconsistencias devido a migracao do sistema SI-PNI para o novo sistema e-SUS.
+- A cobertura vacinal pode exceder 100% em municipios pequenos devido a vacinacao de residentes de outros municipios.
+- Dados municipais sao apresentados em medias trienais para maior estabilidade estatistica.
+
+**Fonte:** SI-PNI/DATASUS, processado com o pacote [healthbR](https://github.com/SidneyBissoli/healthbR).

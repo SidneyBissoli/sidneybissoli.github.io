@@ -1,0 +1,87 @@
+---
+title: "Brazil Public Health Dashboard"
+subtitle: "Epidemiological indicators from official Ministry of Health and IBGE data"
+page-layout: full
+toc: false
+---
+
+Explore interactive dashboards with dynamic visualizations and up-to-date data. Each dashboard allows filtering, comparing, and analyzing indicators across different dimensions and geographic levels (Brazil, state, municipality).
+
+::: {.grid}
+
+::: {.g-col-4}
+::: {.card .border-primary .h-100}
+::: {.card-header .bg-primary .text-white}
+**Immunization (SI-PNI)**
+:::
+::: {.card-body}
+Vaccination coverage, dropout rates, and coverage homogeneity for the main immunobiologicals in the national vaccination schedule.
+
+[View](imunizacao.en.qmd){.btn .btn-primary .btn-sm}
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-secondary .h-100}
+::: {.card-header .bg-secondary .text-white}
+**Vigitel**
+:::
+::: {.card-body}
+Surveillance of risk and protective factors for chronic diseases by telephone survey in the 27 Brazilian state capitals.
+
+[View](vigitel/index.en.qmd){.btn .btn-secondary .btn-sm}
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Mortality (SIM)** -- coming soon
+:::
+::: {.card-body}
+General and cause-specific mortality rates, proportional mortality, and years of potential life lost.
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Maternal & Child Mortality** -- coming soon
+:::
+::: {.card-body}
+Maternal mortality ratio, infant mortality rate (neonatal and post-neonatal), and under-5 mortality.
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Natality (SINASC)** -- coming soon
+:::
+::: {.card-body}
+Live births, low birth weight, prematurity, cesarean section rates, and adequate prenatal care.
+:::
+:::
+:::
+
+::: {.g-col-4}
+::: {.card .border-light .h-100}
+::: {.card-header .bg-light}
+**Hospital Morbidity (SIH)** -- coming soon
+:::
+::: {.card-body}
+Hospitalizations for ambulatory care-sensitive conditions, length of stay, and in-hospital mortality.
+:::
+:::
+:::
+
+:::
+
+::: {.callout-note}
+## About the data
+Indicators are calculated from official Ministry of Health (DATASUS) and IBGE data, processed with the [healthbR](https://github.com/SidneyBissoli/healthbR) package. Data is updated periodically as new databases become available.
+:::
