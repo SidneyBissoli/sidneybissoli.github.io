@@ -15,3 +15,10 @@ data-prep/*.log
 
 # Claude Code local settings
 .claude/
+
+# Saida gerada. O GitHub Pages publica do branch `gh-pages` (conferido em
+# 31/08/2026 via API), entao `_site/` no main nao serve para nada e sao ~8 MB
+# que mudam por completo a cada render, enterrando o diff do que importa.
+# `.quarto/` e cache de build. Os dois estavam rastreados por inercia.
+_site/
+.quarto/
