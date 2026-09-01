@@ -1,6 +1,20 @@
 project:
   type: website
   output-dir: _site
+  # Renderiza SO os .qmd. Os .md da raiz sao documentos de trabalho
+  # (claude-instructions.md, PROGRESS.md, notas do healthbR), nao paginas do
+  # site — e o claude-instructions.md tem blocos ```{r} de exemplo, que faziam
+  # o render inteiro abortar com "You must use the .qmd extension for documents
+  # with executable code".
+  render:
+    - "**/*.qmd"
+    # Paineis fora do render: `dashboard/imunizacao.qmd` e um modulo INACABADO
+    # (ver PROGRESS.md) e aborta com "objeto 'desagregacao' nao encontrado";
+    # `dashboard/vigitel` depende de um .rds gitignored que so existe na
+    # maquina do autor. Enquanto isso for verdade, o site nao constroi em
+    # lugar nenhum se eles entrarem. Reincluir quando os dados agregados
+    # forem versionados.
+    - "!dashboard/**"
 
 # Babelquarto multilingual configuration
 babelquarto:
@@ -11,10 +25,14 @@ babelquarto:
       text: "English"
   mainlanguage: "pt"
   languages: ["en"]
-  title-pt: "Sidney Bissoli"
-  title-en: "Sidney Bissoli"
-  description-pt: "Psicólogo | Pesquisador em Saúde Pública | Analista de Mercados Financeiros | Cientista de Dados"
-  description-en: "Psychologist | Public Health Researcher | Financial Markets Analyst | Data Scientist"
+
+# As chaves por idioma ficam no NÍVEL RAIZ, não dentro de `babelquarto:` —
+# foi assim que o pacote as gerou quando consultado, e com elas aninhadas o
+# seletor de idioma não era emitido. Conferido em 31/08/2026 contra um projeto
+# descartável montado por `register_main_language()`/`register_further_languages()`.
+lang: pt
+title-en: "Sidney Bissoli"
+description-en: "Psychologist | Public Health Researcher | Financial Markets Analyst | Data Scientist"
 
 website:
   title: "Sidney Bissoli"
@@ -22,16 +40,27 @@ website:
   navbar:
     background: light
     pinned: true
-    collapse: false
+    # collapse: true (padrao) porque sao sete itens: em tela estreita
+    # eles viram menu sanfona em vez de estourar a linha.
+    collapse: true
     left:
-      - href: about.qmd
-        text: Sobre mim
+      # Os tres produtos vem primeiro e no primeiro nivel, por decisao do Sidney
+      # em 31/08/2026: menu suspenso esconderia justamente o que se quer que o
+      # visitante descubra. Custa um item a mais na barra; paga em descoberta.
+      - href: tools/index.qmd
+        text: Servidores MCP
+      - href: packages/index.qmd
+        text: Pacotes R
+      - href: dashboard/index.qmd
+        text: Painéis
       - href: projects/index.qmd
         text: Projetos
       - href: blog/index.qmd
-        text: Blog
+        text: Escritos
       - href: research/index.qmd
-        text: Artigos
+        text: Publicações
+      - href: about.qmd
+        text: Sobre mim
     right:
       - icon: linkedin
         href: "https://linkedin.com/in/sidneybissoli/"

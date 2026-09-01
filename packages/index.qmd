@@ -1,0 +1,121 @@
+---
+title: "Pacotes R"
+subtitle: "Escrevo pacotes que entregam dado público brasileiro arrumado, direto no R"
+page-layout: full
+toc: false
+---
+
+Dado público brasileiro raramente vem pronto. Está em arquivo de largura fixa,
+em planilha com cabeçalho de três linhas, atrás de um formulário, ou numa API
+que devolve JSON aninhado com nomes em maiúsculas. O trabalho de limpar isso é
+sempre o mesmo, e sempre refeito por quem chega depois.
+
+Escrevi estes pacotes para fazer esse trabalho uma vez, em R, e devolver
+`data.frame` arrumado.
+
+## No CRAN
+
+O CRAN não é hospedagem: é um portão com revisor humano, verificação em várias
+plataformas e exigência de documentação e exemplos que rodam. Passei dois pacotes
+por ele.
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### educabR {.card-title}
+
+**Dados educacionais do INEP** — Censo Escolar, IDEB, ENEM, SAEB, Censo da
+Educação Superior, ENCCEJA, IDD e ENADE. Baixa, descompacta e organiza.
+
+`install.packages("educabR")`
+
+Versão 1.1.0 no CRAN desde 23/08/2026 ·
+[documentação](https://sidneybissoli.github.io/educabR/) ·
+[GitHub](https://github.com/SidneyBissoli/educabR)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### healthbR {.card-title}
+
+**Dados de saúde pública brasileiros** de várias fontes do DATASUS e do
+Ministério da Saúde — internações, mortalidade, nascimentos, estabelecimentos,
+inquéritos como o VIGITEL.
+
+`install.packages("healthbR")`
+
+Versão 0.2.0 no CRAN desde 15/02/2026 ·
+[documentação](https://sidneybissoli.github.io/healthbR/) ·
+[GitHub](https://github.com/SidneyBissoli/healthbR)
+:::
+:::
+:::
+
+:::
+
+## Em desenvolvimento, no GitHub
+
+Instaláveis com `remotes::install_github()`. Ainda não os submeti ao CRAN.
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+::: {.card .h-100}
+::: {.card-body}
+### cvmdata {.card-title}
+
+**Dados abertos da CVM** — informações de companhias abertas e fundos, em
+formato arrumado.
+
+`0.2.0.9000` ·
+[documentação](https://sidneybissoli.github.io/cvmdata/) ·
+[GitHub](https://github.com/SidneyBissoli/cvmdata)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-4}
+::: {.card .h-100}
+::: {.card-body}
+### welfarebR {.card-title}
+
+**Dados de assistência social** brasileira — programas, benefícios e cobertura.
+
+`0.1.0` ·
+[GitHub](https://github.com/SidneyBissoli/welfarebR)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-4}
+::: {.card .h-100}
+::: {.card-body}
+### senado {.card-title}
+
+**API de Dados Abertos do Senado Federal**, com interface arrumada. É o irmão em
+R do servidor MCP do Senado.
+
+`0.0.0.9000` ·
+[GitHub](https://github.com/SidneyBissoli/senado)
+:::
+:::
+:::
+
+:::
+
+## Por que R, e por que também MCP
+
+Os [servidores MCP](/tools/) e estes pacotes são meu ataque ao mesmo problema por
+lados opostos. O pacote serve quem já está numa análise, escrevendo código, e quer o
+dado dentro do ambiente onde vai modelar. O servidor MCP serve quem está
+conversando com um assistente e quer a resposta com fonte, sem escrever
+código nenhum.
+
+Nenhum dos dois substitui o outro, e os dois dependem da mesma coisa: alguém ter
+lido a documentação da fonte, descoberto onde ela mente, e escrito isso em
+código que outra pessoa possa reusar. É esse o trabalho que eu faço.

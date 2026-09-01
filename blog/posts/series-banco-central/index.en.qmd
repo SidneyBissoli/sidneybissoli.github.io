@@ -1,0 +1,130 @@
+---
+title: "Central Bank of Brazil series: SGS, Focus and PTAX without the traps"
+subtitle: "Three API limits measured live, level series vs. rate series, and what the ODbL requires"
+author: "Sidney Bissoli"
+date: "2026-08-31"
+categories: [Central Bank, SGS, Financial markets, MCP]
+toc: true
+---
+
+*Published 31 August 2026. Every behaviour and value described here was measured
+live against the Central Bank APIs on the publication date; nothing is inferred
+from documentation.*
+
+The Central Bank of Brazil publishes three different things, by three different
+routes, and beginners tend to treat them as one:
+
+- the **SGS** (time series management system) — thousands of numbered series:
+  the policy rate, inflation, exchange rates, credit, monetary aggregates;
+- **Focus** — the weekly market-expectations survey, which is not a time series
+  but a matrix of indicator × horizon × statistic;
+- **PTAX** — the official closing exchange rates, served by a separate API.
+
+## The SGS: everything is a series number
+
+You do not query "inflation". You query **series 433**. Not "the dollar";
+**series 1**. The policy rate target is **432**. Finding the code is half the
+work.
+
+Real response on 2026-08-31 — monthly IPCA inflation:
+
+```json
+[{"data":"01/05/2026","valor":"0.58"},
+ {"data":"01/06/2026","valor":"0.16"},
+ {"data":"01/07/2026","valor":"0.07"}]
+```
+
+## Three API limits, measured
+
+**1. A window longer than 10 years on a daily series is refused with HTTP 406.**
+
+```
+.../bcdata.sgs.1/dados?formato=json&dataInicial=01/01/2011&dataFinal=31/12/2025
+→ HTTP 406
+```
+
+A 3-year window on the same series returns 755 observations.
+
+**2. An open window is refused too**, for the same reason: with no end date the
+API assumes today, and series 1 begins in 1984.
+
+**3. `ultimos/N` is capped at 20**, in every periodicity — and above it the
+request *fails* with HTTP 400 rather than returning 20.
+
+Put the three together and a 15-year daily series has to be sliced, fetched and
+merged without duplicating the seams. In practice slice at **3 years**, not the
+permitted 10: a decade-long daily window costs 10–20 seconds upstream and can be
+cut off around 30.
+
+## The trap that raises no error: variation on a series that already is variation
+
+Monthly IPCA **already is a percentage change**. Summing twelve monthly values
+to get the annual figure is wrong, because inflation compounds:
+
+```
+compounded = [ Π (1 + vᵢ/100) − 1 ] × 100
+```
+
+With the three real months above, the sum gives 0.8100 and compounding gives
+0.8114 — the sum understates. Small over three months; not small over twelve,
+or in any period with high inflation.
+
+The rule: **before computing a variation, ask whether the series is a level or a
+rate.** Levels (the exchange rate, credit stock, GDP) admit endpoint-to-endpoint
+change. Series that already are period-on-period rates require compounding. The
+same applies to resampling: turning monthly inflation into annual is geometric
+composition, not an average.
+
+## Focus: the policy rate's axis is not a horizon
+
+For most indicators the expectation has a **horizon** — monthly, quarterly,
+annual, or inflation accumulated over 12 and 24 months. Each response carries
+mean, median, standard deviation, minimum, maximum and the number of
+respondents, plus a **Top 5** variant for the best recent forecasters.
+
+The policy rate is different: its axis is the **monetary policy committee
+meeting** (in the form `R1/2026`), not a time horizon. Treating it as one more
+horizon is the most common conceptual error here.
+
+Another asymmetry: **the set of indicators changes with the scope** — 9 in the
+monthly scope, 26 in the annual. There is no single "list of Focus indicators";
+there is the list *of that scope*.
+
+## PTAX: not every quote is compiled by the Central Bank
+
+The Central Bank compiles the US dollar PTAX. **Cross-currency parities are
+not**: they come from an information agency (Refinitiv) and are redistributed by
+the Central Bank. The difference is legal and methodological, not cosmetic — and
+the Bank's own liability disclaimer must be passed through verbatim.
+
+## The licence asks for things
+
+Central Bank data is released under the **Open Data Commons Open Database
+License (ODbL) v1.0**. That is **not** CC0, not CC BY and not public domain. The
+ODbL carries three obligations that survive redistribution: **attribution**,
+**share-alike on derived databases**, and an **anti-DRM** clause.
+
+Checked against the source on 2026-08-13: 4,259 of the 4,260 datasets in the
+Bank's open-data portal declare `license_id: "odc-odbl"`.
+
+## Where an AI assistant fits
+
+Asking a model *"what is the policy rate today?"* returns a number from
+training: possibly right, possibly three committee meetings out of date, with no
+source. Plugging in the SGS buys **provenance** — the series, the period, the
+canonical URL, the real extraction instant and the licence — and moves the traps
+above to the server side.
+
+That is what [`bcb-br-mcp`](https://github.com/SidneyBissoli/bcb-br-mcp) does: 15
+tools over SGS, Focus and PTAX, with a curated catalogue of 135 series verified
+against the source, for clients that speak
+[MCP](https://modelcontextprotocol.io).
+
+With or without a tool, the two questions that avoid most errors are the same:
+**is this series a level or a rate?** and **who compiled this number?**
+
+---
+
+*Server: [`bcb-br-mcp`](https://github.com/SidneyBissoli/bcb-br-mcp) · hosted
+endpoint at `https://bcb.sidneybissoli.com/mcp` · code under MIT. Central Bank
+data under ODbL v1.0 — https://opendatacommons.org/licenses/odbl/1-0/.*

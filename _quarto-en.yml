@@ -1,15 +1,17 @@
+# Configuracao do render em ingles (perfil do babelquarto).
+#
+# SEM BLOCO `navbar` DE PROPOSITO. Ele existia aqui para traduzir os rotulos da
+# barra, e era exatamente o que quebrava o site: o babelquarto 0.1.0.9000 funde
+# este arquivo no _quarto.yml com utils::modifyList(), e a fusao morre em
+# `[[<-.data.frame` quando encontra a lista de itens da navbar. Com o erro, o
+# pos-processamento nunca roda — e e ele que injeta o seletor de idioma.
+#
+# Medido em 31/08/2026, isolando: com navbar aqui, render aborta e o seletor
+# nao existe; sem navbar, zero erros e o seletor aparece nos dois idiomas. O
+# preco e a barra em ingles exibir os rotulos em portugues. Um site que
+# constroi com rotulo torto e melhor que um site que nao constroi.
 website:
   title: "Sidney Bissoli"
-  navbar:
-    left:
-      - href: about.qmd
-        text: About me
-      - href: projects/index.qmd
-        text: Projects
-      - href: blog/index.qmd
-        text: Blog
-      - href: research/index.qmd
-        text: Articles
   page-footer:
     center: |
       © 2025 Sidney Bissoli · Made with [Quarto](https://quarto.org/)

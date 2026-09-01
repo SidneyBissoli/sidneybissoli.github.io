@@ -1,0 +1,162 @@
+---
+title: "Finding the right SIDRA table — and knowing that it is the right one"
+subtitle: "The three steps, the metadata that settles it, and the four traps that cost the most"
+author: "Sidney Bissoli"
+date: "2026-08-31"
+categories: [IBGE, SIDRA, Public data, MCP]
+toc: true
+---
+
+*Published 31 August 2026. Every figure here was captured live from the IBGE
+APIs on the publication date; none is illustrative.*
+
+SIDRA is IBGE's statistical table bank — the primary source for Brazilian
+official statistics, and it is open. Census, continuous household survey, GDP,
+industrial output, agriculture: nearly everything the institute publishes goes
+through it.
+
+Access is not the problem. The problem is that the question a person asks —
+*how many households are connected to the sewage network?* — looks nothing like
+what SIDRA understands, which is a table code, a set of variables, a
+classification, a period and a territorial level. Between the question and the
+query there is a step most tutorials skip: **finding out which table** — and,
+harder, **being sure it is that one**.
+
+## The SIDRA model in one paragraph
+
+Each **survey** (Demographic Census, continuous PNAD, IPCA…) has its **tables**,
+which the API calls *aggregates*. Each table publishes **variables** (what is
+measured, with its unit), zero or more **classifications** (the cuts: sex, race,
+urban/rural…), a list of **periods** and a list of **territorial levels**.
+
+Two consequences bite:
+
+1. **A table does not cover every territorial level.** Some publish Brazil only.
+   Asking for states returns an error, not a zero.
+2. **A table's name does not say which survey it belongs to.** That is where the
+   error this article is about comes from.
+
+## Step 1: search — and do not trust the result
+
+Searching the catalogue for *"esgotamento sanitário"* (sanitary sewage) on
+2026-08-31 returned **108 tables**. None of the top hits was the general one:
+they were subsets — urban surroundings, quilombola households, conservation
+units — that contain the term because they *also* classify by sewage. The list
+was right; the expectation was wrong. **Searching by name returns everything
+that mentions the subject, not what is about the subject.**
+
+## Step 2: the metadata is what decides
+
+```
+GET https://servicodados.ibge.gov.br/api/v3/agregados/{table}/metadados
+```
+
+Four fields the search listing does not give you, and all four matter:
+**`pesquisa`** (which survey — the decisive one), **`periodicidade`** (the
+periods actually covered), **`nivelTerritorial`** (how far down it goes) and
+**`variaveis`** (what is measured, with units).
+
+Two real cases, both checked on 2026-08-31:
+
+**Table 6803**, the one that answers the question:
+
+```
+survey:      Demographic Census
+periods:     2022–2022
+levels:      Brazil, region, state, municipality
+```
+
+**Table 9696**, which in a catalogue passes easily for "something about
+households":
+
+```
+survey:      Continuous PNAD, annual
+periods:     2022–2025
+levels:      Brazil and major region only
+name:        Average real monthly household income per capita in households
+             with a television, by television subscription service
+```
+
+Both mention households. Both have 2022 data. One is the Census; the other
+measures income in households with pay TV. Swapping them raises no error at
+all: it gives you a table of numbers that looks like an answer.
+
+> **I made exactly this mistake, at scale.** The `ibge-br-mcp` server has a
+> shortcut that turns `theme` + `year` into a table code so nobody needs to know
+> any of this. The map behind it was written by hand. On 2026-08-31 a sweep
+> against the official catalogue found **15 of its 41 tables outside the
+> Demographic Census, or outside the theme's subject**: `sanitation`/2022
+> pointed at 9696 above; `fertility`/2010 at the **consumer price index** for
+> 1990; `income`/2000 at the **Agricultural** Census. Each answered normally,
+> with the hand-written label in the header — data from another survey under a
+> name that lied. Nothing broke, so nothing showed. The tables were fixed and
+> the repository now keeps a mirror of the Census catalogue plus a test that
+> checks, one by one, that each code belongs to the Census and to the subject it
+> promises. The lesson is not about that product: **a hand-written table code
+> next to a hand-written description is a pair that rots in silence.**
+
+## Step 3: query
+
+```
+GET https://apisidra.ibge.gov.br/values/t/6803/n3/all/v/allxp/p/2022
+```
+
+Real result, captured on 2026-08-31 — 27 rows, one per state plus the Federal
+District:
+
+| | Occupied permanent private households |
+|---|---|
+| **Total** | 72,456,368 |
+| Highest — São Paulo | 16,224,248 |
+| Lowest — Roraima | 177,418 |
+| mean | 2,683,569 |
+| **median** | **1,372,108** |
+
+The mean is nearly double the median. That is not a statistical curiosity: it is
+the portrait of a federation where one unit alone accounts for 22% of the total.
+A "top 10" would hide it; the full distribution does not.
+
+*Source: IBGE — SIDRA, Table 6803,
+https://apisidra.ibge.gov.br/values/t/6803/n3/all/v/allxp/p/2022, retrieved
+2026-08-31.*
+
+## Four traps worth knowing
+
+**1. `allxp` mixes units.** Asking for every variable in a table that publishes
+both absolute values and percentages returns both in the same `V` column, with
+no warning. Summing that produces a meaningless number.
+
+**2. Absence is not zero.** SIDRA marks absence with `-`, `..`, `...` and `X`,
+each meaning something different. A careless parser turns all of them into `0`
+and produces a series that falls when what actually happened is that the
+information was missing.
+
+**3. The municipality code has 7 digits, and the seventh is a check digit.**
+São Paulo is `3550308`, not `355030`.
+
+**4. Check by two paths.** Sum the municipalities and compare with the state
+total; compare the Census figure with the estimate for the same year. If both
+paths close, the number stands.
+
+## Where an AI assistant fits
+
+Asking a model *"how many Brazilian households have a sewage connection?"*
+returns a plausible number from training: maybe right, maybe from another
+census, with no source. The gain from plugging in SIDRA is not convenience — it
+is **provenance**: the table, the period, the URL that reproduces the query and
+the extraction date travel with the value, and anyone can retrace the path.
+
+That is what [`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) does:
+21 tools over the IBGE APIs, with a provenance block on every response, for
+clients that speak [MCP](https://modelcontextprotocol.io).
+
+But step 2 stays yours, with or without a tool. **Before publishing a number,
+look at which survey the table belongs to.** It is the only thing that stood
+between fifteen wrong mappings and none.
+
+---
+
+*Server: [`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) · hosted
+endpoint at `https://ibge.sidneybissoli.com/mcp` · MIT. IBGE data under Brazil's
+open-data framework (Law 12.527/2011 and Decree 8.777/2016): free use, with the
+obligation to credit the source.*

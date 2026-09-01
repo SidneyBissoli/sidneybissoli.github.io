@@ -1,0 +1,122 @@
+---
+title: "R packages"
+subtitle: "I write packages that hand back Brazilian public data tidy, straight from R"
+page-layout: full
+toc: false
+---
+
+Brazilian public data rarely arrives ready to use. It comes as a fixed-width
+file, a spreadsheet with a three-row header, something behind a form, or an API
+returning nested JSON with uppercase field names. The cleanup work is always the
+same, and always redone by whoever arrives next.
+
+I wrote these packages to do that work once, in R, and hand back a tidy data
+frame.
+
+## On CRAN
+
+CRAN is not hosting: it is a gate with a human reviewer, checks across several
+platforms, and a requirement that documentation and examples actually run. I put
+two packages through it.
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### educabR {.card-title}
+
+**Brazilian education data from INEP** — school census, IDEB, ENEM, SAEB, higher
+education census, ENCCEJA, IDD and ENADE. Downloads, unpacks and tidies.
+
+`install.packages("educabR")`
+
+Version 1.1.0 on CRAN since 2026-08-23 ·
+[documentation](https://sidneybissoli.github.io/educabR/) ·
+[GitHub](https://github.com/SidneyBissoli/educabR)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### healthbR {.card-title}
+
+**Brazilian public health data** from several DATASUS and Ministry of Health
+sources — hospital admissions, mortality, births, facilities, and surveys such
+as VIGITEL.
+
+`install.packages("healthbR")`
+
+Version 0.2.0 on CRAN since 2026-02-15 ·
+[documentation](https://sidneybissoli.github.io/healthbR/) ·
+[GitHub](https://github.com/SidneyBissoli/healthbR)
+:::
+:::
+:::
+
+:::
+
+## In development, on GitHub
+
+Installable with `remotes::install_github()`. I have not submitted these to CRAN
+yet.
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+::: {.card .h-100}
+::: {.card-body}
+### cvmdata {.card-title}
+
+**Open data from the CVM**, Brazil's securities regulator — listed companies and
+funds, in tidy form.
+
+`0.2.0.9000` ·
+[documentation](https://sidneybissoli.github.io/cvmdata/) ·
+[GitHub](https://github.com/SidneyBissoli/cvmdata)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-4}
+::: {.card .h-100}
+::: {.card-body}
+### welfarebR {.card-title}
+
+**Brazilian social assistance data** — programmes, benefits and coverage.
+
+`0.1.0` ·
+[GitHub](https://github.com/SidneyBissoli/welfarebR)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-4}
+::: {.card .h-100}
+::: {.card-body}
+### senado {.card-title}
+
+**The Brazilian Federal Senate open data API**, with a tidy interface. The R
+sibling of the Senate MCP server.
+
+`0.0.0.9000` ·
+[GitHub](https://github.com/SidneyBissoli/senado)
+:::
+:::
+:::
+
+:::
+
+## Why R, and why MCP as well
+
+The [MCP servers](/tools/) and these packages are how I attack the same problem
+from opposite sides. A package serves someone already inside an analysis, writing
+code, who wants the data in the environment where the modelling will happen. An
+MCP server serves someone talking to an assistant who wants the answer with its
+source, without writing any code.
+
+Neither replaces the other, and both depend on the same thing: somebody having
+read the source's documentation, found where it lies, and written that down in
+code someone else can reuse. That is the work I do.

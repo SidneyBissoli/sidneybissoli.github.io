@@ -1,0 +1,159 @@
+---
+title: "MCP servers"
+subtitle: "I give AI assistants live access to public data, with provenance on every response"
+page-layout: full
+toc: false
+---
+
+Ask an AI assistant for the population of Belo Horizonte in the 2022 Census and
+you get a plausible number, drawn from training: maybe right, maybe from a
+different census, with no source. I solved it differently — these servers make
+the assistant **query the official API on the spot**.
+
+They all speak [MCP](https://modelcontextprotocol.io) (Model Context Protocol),
+the open standard that connects assistants to data sources. They work with
+Claude, ChatGPT and any compatible client, and need no installation: point the
+client at the address.
+
+## What I guaranteed across the six
+
+**Provenance on every response.** I made each figure come with its source, the
+reference period, the canonical URL that reproduces the query, the real
+extraction instant and the licence. It is not a decorative footer: it is what
+makes the number checkable, citable and auditable. When the server computes
+something — a variation, a distribution — the result is flagged as derived, with
+the convention it used.
+
+**Verified protocol conformity.** I brought all six to 100% on
+[`mcpscore`](https://pypi.org/project/mcpscore/), with a CI ratchet that blocks
+regression: a change that lowers the score is not accepted.
+
+**Open source under MIT.** The data is not — each source carries its own licence,
+and I make it travel with the number.
+
+## The servers
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### IBGE (Brazilian statistics) {.card-title}
+
+**21 tools** over the IBGE APIs: geography, Census (1970–2022), economic and
+social indicators, SIDRA tables, cartographic meshes, given names, economic
+activity codes and health. Ranks all 5,570 municipalities in a single call, with
+the full distribution instead of a top 10 that hides the skew.
+
+[`ibge.sidneybissoli.com`](https://ibge.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/ibge-br-mcp) ·
+[npm](https://www.npmjs.com/package/ibge-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### Central Bank of Brazil {.card-title}
+
+**15 tools** over three BCB sources: the **SGS** time series, the **Focus**
+market-expectations survey and the official **PTAX** exchange rates. It handles
+the API's limits on its own — a 15-year daily window is sliced and merged — and
+compounds rather than sums the series that already are rates of change.
+
+[`bcb.sidneybissoli.com`](https://bcb.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/bcb-br-mcp) ·
+[npm](https://www.npmjs.com/package/bcb-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### Brazilian Federal Senate {.card-title}
+
+**67 tools** over the Senate's open data: senators, bills, votes, committees,
+floor proceedings, the e-Cidadania participation layer and the administrative
+tier (expenses, procurement, staff, budget). An independent, read-only service,
+not affiliated with the Senate.
+
+[`senado.sidneybissoli.com`](https://senado.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/senado-br-mcp-cloudflare) ·
+[npm](https://www.npmjs.com/package/senado-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### Medical terminologies {.card-title}
+
+**31 tools** over ICD-11, LOINC, RxNorm, MeSH, ATC and the **Brazilian CID-10**
+(DataSUS V2008, bundled — no network call), plus WHO's official ICD-10 → ICD-11
+transition tables. Portuguese labels come from WHO and NLM themselves; never
+from machine translation.
+
+[`medical.sidneybissoli.com`](https://medical.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/medical-terminologies-mcp) ·
+[npm](https://www.npmjs.com/package/medical-terminologies-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### ILOSTAT (ILO) {.card-title}
+
+**4 tools** over the International Labour Organization's statistical database:
+more than 1,200 indicator dataflows on labour, by country, year, sex and age
+group. You search the dataflows before pulling data, so you never have to guess
+an indicator code.
+
+[`ilo.sidneybissoli.com`](https://ilo.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/ilo-mcp-server) ·
+[npm](https://www.npmjs.com/package/ilo-mcp-server)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### UNESCO UIS {.card-title}
+
+**3 tools** over the UNESCO Institute for Statistics: around 5,000 indicators on
+education, science and R&D, culture and communication, by country, region and
+year. The data release is pinned on every query, so the same question gives the
+same answer tomorrow.
+
+[`uis.sidneybissoli.com`](https://uis.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/uis-mcp-server)
+:::
+:::
+:::
+
+:::
+
+## How to use them
+
+In any MCP client with HTTP support, point it at the server address followed by
+`/mcp`. For the IBGE one:
+
+```
+https://ibge.sidneybissoli.com/mcp
+```
+
+No installation, no sign-up, no API key. For local use, the five published to
+npm run with `npx` — for example, `npx -y ibge-br-mcp`.
+
+Then just ask:
+
+> *"What was the population of Belo Horizonte in the 2022 Census?"*
+>
+> *"What does the market expect for Brazilian inflation in 2027?"*
+>
+> *"How did each senator vote on the last recorded floor vote?"*

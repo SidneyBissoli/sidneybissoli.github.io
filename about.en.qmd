@@ -6,34 +6,72 @@ toc: true
 
 ## Who I am
 
-I'm a psychologist with a master's degree, experienced in **public health research** and **financial markets analysis**. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior.
+I am a psychologist, with a master's degree and training in psychoanalysis, and
+I now work with Brazilian public data. I build tools that deliver that data
+ready to check: every figure comes with its source, and the way back to it.
 
-My background in psychology, with emphasis on psychoanalysis, has given me a unique perspective on human decision-making — something I apply to both health data analysis and financial market studies.
+That requirement is not technical fussiness. It comes from two directions that
+met: from research, where a figure without provenance cannot hold an argument;
+and from the clinic, where I learned that the dangerous thing is not *not
+knowing* — it is believing you know.
 
-## Areas of work
+## What I have built
 
-### Public Health
-Analysis of population health patterns, epidemiological research, and health policy evaluation. I work with data from the Brazilian public health system (SUS) and other sources to understand trends and inform decisions.
+**[MCP servers](/tools/)** — six servers that give AI assistants live access to
+data from IBGE (Brazilian statistics), the Central Bank of Brazil, the Federal
+Senate, DataSUS, and the international databases of the ILO and UNESCO. Every
+response carries provenance; all six score 100% on protocol conformity, with
+automated checks that block regression.
 
-### Financial Markets
-Investment analysis, market behavior, and economic indicators. Special focus on Brazilian companies listed on B3, using balance sheet and financial statement data.
+**[R packages](/packages/)** — five packages for accessing public data, two of
+them published on CRAN: `educabR`, for education data from INEP, and `healthbR`,
+for public health.
 
-### Data Science
-Statistical modeling, data visualization, and predictive analytics. I use the R tidyverse ecosystem to transform raw data into actionable insights.
+**[Dashboards](/dashboard/)** — visualisations of epidemiological indicators
+computed from official data published by the Brazilian Ministry of Health and
+IBGE.
 
-## Technical skills
+**A citable dataset** — the participation layer of the Federal Senate's
+e-Cidadania portal, versioned, with a DOI on Zenodo and a per-field provenance
+envelope. It is the layer no existing legislative data package covered.
 
-- **Programming:** R (tidyverse, ggplot2, tidymodels, Shiny)
-- **Analysis:** Statistical modeling, data visualization, predictive analytics
-- **Tools:** Quarto, Git/GitHub, RStudio
-- **Data:** API extraction, web scraping, large dataset manipulation
+## Where I come from
+
+Before I wrote code, I wrote about psychoanalysis. My first published article
+examines how the concept of transference appears in Breuer and Freud's *Studies
+on Hysteria* — and argues that what the later tradition treated as "the whole
+relationship between patient and analyst" was, in the original text, something
+far more specific and far stranger.
+
+That sounds distant from downloading DATASUS microdata, and it is not. In both
+cases the work is the same: read the source carefully, find where it says less
+than it appears to say, and never let interpretation pass itself off as
+description.
+
+## How I work
+
+Three things I always do, which explain most of my technical choices:
+
+**Provenance before convenience.** A number that cannot be traced back to its
+origin does not enter an analysis of mine. That is why every server and every
+package hands back the source along with the data.
+
+**Verification derived from the source.** A count written by hand next to the
+thing it describes rots in silence. I would rather have a test that confronts
+the claim with the origin — and fails loudly when they diverge.
+
+**A noisy error instead of a plausible answer.** When something cannot be
+answered safely, the tool has to say so. Wrong data under a good-looking label
+is worse than an error, because it looks like an answer.
 
 ## Outside of work
 
-When I'm not analyzing data or studying markets, I enjoy reading about philosophy and history, watching documentaries, and spending time with family. I believe a balanced life contributes to more creative thinking and sharper analysis.
+I read philosophy and history, watch documentaries, and spend time with my
+family. I think a balanced life makes for better thinking — and I am wary of
+people with only one thing in their heads.
 
----
+## Contact
 
-::: {.cv-download}
-[Download CV (PDF)](#){.btn .btn-primary}
-:::
+Write to [sbissoli76@gmail.com](mailto:sbissoli76@gmail.com), or find me on
+[GitHub](https://github.com/SidneyBissoli) and
+[LinkedIn](https://linkedin.com/in/sidneybissoli/).

@@ -1,0 +1,158 @@
+---
+title: "Servidores MCP"
+subtitle: "Dou a assistentes de IA acesso ao vivo a dados públicos, com procedência em toda resposta"
+page-layout: full
+toc: false
+---
+
+Pergunte a um assistente de IA a população de Belo Horizonte no Censo 2022 e ele
+devolve um número plausível, tirado do treino: talvez certo, talvez de outro
+censo, sem fonte. Eu resolvi isso de outra maneira — estes servidores fazem o
+assistente **consultar a API oficial na hora**.
+
+Todos falam [MCP](https://modelcontextprotocol.io) (Model Context Protocol), o
+padrão aberto que conecta assistentes a fontes de dados. Funcionam com Claude,
+ChatGPT e qualquer cliente compatível, e não exigem instalação: basta apontar o
+cliente para o endereço.
+
+## O que eu garanti nos seis
+
+**Procedência em toda resposta.** Fiz cada número sair com a fonte, o período de
+referência, a URL canônica que reproduz a consulta, o instante real da extração
+e a licença. Não é um rodapé decorativo: é o que permite conferir, citar e
+auditar. Quando o servidor calcula alguma coisa — uma variação, uma
+distribuição —, o resultado vem marcado como derivado, com a convenção usada.
+
+**Conformidade de protocolo verificada.** Deixei os seis em 100% no
+[`mcpscore`](https://pypi.org/project/mcpscore/), com uma catraca no CI que
+impede regressão: uma alteração que derrube a nota não é aceita.
+
+**Código aberto sob licença MIT.** Os dados, não — cada fonte tem a sua licença,
+e eu a faço viajar junto com o número.
+
+## Os servidores
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### IBGE {.card-title}
+
+**21 ferramentas** sobre as APIs do IBGE: geografia, Censo (1970–2022),
+indicadores econômicos e sociais, tabelas SIDRA, malhas cartográficas, nomes,
+CNAE e saúde. Ranqueia os 5.570 municípios numa chamada só, com a distribuição
+completa em vez de um top 10 que esconde a assimetria.
+
+[`ibge.sidneybissoli.com`](https://ibge.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/ibge-br-mcp) ·
+[npm](https://www.npmjs.com/package/ibge-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### Banco Central {.card-title}
+
+**15 ferramentas** sobre três fontes do BCB: as séries temporais do **SGS**, a
+pesquisa de expectativas de mercado **Focus** e as cotações oficiais **PTAX**.
+Resolve sozinho os limites da API — janela diária de 15 anos é fatiada e
+fundida — e usa encadeamento, não soma, nas séries que já são variação.
+
+[`bcb.sidneybissoli.com`](https://bcb.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/bcb-br-mcp) ·
+[npm](https://www.npmjs.com/package/bcb-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### Senado Federal {.card-title}
+
+**67 ferramentas** sobre os dados abertos do Senado: senadores, matérias,
+votações, comissões, plenário, e-Cidadania e a camada administrativa (CEAPS,
+contratações, servidores, orçamento). Serviço independente, somente leitura,
+não afiliado ao Senado.
+
+[`senado.sidneybissoli.com`](https://senado.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/senado-br-mcp-cloudflare) ·
+[npm](https://www.npmjs.com/package/senado-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### Terminologias médicas {.card-title}
+
+**31 ferramentas** sobre ICD-11, LOINC, RxNorm, MeSH, ATC e a **CID-10
+brasileira** (DataSUS V2008, embutida — sem chamada de rede), mais as tabelas
+oficiais de transição ICD-10 → ICD-11 da OMS. Rótulos em português vêm da OMS e
+da NLM; nunca de tradução de máquina.
+
+[`medical.sidneybissoli.com`](https://medical.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/medical-terminologies-mcp) ·
+[npm](https://www.npmjs.com/package/medical-terminologies-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### ILOSTAT (OIT) {.card-title}
+
+**4 ferramentas** sobre a base estatística da Organização Internacional do
+Trabalho: mais de 1.200 fluxos de indicadores de trabalho por país, ano, sexo e
+faixa etária. Busca-se o fluxo antes de puxar o dado, para não ter que adivinhar
+código de indicador.
+
+[`ilo.sidneybissoli.com`](https://ilo.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/ilo-mcp-server) ·
+[npm](https://www.npmjs.com/package/ilo-mcp-server)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
+### UNESCO UIS {.card-title}
+
+**3 ferramentas** sobre o Instituto de Estatística da UNESCO: cerca de 5.000
+indicadores de educação, ciência e P&D, cultura e comunicação, por país, região
+e ano. A release dos dados é fixada em toda consulta, então a mesma pergunta dá
+a mesma resposta amanhã.
+
+[`uis.sidneybissoli.com`](https://uis.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/uis-mcp-server)
+:::
+:::
+:::
+
+:::
+
+## Como usar
+
+Em qualquer cliente MCP com suporte a HTTP, aponte para o endereço do servidor
+seguido de `/mcp`. Por exemplo, para o do IBGE:
+
+```
+https://ibge.sidneybissoli.com/mcp
+```
+
+Não há instalação, cadastro nem chave de API. Para uso local, os cinco
+publicados no npm rodam com `npx` — por exemplo, `npx -y ibge-br-mcp`.
+
+Depois é só perguntar em português:
+
+> *"Qual era a população de Belo Horizonte no Censo 2022?"*
+>
+> *"O que o mercado espera do IPCA em 2027?"*
+>
+> *"Como cada senador votou na última votação nominal do plenário?"*
