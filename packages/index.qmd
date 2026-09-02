@@ -3,6 +3,11 @@ title: "Pacotes R"
 subtitle: "Escrevo pacotes que entregam dado público brasileiro arrumado, direto no R"
 page-layout: full
 toc: false
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
 ---
 
 Dado público brasileiro raramente vem pronto. Está em arquivo de largura fixa,

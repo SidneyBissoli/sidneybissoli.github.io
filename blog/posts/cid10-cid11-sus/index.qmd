@@ -5,6 +5,11 @@ author: "Sidney Bissoli"
 date: "2026-08-31"
 categories: [Saúde pública, DataSUS, CID-10, MCP]
 toc: true
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
 ---
 
 conjuntos oficiais que acompanham o servidor — a CID-10 V2008 publicada pelo

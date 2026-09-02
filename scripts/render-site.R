@@ -24,7 +24,7 @@
 setwd(here::here())
 library(stringr)
 
-message("[1/3] renderizando os dois idiomas...")
+message("[1/4] renderizando os dois idiomas...")
 babelquarto::render_website(".", preview = FALSE)
 
 # ---- 2. tradução da barra na versão em inglês -------------------------------
@@ -41,7 +41,7 @@ ROTULOS <- c(
   "Sobre mim"      = "About me"
 )
 
-message("[2/3] traduzindo a barra em _site/en/ ...")
+message("[2/4] traduzindo a barra em _site/en/ ...")
 arquivos <- list.files("_site/en", pattern = "\\.html$", recursive = TRUE,
                        full.names = TRUE)
 if (length(arquivos) == 0) stop("nenhum HTML em _site/en/ — o render em inglês falhou?")
@@ -103,7 +103,7 @@ REDIRECIONAMENTOS <- c(
   "/about.en.html"           = "/en/about.html"
 )
 
-message("[3/3] escrevendo _site/_redirects ...")
+message("[3/4] escrevendo _site/_redirects ...")
 for (antigo in names(REDIRECIONAMENTOS)) {
   novo  <- REDIRECIONAMENTOS[[antigo]]
   alvo  <- if (endsWith(novo, "/")) paste0(novo, "index.html") else novo
@@ -118,5 +118,117 @@ linhas <- c(
   sprintf("%s %s 301", names(REDIRECIONAMENTOS), REDIRECIONAMENTOS)
 )
 writeLines(linhas, "_site/_redirects", useBytes = TRUE)
+
+# ---- 4. superfície para agentes: llms.txt e llms-full.txt ------------------
+# Agentes e LLMs já pedem `/llms.txt` aqui (medido na zona em 02/09/2026: sete
+# pedidos em uma semana, todos em 404, de diretórios de agentes e de robôs de
+# inventário). O que se publica é o equivalente à mão do "Markdown para
+# agentes" que a Cloudflare só vende no plano Pro: cada documento que declara
+# `format: gfm` no frontmatter sai do render como `index.md` AO LADO do
+# `index.html` (mesmo caminho, extensão trocada), e o `llms.txt` da raiz lista
+# esses `.md` no formato de llmstxt.org. O `llms-full.txt` é a concatenação
+# deles, para quem lê tudo de uma vez.
+#
+# NADA aqui é listado à mão. A lista esperada vem dos `.qmd` que declaram
+# `gfm`; o arquivo só sai se TODOS os `.md` esperados existirem em `_site/`
+# (o babelquarto move os da versão em inglês para `_site/en/` — conferido em
+# 02/09/2026), e um `.md` em `_site/` que nenhum `.qmd` explique é render
+# velho: também para o script. Título e resumo vêm do frontmatter
+# (`title`, `subtitle`); a data, dos posts, para ordenar do mais novo ao mais
+# antigo. Página sem `subtitle` entra sem resumo, não com resumo inventado.
+DOMINIO <- "https://sidneybissoli.com"
+
+fontes <- list.files(".", pattern = "\\.qmd$", recursive = TRUE)
+fontes <- fontes[!grepl("^(_site|dashboard)/", fontes)]
+paginas <- lapply(fontes, function(f) {
+  fm <- rmarkdown::yaml_front_matter(f)
+  if (is.null(fm$format$gfm)) return(NULL)
+  en   <- grepl("\\.en\\.qmd$", f)
+  rel  <- sub("\\.en\\.qmd$|\\.qmd$", ".md", f)
+  md   <- file.path("_site", if (en) file.path("en", rel) else rel)
+  list(
+    fonte  = f,
+    md     = md,
+    url    = paste0(DOMINIO, "/", if (en) file.path("en", rel) else rel),
+    idioma = if (en) "en" else "pt",
+    post   = grepl("^blog/posts/", f),
+    titulo = fm$title,
+    resumo = fm$subtitle,
+    data   = if (!is.null(fm$date)) as.Date(fm$date) else as.Date(NA)
+  )
+})
+paginas <- Filter(Negate(is.null), paginas)
+
+message("[4/4] escrevendo _site/llms.txt e _site/llms-full.txt ...")
+if (length(paginas) == 0) stop("nenhum .qmd declara `format: gfm` — o llms.txt ficaria vazio.")
+
+esperados <- vapply(paginas, `[[`, "", "md")
+faltam <- esperados[!file.exists(esperados)]
+if (length(faltam) > 0) {
+  stop(".md esperado(s) e ausente(s) em _site/: ", paste(faltam, collapse = ", "),
+       "\nO documento declara `gfm` mas o render não o produziu (ou não o moveu para en/).")
+}
+existentes <- list.files("_site", pattern = "\\.md$", recursive = TRUE, full.names = TRUE)
+existentes <- existentes[!grepl("^_site/site_libs/", existentes)]
+sobras <- setdiff(normalizePath(existentes), normalizePath(esperados))
+if (length(sobras) > 0) {
+  stop(".md em _site/ sem .qmd que o explique (render velho?): ",
+       paste(sobras, collapse = ", "))
+}
+
+# Linha do llmstxt.org: "- [título](url): resumo" (resumo só quando existe).
+linha_llms <- function(p) {
+  sprintf("- [%s](%s)%s", p$titulo, p$url,
+          if (is.null(p$resumo) || !nzchar(p$resumo)) "" else paste0(": ", p$resumo))
+}
+# Páginas na ordem da barra; posts do mais novo ao mais antigo.
+ordem_paginas <- c("tools", "packages", "research", "about")
+ordenar <- function(ps, posts) {
+  ps <- Filter(function(p) p$post == posts, ps)
+  if (posts) {
+    ps[order(vapply(ps, function(p) as.numeric(p$data), 0), decreasing = TRUE)]
+  } else {
+    chave <- vapply(ps, function(p) sub("/.*$|\\.qmd$|\\.en\\.qmd$", "", p$fonte), "")
+    pos <- match(chave, ordem_paginas)
+    pos[is.na(pos)] <- length(ordem_paginas) + seq_len(sum(is.na(pos)))
+    ps[order(pos)]
+  }
+}
+secao <- function(titulo, ps) {
+  if (length(ps) == 0) return(character())
+  c(sprintf("## %s", titulo), vapply(ps, linha_llms, ""), "")
+}
+pt <- Filter(function(p) p$idioma == "pt", paginas)
+en <- Filter(function(p) p$idioma == "en", paginas)
+
+llms <- c(
+  "# Sidney Bissoli",
+  "",
+  "> Psicólogo, pesquisador em saúde pública e cientista de dados. Servidores MCP",
+  "> e pacotes R que entregam dado público brasileiro (IBGE, Banco Central,",
+  "> Senado, DATASUS) a assistentes de IA e ao R, com procedência em toda resposta.",
+  "",
+  "Cada link abaixo é a versão Markdown de uma página; o HTML correspondente está",
+  "no mesmo caminho, com `.html` no lugar de `.md`. O site é em português, com",
+  "versão em inglês em `/en/`. Tudo o que está listado aqui, concatenado:",
+  sprintf("%s/llms-full.txt", DOMINIO),
+  "",
+  secao("Páginas", ordenar(pt, posts = FALSE)),
+  secao("Escritos", ordenar(pt, posts = TRUE)),
+  secao("English", c(ordenar(en, posts = FALSE), ordenar(en, posts = TRUE)))
+)
+writeLines(llms, "_site/llms.txt", useBytes = TRUE)
+
+ordem_full <- c(ordenar(pt, posts = FALSE), ordenar(pt, posts = TRUE),
+                ordenar(en, posts = FALSE), ordenar(en, posts = TRUE))
+full <- unlist(lapply(ordem_full, function(p) {
+  c(sprintf("<!-- %s -->", p$url),
+    readLines(p$md, warn = FALSE, encoding = "UTF-8"),
+    "", "---", "")
+}))
+writeLines(c(llms, "", "---", "", full), "_site/llms-full.txt", useBytes = TRUE)
+
+message(sprintf("  %d documento(s) em Markdown (%d pt, %d en) listados no llms.txt; llms-full.txt com %d linhas.",
+                length(paginas), length(pt), length(en), length(full)))
 
 message("pronto: _site/ (pt na raiz, en em _site/en/)")

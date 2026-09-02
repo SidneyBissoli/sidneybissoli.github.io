@@ -3,6 +3,11 @@ title: "MCP servers"
 subtitle: "I give AI assistants live access to public data, with provenance on every response"
 page-layout: full
 toc: false
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
 ---
 
 Ask an AI assistant for the population of Belo Horizonte in the 2022 Census and

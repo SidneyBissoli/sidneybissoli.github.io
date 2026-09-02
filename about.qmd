@@ -2,6 +2,11 @@
 title: "Sobre mim"
 page-layout: article
 toc: true
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
 ---
 
 ## Quem sou eu

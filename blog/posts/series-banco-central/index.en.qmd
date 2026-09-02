@@ -5,6 +5,11 @@ author: "Sidney Bissoli"
 date: "2026-08-31"
 categories: [Central Bank, SGS, Financial markets, MCP]
 toc: true
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
 ---
 
 *Published 31 August 2026. Every behaviour and value described here was measured

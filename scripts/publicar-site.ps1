@@ -8,7 +8,8 @@
 #      render` direto -- ver o cabecalho daquele script);
 #   2. `wrangler deploy` do _site/ conforme wrangler.jsonc;
 #   3. conferencia AO VIVO: paginas-chave em 200 nos dois idiomas, o www
-#      e as URLs antigas em 301, e o sitemap apontando para o dominio proprio.
+#      e as URLs antigas em 301, o llms.txt e os .md dos posts em text/*,
+#      e o sitemap apontando para o dominio proprio.
 #      Conferir depois de publicar, nunca confiar no log do deploy.
 #
 # Uso:  powershell -File scripts/publicar-site.ps1
@@ -30,6 +31,8 @@ try {
     if (-not (Test-Path '_site\index.html'))      { throw "_site\index.html nao existe" }
     if (-not (Test-Path '_site\en\index.html'))   { throw "_site\en\index.html nao existe" }
     if (-not (Test-Path '_site\_redirects'))      { throw "_site\_redirects nao existe" }
+    if (-not (Test-Path '_site\llms.txt'))        { throw "_site\llms.txt nao existe" }
+    if (-not (Test-Path '_site\llms-full.txt'))   { throw "_site\llms-full.txt nao existe" }
 
     # --- 2. deploy ----------------------------------------------------------
     # `npx.cmd` e nao `npx` (no PowerShell `npx` resolve para um shim .ps1 que
@@ -59,11 +62,11 @@ try {
                 if ($null -eq $_.Exception.Response) { throw }
                 $resp = $_.Exception.Response
             }
-            $out = @{ code = [int]$resp.StatusCode; location = [string]$resp.Headers['Location'] }
+            $out = @{ code = [int]$resp.StatusCode; location = [string]$resp.Headers['Location']; ctype = [string]$resp.ContentType }
             $resp.Close()
             return $out
         } catch {
-            return @{ code = -1; location = $_.Exception.Message }
+            return @{ code = -1; location = $_.Exception.Message; ctype = '' }
         }
     }
 
@@ -90,6 +93,25 @@ try {
         if (-not $ok) { $falhas += ("$url -> " + $s.code + " " + $s.location + " (esperado 301 para " + $devem301[$url] + ")") }
     }
 
+    # Superficie para agentes (render-site.R, passo 4): o llms.txt na raiz e
+    # o .md ao lado de cada post. As URLs dos .md sao DERIVADAS dos posts ja
+    # conferidos acima, nao pinadas; o Content-Type e conferido na ponta porque
+    # o Worker com assets o deduz da extensao (text/markdown esperado -- se
+    # vier outro, e caso para o _headers).
+    foreach ($p in @('/llms.txt', '/llms-full.txt')) {
+        $s = Status ($dominio + $p)
+        if ($s.code -ne 200)               { $falhas += ("$p -> " + $s.code + " (esperado 200)") }
+        elseif ($s.ctype -notlike 'text/*') { $falhas += ("$p -> Content-Type '" + $s.ctype + "' (esperado text/*)") }
+    }
+    $posts = $devem200 | Where-Object { $_ -like '*/blog/posts/*/' }
+    if ($posts.Count -eq 0) { throw "nenhum post na lista devem200 para derivar o .md" }
+    foreach ($p in $posts) {
+        $md = $p + 'index.md'
+        $s = Status ($dominio + $md)
+        if ($s.code -ne 200)                       { $falhas += ("$md -> " + $s.code + " (esperado 200)") }
+        elseif ($s.ctype -notlike 'text/markdown*') { $falhas += ("$md -> Content-Type '" + $s.ctype + "' (esperado text/markdown)") }
+    }
+
     $s = Status ($dominio + '/nao-existe-' + [guid]::NewGuid().ToString('N').Substring(0, 6))
     if ($s.code -ne 404) { $falhas += ("pagina inexistente -> " + $s.code + " (esperado 404)") }
 
@@ -101,7 +123,7 @@ try {
         foreach ($f in $falhas) { Registrar ("FALHA: " + $f) }
         throw "conferencia ao vivo falhou (" + $falhas.Count + ")"
     }
-    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, 404 ok, sitemap no dominio proprio")
+    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown, 404 ok, sitemap no dominio proprio")
 }
 catch {
     Registrar ("ERRO: " + $_.Exception.Message)

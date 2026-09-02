@@ -3,6 +3,11 @@ title: "Servidores MCP"
 subtitle: "Dou a assistentes de IA acesso ao vivo a dados públicos, com procedência em toda resposta"
 page-layout: full
 toc: false
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
 ---
 
 Pergunte a um assistente de IA a população de Belo Horizonte no Censo 2022 e ele
