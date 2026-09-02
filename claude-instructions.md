@@ -18,16 +18,16 @@ Um dashboard interativo de saude publica brasileira, hospedado como parte do web
 |---|---|
 | Linguagem de programacao | R |
 | Framework do website | Quarto |
-| Hospedagem | GitHub Pages (site estatico) |
+| Hospedagem | Cloudflare Worker com assets estaticos (`wrangler.jsonc`), desde 02/09/2026; antes GitHub Pages |
 | Pacote de dados | `healthbR` (CRAN) |
 | Visualizacoes interativas | `plotly` |
 | Interatividade (filtros) | `crosstalk` |
 | Tabelas | `reactable` (preferencial) ou `DT` |
 | Desagregacoes | Quarto tabset panels (nativo) |
 | Multilingue | `babelquarto` (PT principal, EN secundario) |
-| Renderizacao | `babelquarto::render_website(".")` |
+| Renderizacao | `Rscript scripts/render-site.R` (embrulha o babelquarto; NUNCA render direto -- ver cabecalho do script) |
 | Preview local | `servr::httw("_site")` |
-| Publicacao | `quarto publish gh-pages` |
+| Publicacao | `powershell -File scripts/publicar-site.ps1` (render + `wrangler deploy` + conferencia ao vivo) |
 
 ### 1.3 Restricao arquitetural fundamental
 
@@ -1278,9 +1278,9 @@ babelquarto::render_website(".")
 # 4. preview local
 servr::httw("_site")
 
-# 5. publicar
+# 5. publicar (render + deploy + conferencia ao vivo em sidneybissoli.com)
 # no terminal:
-quarto publish gh-pages
+powershell -File scripts/publicar-site.ps1
 ```
 
 ---

@@ -78,43 +78,45 @@ if (length(desconhecidos) > 0) {
 
 message(sprintf("  %d arquivo(s) em inglês com a barra traduzida.", tocados))
 
-# ---- 3. redirecionamentos das URLs do site antigo ---------------------------
-# O gh-pages de 08/01/2026 servia caminhos que o layout atual não gera:
-# `publications/` (hoje `research/`) e as cópias `*.en.html` na raiz que a
-# versão anterior do babelquarto emitia (hoje tudo em inglês mora em `en/`).
-# Quem chega por link ou índice antigo cai aqui em vez de num 404.
+# ---- 3. redirecionamentos (arquivo _redirects do Worker) --------------------
+# O site do GitHub Pages (até 01/09/2026) servia caminhos que o layout atual
+# não gera: `publications/` (hoje `research/`) e as cópias `*.en.html` na raiz
+# que a versão anterior do babelquarto emitia (hoje tudo em inglês mora em
+# `en/`). Quem chega por link ou índice antigo recebe um 301 para o lugar
+# novo — 301 de verdade, que o buscador trata como mudança de endereço
+# (no GitHub Pages só havia `meta refresh`).
 #
 # Por que não `aliases:` do Quarto: a versão em inglês é renderizada à parte
 # e movida para `_site/en/`, então um alias declarado num `.en.qmd` nasceria
 # DENTRO de `en/`, nunca na raiz. Mapa explícito, como o de rótulos acima: o
 # destino tem de existir no `_site/` recém-gerado, senão o script para.
+#
+# O `_redirects` é lido pelo Worker com assets (wrangler.jsonc) e não é
+# servido como arquivo. Formato: "origem destino código", um por linha. Só
+# aceita caminhos RELATIVOS (o deploy recusa "https://www..." com "Only
+# relative URLs are allowed", medido em 02/09/2026) — por isso o www -> apex
+# não está aqui: é uma Redirect Rule da zona no painel da Cloudflare.
 REDIRECIONAMENTOS <- c(
-  "publications/index.html" = "research/index.html",
-  "index.en.html"           = "en/index.html",
-  "about.en.html"           = "en/about.html"
+  "/publications/index.html" = "/research/index.html",
+  "/publications/"           = "/research/",
+  "/index.en.html"           = "/en/index.html",
+  "/about.en.html"           = "/en/about.html"
 )
 
-message("[3/3] redirecionamentos das URLs antigas ...")
+message("[3/3] escrevendo _site/_redirects ...")
 for (antigo in names(REDIRECIONAMENTOS)) {
-  novo <- REDIRECIONAMENTOS[[antigo]]
-  if (!file.exists(file.path("_site", novo))) {
+  novo  <- REDIRECIONAMENTOS[[antigo]]
+  alvo  <- if (endsWith(novo, "/")) paste0(novo, "index.html") else novo
+  if (!file.exists(file.path("_site", sub("^/", "", alvo)))) {
     stop("redirecionamento ", antigo, " -> ", novo,
          ": o destino não existe em _site/. Corrija o mapa REDIRECIONAMENTOS.")
   }
-  dir.create(dirname(file.path("_site", antigo)), showWarnings = FALSE,
-             recursive = TRUE)
-  writeLines(c(
-    "<!DOCTYPE html>",
-    '<html><head><meta charset="utf-8">',
-    sprintf('<meta http-equiv="refresh" content="0; url=/%s">', novo),
-    sprintf('<link rel="canonical" href="/%s">', novo),
-    '<meta name="robots" content="noindex">',
-    "</head><body>",
-    sprintf('<p>Esta página mudou de endereço: <a href="/%s">/%s</a></p>',
-            novo, novo),
-    "</body></html>"
-  ), file.path("_site", antigo), useBytes = TRUE)
-  message(sprintf("  /%s -> /%s", antigo, novo))
+  message(sprintf("  %s -> %s", antigo, novo))
 }
+linhas <- c(
+  "# Gerado por scripts/render-site.R — não editar à mão.",
+  sprintf("%s %s 301", names(REDIRECIONAMENTOS), REDIRECIONAMENTOS)
+)
+writeLines(linhas, "_site/_redirects", useBytes = TRUE)
 
 message("pronto: _site/ (pt na raiz, en em _site/en/)")

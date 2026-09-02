@@ -22,3 +22,6 @@ data-prep/*.log
 # `.quarto/` e cache de build. Os dois estavam rastreados por inercia.
 _site/
 .quarto/
+
+# Cache do wrangler (deploy do site). Contem o id da conta; nao e fonte.
+.wrangler/

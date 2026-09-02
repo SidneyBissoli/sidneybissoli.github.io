@@ -1,0 +1,12 @@
+---
+title: "Página não encontrada"
+page-layout: article
+toc: false
+---
+
+O endereço que você abriu não existe neste site — ou mudou de lugar.
+
+- [Início](/) · [Home (English)](/en/)
+- [Servidores MCP](/tools/) · [Pacotes R](/packages/) · [Escritos](/blog/) · [Sobre mim](/about.html)
+
+*Page not found. The address you opened does not exist on this site, or it has moved. The links above lead to the main sections.*

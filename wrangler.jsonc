@@ -1,0 +1,35 @@
+// Hospedagem do site em Worker com assets estáticos (Cloudflare), desde
+// 02/09/2026. Antes: GitHub Pages (branch gh-pages). Motivo da mudança: o
+// domínio, os seis servidores MCP e o painel já vivem nesta zona; aqui o site
+// entra no mesmo DNS, certificado e medição de crawlers, e ganha `_redirects`
+// (301 de verdade) e `_headers`, que o GitHub Pages não tem.
+//
+// Não há código de Worker: `_site/` é servido tal como o render-site.R o
+// deixa. Publicação SOMENTE por scripts/publicar-site.ps1 (render + deploy +
+// conferência ao vivo); `wrangler deploy` solto publica o que estiver em
+// `_site/`, inclusive um render velho.
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler-configuration.json",
+  "name": "sidneybissoli-site",
+  "compatibility_date": "2026-09-02",
+
+  // Sem host *.workers.dev: seria uma segunda URL pública do mesmo conteúdo
+  // (duplicata para o buscador). O site só existe no domínio próprio.
+  "workers_dev": false,
+  "routes": [
+    { "pattern": "sidneybissoli.com", "custom_domain": true },
+    // O www existe só para ganhar DNS e certificado; quem manda ao apex é
+    // uma Redirect Rule da zona (o _redirects só aceita caminhos relativos).
+    { "pattern": "www.sidneybissoli.com", "custom_domain": true }
+  ],
+
+  "assets": {
+    "directory": "./_site",
+    // /blog/posts/x/ e /blog/posts/x/index.html são a mesma página; o Quarto
+    // gera links nas duas formas.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+
+  "observability": { "enabled": true }
+}

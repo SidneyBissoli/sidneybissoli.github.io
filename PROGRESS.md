@@ -1,5 +1,16 @@
 # Progress
 
+## Publicacao (desde 02/09/2026)
+
+O site vive em **https://sidneybissoli.com**, servido por um Worker com assets
+estaticos na Cloudflare (`wrangler.jsonc`, sem codigo). Publicar =
+`powershell -File scripts/publicar-site.ps1`: renderiza os dois idiomas por
+`scripts/render-site.R`, roda `wrangler deploy` e confere ao vivo (paginas em
+200, www e URLs antigas em 301, sitemap no dominio proprio). Antes disso o
+site era o GitHub Pages do repo (`quarto publish gh-pages`); o branch
+`gh-pages` ficou so com um redirecionamento para o dominio novo.
+
+
 ## Current status
 
 **Module 1: Imunizacao (SI-PNI)** -- in progress (data prep running)

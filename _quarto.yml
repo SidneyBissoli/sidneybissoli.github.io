@@ -36,7 +36,10 @@ description-en: "Psychologist | Public Health Researcher | Financial Markets Ana
 
 website:
   title: "Sidney Bissoli"
-  site-url: "https://sidneybissoli.github.io"
+  # Domínio próprio desde 02/09/2026 (Worker com assets, wrangler.jsonc). O
+  # valor entra no sitemap, no canonical e nos links do seletor de idioma —
+  # é o endereço que o buscador considera oficial.
+  site-url: "https://sidneybissoli.com"
   navbar:
     background: light
     pinned: true
