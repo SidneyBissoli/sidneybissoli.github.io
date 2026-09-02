@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
 <head>
-<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/projects/index.html" />
-<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/projects/index.en.html" />
+<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/blog/posts/series-banco-central/index.html" />
+<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/blog/posts/series-banco-central/index.en.html" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Projetos – Sidney Bissoli</title>
+<meta name="author" content="Sidney Bissoli">
+<title>Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas – Sidney Bissoli</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,12 +24,47 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script><script src="../site_libs/clipboard/clipboard.min.js"></script><script src="../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../site_libs/quarto-search/fuse.min.js"></script><script src="../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script><script src="../site_libs/quarto-listing/quarto-listing.js"></script><script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script><link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script><script src="../../../site_libs/clipboard/clipboard.min.js"></script><script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../../../site_libs/quarto-search/fuse.min.js"></script><script src="../../../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script><script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../../../site_libs/quarto-html/popper.min.js"></script><script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../../../site_libs/quarto-html/anchor.min.js"></script><link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script><link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -55,67 +91,14 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Enviar",
     "search-label": "Procurar"
   }
-}</script><script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-title','listing-subtitle','listing-categories','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="../styles.css">
+}</script><link rel="stylesheet" href="../../../styles.css">
 </head>
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Sidney Bissoli</span>
     </a>
   </div>
@@ -126,30 +109,30 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
 <li class="nav-item"><div class="dropdown" id="languages-links-parent">
-<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/projects/index.html" id="language-link-en">English</a></li></ul>
+<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/blog/posts/series-banco-central/index.html" id="language-link-en">English</a></li></ul>
 </div></li>
 <li class="nav-item">
-    <a class="nav-link" href="../tools/index.html"> 
+    <a class="nav-link" href="../../../tools/index.html"> 
 <span class="menu-text">Servidores MCP</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../packages/index.html"> 
+    <a class="nav-link" href="../../../packages/index.html"> 
 <span class="menu-text">Pacotes R</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../../projects/index.html"> 
 <span class="menu-text">Projetos</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
+    <a class="nav-link" href="../../../blog/index.html"> 
 <span class="menu-text">Escritos</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../research/index.html"> 
+    <a class="nav-link" href="../../../research/index.html"> 
 <span class="menu-text">Publicações</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">Sobre mim</span></a>
   </li>  
 </ul>
@@ -178,51 +161,125 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categorias</h5>
-<div class="quarto-listing-category category-default"><div class="category" data-category="">Tudo <span class="quarto-category-count">(0)</span>
-</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Nesta página</h2>
+   
+  <ul>
+<li><a href="#o-sgs-tudo-%C3%A9-um-n%C3%BAmero-de-s%C3%A9rie" id="toc-o-sgs-tudo-é-um-número-de-série" class="nav-link active" data-scroll-target="#o-sgs-tudo-é-um-número-de-série">O SGS: tudo é um número de série</a></li>
+  <li><a href="#tr%C3%AAs-limites-da-api-medidos" id="toc-três-limites-da-api-medidos" class="nav-link" data-scroll-target="#três-limites-da-api-medidos">Três limites da API, medidos</a></li>
+  <li><a href="#a-armadilha-que-n%C3%A3o-d%C3%A1-erro-varia%C3%A7%C3%A3o-de-s%C3%A9rie-que-j%C3%A1-%C3%A9-varia%C3%A7%C3%A3o" id="toc-a-armadilha-que-não-dá-erro-variação-de-série-que-já-é-variação" class="nav-link" data-scroll-target="#a-armadilha-que-não-dá-erro-variação-de-série-que-já-é-variação">A armadilha que não dá erro: variação de série que já é variação</a></li>
+  <li><a href="#focus-o-eixo-da-selic-n%C3%A3o-%C3%A9-um-horizonte" id="toc-focus-o-eixo-da-selic-não-é-um-horizonte" class="nav-link" data-scroll-target="#focus-o-eixo-da-selic-não-é-um-horizonte">Focus: o eixo da Selic não é um horizonte</a></li>
+  <li><a href="#ptax-nem-toda-cota%C3%A7%C3%A3o-%C3%A9-apurada-pelo-banco-central" id="toc-ptax-nem-toda-cotação-é-apurada-pelo-banco-central" class="nav-link" data-scroll-target="#ptax-nem-toda-cotação-é-apurada-pelo-banco-central">PTAX: nem toda cotação é apurada pelo Banco Central</a></li>
+  <li><a href="#a-licen%C3%A7a-odbl-e-ela-pede-coisas" id="toc-a-licença-odbl-e-ela-pede-coisas" class="nav-link" data-scroll-target="#a-licença-odbl-e-ela-pede-coisas">A licença: ODbL, e ela pede coisas</a></li>
+  <li><a href="#e-onde-entra-um-assistente-de-ia" id="toc-e-onde-entra-um-assistente-de-ia" class="nav-link" data-scroll-target="#e-onde-entra-um-assistente-de-ia">E onde entra um assistente de IA</a></li>
+  </ul></nav>
 </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Projetos</h1>
-<p class="subtitle lead">Análises em R para Psicologia, Saúde Pública e Mercados Financeiros</p>
-</div>
+<h1 class="title">Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas</h1>
+<p class="subtitle lead">Os três limites da API medidos ao vivo, série de nível contra série de taxa, e o que a ODbL exige</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Banco Central</div>
+    <div class="quarto-category">SGS</div>
+    <div class="quarto-category">Mercados financeiros</div>
+    <div class="quarto-category">MCP</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sidney Bissoli </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Data de Publicação</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">31 de agosto de 2026</p>
+    </div>
+  </div>
   
     
   </div>
   
 
 
-</header><p>Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+</header><p><em>Publicado em 31 de agosto de 2026. Todos os comportamentos e valores descritos aqui foram medidos ao vivo contra as APIs do Banco Central na data da publicação; nada é inferido da documentação. As URLs estão ao lado de cada medição.</em></p>
+<p>O Banco Central do Brasil publica três coisas diferentes, por três caminhos diferentes, e quem começa costuma tratar as três como se fossem a mesma:</p>
+<ul>
+<li>o <strong>SGS</strong> (Sistema Gerenciador de Séries Temporais) — milhares de séries numeradas: Selic, IPCA, câmbio, crédito, agregados monetários, contas externas;</li>
+<li>a <strong>Focus</strong> — a pesquisa semanal de expectativas de mercado, que não é série temporal e sim uma matriz de indicador × horizonte × estatística;</li>
+<li>a <strong>PTAX</strong> — as cotações oficiais de fechamento, servidas pela API Olinda.</li>
+</ul>
+<p>Este texto é sobre as armadilhas de cada uma. São armadilhas reais: todas as que estão aqui foram reproduzidas em 31/08/2026, com a requisição e o código de resposta anotados.</p>
+<section id="o-sgs-tudo-é-um-número-de-série" class="level2"><h2 class="anchored" data-anchor-id="o-sgs-tudo-é-um-número-de-série">O SGS: tudo é um número de série</h2>
+<p>No SGS não se consulta “o IPCA”. Consulta-se a <strong>série 433</strong>. Não se consulta “o dólar”; consulta-se a <strong>série 1</strong>. A Selic meta é a <strong>432</strong>; a Selic efetiva acumulada no mês é outra; a Selic diária é outra ainda. Achar o código é metade do trabalho, e é onde a maior parte do tempo se perde.</p>
+<p>A consulta em si é simples:</p>
+<pre><code>GET https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/3?formato=json</code></pre>
+<p>Resposta real, em 31/08/2026 — o IPCA mensal:</p>
+<div class="code-copy-outer-scaffold">
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="fu">{</span><span class="dt">"data"</span><span class="fu">:</span><span class="st">"01/05/2026"</span><span class="fu">,</span><span class="dt">"valor"</span><span class="fu">:</span><span class="st">"0.58"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">{</span><span class="dt">"data"</span><span class="fu">:</span><span class="st">"01/06/2026"</span><span class="fu">,</span><span class="dt">"valor"</span><span class="fu">:</span><span class="st">"0.16"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">{</span><span class="dt">"data"</span><span class="fu">:</span><span class="st">"01/07/2026"</span><span class="fu">,</span><span class="dt">"valor"</span><span class="fu">:</span><span class="st">"0.07"</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+<button title="Copiar para a área de transferência" class="code-copy-button"><i class="bi"></i></button>
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Dica</span>Filtrando projetos
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).</p>
-</div>
-</div>
+<p>E a Selic meta, série 432, na mesma leitura: <strong>14,00</strong>. (Note que o SGS publica a meta com data à frente, até a próxima reunião do Copom — a leitura de 31/08/2026 devolveu datas de 14 a 16/09/2026. Isso é característica da série, não erro.)</p>
+</section><section id="três-limites-da-api-medidos" class="level2"><h2 class="anchored" data-anchor-id="três-limites-da-api-medidos">Três limites da API, medidos</h2>
+<p>Estes três não estão em lugar nenhum de forma explícita, e cada um derruba um script na primeira vez.</p>
+<p><strong>1. Janela maior que 10 anos em série diária é recusada com HTTP 406.</strong></p>
+<pre><code>GET .../bcdata.sgs.1/dados?formato=json&amp;dataInicial=01/01/2011&amp;dataFinal=31/12/2025
+→ HTTP 406 Not Acceptable</code></pre>
+<p>Uma janela de 3 anos na mesma série passa e devolve 755 observações:</p>
+<pre><code>GET .../bcdata.sgs.1/dados?formato=json&amp;dataInicial=01/01/2019&amp;dataFinal=31/12/2021
+→ HTTP 200, 755 registros</code></pre>
+<p><strong>2. Janela aberta também é recusada, e pela mesma razão.</strong> Pedir a série diária sem data nenhuma parece inofensivo, mas o limite vale sobre a janela <em>implícita</em> — sem <code>dataFinal</code>, a API assume hoje, e a série 1 começa em 1984:</p>
+<pre><code>GET .../bcdata.sgs.1/dados?formato=json
+→ HTTP 406 Not Acceptable</code></pre>
+<p><strong>3. <code>ultimos/N</code> tem teto de 20, em qualquer periodicidade.</strong></p>
+<pre><code>GET .../bcdata.sgs.1/dados/ultimos/20?formato=json  → HTTP 200, 20 registros
+GET .../bcdata.sgs.1/dados/ultimos/25?formato=json  → HTTP 400 Bad Request</code></pre>
+<p>Note que o erro é <strong>400</strong>, não uma resposta truncada: acima de 20 a requisição falha, não devolve 20. Quem precisa de mais tem de trocar a estratégia e buscar por janela de datas — o que exige inferir a periodicidade da série, porque o SGS <strong>não tem endpoint de metadados por série</strong> (o caminho <code>/metadados</code> responde 404, e unidade de medida não está disponível em fonte nenhuma da API).</p>
+<p>Junte os três e o padrão fica claro: para uma série diária de 15 anos, o caminho é fatiar em janelas de até 10 anos, buscar cada pedaço e fundir em ordem de data, sem duplicar as emendas. Na prática convém fatiar em <strong>3 anos</strong>, não nos 10 permitidos: uma janela diária de uma década custa de 10 a 20 segundos na origem e pode ser cortada por volta dos 30.</p>
+</section><section id="a-armadilha-que-não-dá-erro-variação-de-série-que-já-é-variação" class="level2"><h2 class="anchored" data-anchor-id="a-armadilha-que-não-dá-erro-variação-de-série-que-já-é-variação">A armadilha que não dá erro: variação de série que já é variação</h2>
+<p>Esta é a mais cara, porque produz um número.</p>
+<p>O IPCA mensal (série 433) <strong>já é uma variação percentual</strong>. Somar doze valores mensais para obter o acumulado do ano dá um resultado errado, e errado para menos, porque inflação compõe. O acumulado se obtém por encadeamento:</p>
+<pre><code>acumulado = [ Π (1 + vᵢ/100) − 1 ] × 100</code></pre>
+<p>Com os três meses reais acima (0,58, 0,16 e 0,07), a soma dá 0,8100 e o encadeamento dá 0,8114 — a soma subestima. A diferença é pequena em três meses e deixa de ser pequena em doze, ou em qualquer período com inflação alta.</p>
+<p>A regra prática: <strong>antes de calcular variação, pergunte se a série é de nível ou de taxa.</strong> Série de nível (o dólar, o saldo de crédito, o PIB) admite variação entre as pontas. Série que já é variação por período (IPCA, IGP-M, INPC) exige encadeamento. E o mesmo vale para reamostrar: transformar IPCA mensal em anual é composição geométrica, não média.</p>
+</section><section id="focus-o-eixo-da-selic-não-é-um-horizonte" class="level2"><h2 class="anchored" data-anchor-id="focus-o-eixo-da-selic-não-é-um-horizonte">Focus: o eixo da Selic não é um horizonte</h2>
+<p>A Focus é servida pela API Olinda, em cerca de 18 recursos OData distintos. Consolidá-los faz sentido — mas há uma diferença estrutural que não se pode consolidar sem mentir.</p>
+<p>Para a maior parte dos indicadores (IPCA, PIB, câmbio…), a expectativa tem um <strong>horizonte</strong>: mensal, trimestral, anual, ou inflação acumulada em 12 e 24 meses. Cada resposta traz média, mediana, desvio-padrão, mínimo, máximo e número de respondentes, e há a variante <strong>Top 5</strong>, com os cinco projetistas de melhor desempenho recente.</p>
+<p>A Selic é diferente: o eixo dela é a <strong>reunião do Copom</strong> (na forma <code>R1/2026</code>), não um horizonte de tempo. Tratar <code>selic</code> como se fosse mais um horizonte é o erro conceitual mais comum aqui, e leva a consultas que não retornam nada sem explicar por quê.</p>
+<p>Outra assimetria que surpreende: <strong>o conjunto de indicadores muda com o escopo</strong>. São 9 indicadores no escopo mensal e 26 no anual. Não existe “a lista de indicadores da Focus” — existe a lista <em>daquele</em> escopo.</p>
+</section><section id="ptax-nem-toda-cotação-é-apurada-pelo-banco-central" class="level2"><h2 class="anchored" data-anchor-id="ptax-nem-toda-cotação-é-apurada-pelo-banco-central">PTAX: nem toda cotação é apurada pelo Banco Central</h2>
+<p>O BCB apura a PTAX do dólar. As <strong>paridades entre outras moedas não são apuradas por ele</strong>: vêm de agência de informação (Refinitiv) e são redistribuídas pelo Banco Central. A diferença é jurídica e metodológica, não cosmética — e as respostas do BCB carregam o aviso de responsabilidade dele próprio, que deve ser repassado literalmente.</p>
+<p>Detalhe de implementação que custa uma tarde: no recurso da Selic Top 5, os nomes de campo vêm em caixa diferente da dos outros doze recursos. Nenhuma documentação avisa; só aparece quando o parser devolve <code>undefined</code>.</p>
+</section><section id="a-licença-odbl-e-ela-pede-coisas" class="level2"><h2 class="anchored" data-anchor-id="a-licença-odbl-e-ela-pede-coisas">A licença: ODbL, e ela pede coisas</h2>
+<p>Os dados do Banco Central saem sob <strong>Open Data Commons Open Database License (ODbL) v1.0</strong>. Isso <strong>não</strong> é CC0, não é CC BY e não é domínio público. A ODbL tem três obrigações que sobrevivem à redistribuição:</p>
+<ul>
+<li>
+<strong>atribuição</strong> — creditar a fonte;</li>
+<li>
+<strong>share-alike sobre bases derivadas</strong> — uma base pública construída a partir desta sai sob a mesma licença;</li>
+<li>
+<strong>cláusula anti-DRM</strong> — não se pode distribuir a base com trava técnica que impeça o exercício dos direitos da licença.</li>
+</ul>
+<p>Conferido contra a fonte em 13/08/2026: 4.259 dos 4.260 conjuntos do Portal de Dados Abertos do BCB declaram <code>license_id: "odc-odbl"</code>.</p>
+<p>Isso muda como se cita. O mínimo honesto, junto de qualquer número: a série, a data da extração e a licença.</p>
+</section><section id="e-onde-entra-um-assistente-de-ia" class="level2"><h2 class="anchored" data-anchor-id="e-onde-entra-um-assistente-de-ia">E onde entra um assistente de IA</h2>
+<p>Perguntar a um modelo <em>“qual a Selic hoje?”</em> devolve um número do treino: pode estar certo, pode estar três reuniões do Copom atrasado, e não vem com fonte.</p>
+<p>Plugar o SGS resolve isso não por conveniência, mas por <strong>procedência</strong>: o valor vem com a série, o período, a URL canônica que reproduz a consulta, o instante real da extração e a licença. E as armadilhas acima ficam do lado do servidor — o fatiamento da janela, o teto de 20, o encadeamento das séries de taxa, os escopos da Focus, o aviso da PTAX.</p>
+<p>É o que o <a href="https://github.com/SidneyBissoli/bcb-br-mcp"><code>bcb-br-mcp</code></a> faz: 15 ferramentas sobre SGS, Focus e PTAX, com catálogo curado de 135 séries verificadas contra a origem, para clientes que falam <a href="https://modelcontextprotocol.io">MCP</a>. Quando ele calcula alguma coisa — variação, estatística descritiva, série harmonizada — o resultado vem marcado como derivado, com a convenção usada; o que o BCB publicou sai sempre verbatim.</p>
+<p>Com ou sem ferramenta, as duas perguntas que evitam a maioria dos erros são sempre as mesmas: <strong>esta série é de nível ou de taxa?</strong> e <strong>quem apurou este número?</strong></p>
+<hr>
+<p><em>Servidor: <a href="https://github.com/SidneyBissoli/bcb-br-mcp"><code>bcb-br-mcp</code></a> · endpoint hospedado em <code>https://bcb.sidneybissoli.com/mcp</code> · pacote npm <a href="https://www.npmjs.com/package/bcb-br-mcp"><code>bcb-br-mcp</code></a> · código sob licença MIT. Dados do Banco Central do Brasil sob ODbL v1.0 — https://opendatacommons.org/licenses/odbl/1-0/.</em></p>
 
 
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="list grid quarto-listing-cols-3">
-
-</div>
-<div class="listing-no-matching d-none">Nenhum item correspondente</div>
-</div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();

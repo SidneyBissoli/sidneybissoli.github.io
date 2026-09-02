@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
 <head>
-<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/projects/index.html" />
-<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/projects/index.en.html" />
+<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/blog/posts/cid10-cid11-sus/index.html" />
+<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/blog/posts/cid10-cid11-sus/index.en.html" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Projetos – Sidney Bissoli</title>
+<meta name="author" content="Sidney Bissoli">
+<title>CID-10, CID-11 e o que muda para quem trabalha com dados do SUS – Sidney Bissoli</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,11 +25,11 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 </style>
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script><script src="../site_libs/clipboard/clipboard.min.js"></script><script src="../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../site_libs/quarto-search/fuse.min.js"></script><script src="../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script><script src="../site_libs/quarto-listing/quarto-listing.js"></script><script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script><link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script><script src="../../../site_libs/clipboard/clipboard.min.js"></script><script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../../../site_libs/quarto-search/fuse.min.js"></script><script src="../../../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script><script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../../../site_libs/quarto-html/popper.min.js"></script><script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../../../site_libs/quarto-html/anchor.min.js"></script><link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script><link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -55,67 +56,14 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Enviar",
     "search-label": "Procurar"
   }
-}</script><script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-title','listing-subtitle','listing-categories','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="../styles.css">
+}</script><link rel="stylesheet" href="../../../styles.css">
 </head>
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Sidney Bissoli</span>
     </a>
   </div>
@@ -126,30 +74,30 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
 <li class="nav-item"><div class="dropdown" id="languages-links-parent">
-<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/projects/index.html" id="language-link-en">English</a></li></ul>
+<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/blog/posts/cid10-cid11-sus/index.html" id="language-link-en">English</a></li></ul>
 </div></li>
 <li class="nav-item">
-    <a class="nav-link" href="../tools/index.html"> 
+    <a class="nav-link" href="../../../tools/index.html"> 
 <span class="menu-text">Servidores MCP</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../packages/index.html"> 
+    <a class="nav-link" href="../../../packages/index.html"> 
 <span class="menu-text">Pacotes R</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../../projects/index.html"> 
 <span class="menu-text">Projetos</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
+    <a class="nav-link" href="../../../blog/index.html"> 
 <span class="menu-text">Escritos</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../research/index.html"> 
+    <a class="nav-link" href="../../../research/index.html"> 
 <span class="menu-text">Publicações</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
+    <a class="nav-link" href="../../../about.html"> 
 <span class="menu-text">Sobre mim</span></a>
   </li>  
 </ul>
@@ -178,51 +126,151 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categorias</h5>
-<div class="quarto-listing-category category-default"><div class="category" data-category="">Tudo <span class="quarto-category-count">(0)</span>
-</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Nesta página</h2>
+   
+  <ul>
+<li><a href="#o-que-%C3%A9-a-cid-10-que-o-sus-usa" id="toc-o-que-é-a-cid-10-que-o-sus-usa" class="nav-link active" data-scroll-target="#o-que-é-a-cid-10-que-o-sus-usa">O que é a CID-10 que o SUS usa</a></li>
+  <li><a href="#o-que-%C3%A9-a-cid-11-e-por-que-ela-ainda-n%C3%A3o-substituiu-nada-aqui" id="toc-o-que-é-a-cid-11-e-por-que-ela-ainda-não-substituiu-nada-aqui" class="nav-link" data-scroll-target="#o-que-é-a-cid-11-e-por-que-ela-ainda-não-substituiu-nada-aqui">O que é a CID-11, e por que ela ainda não substituiu nada aqui</a></li>
+  <li><a href="#as-tabelas-de-transi%C3%A7%C3%A3o-o-que-elas-s%C3%A3o-e-o-que-n%C3%A3o-s%C3%A3o" id="toc-as-tabelas-de-transição-o-que-elas-são-e-o-que-não-são" class="nav-link" data-scroll-target="#as-tabelas-de-transição-o-que-elas-são-e-o-que-não-são">As tabelas de transição: o que elas são, e o que não são</a></li>
+  <li><a href="#uma-nota-sobre-tradu%C3%A7%C3%A3o" id="toc-uma-nota-sobre-tradução" class="nav-link" data-scroll-target="#uma-nota-sobre-tradução">Uma nota sobre tradução</a></li>
+  <li><a href="#licen%C3%A7as-porque-elas-diferem-entre-as-fontes" id="toc-licenças-porque-elas-diferem-entre-as-fontes" class="nav-link" data-scroll-target="#licenças-porque-elas-diferem-entre-as-fontes">Licenças, porque elas diferem entre as fontes</a></li>
+  <li><a href="#e-onde-entra-um-assistente-de-ia" id="toc-e-onde-entra-um-assistente-de-ia" class="nav-link" data-scroll-target="#e-onde-entra-um-assistente-de-ia">E onde entra um assistente de IA</a></li>
+  </ul></nav>
 </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Projetos</h1>
-<p class="subtitle lead">Análises em R para Psicologia, Saúde Pública e Mercados Financeiros</p>
-</div>
+<h1 class="title">CID-10, CID-11 e o que muda para quem trabalha com dados do SUS</h1>
+<p class="subtitle lead">A estrutura da V2008 em números, o que as tabelas de transição da OMS são — e o que elas não são</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Saúde pública</div>
+    <div class="quarto-category">DataSUS</div>
+    <div class="quarto-category">CID-10</div>
+    <div class="quarto-category">MCP</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Autor</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sidney Bissoli </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Data de Publicação</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">31 de agosto de 2026</p>
+    </div>
+  </div>
   
     
   </div>
   
 
 
-</header><p>Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Dica</span>Filtrando projetos
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).</p>
-</div>
-</div>
+</header><p>conjuntos oficiais que acompanham o servidor — a CID-10 V2008 publicada pelo DataSUS e as tabelas de transição da OMS, release 2025-01 — e podem ser reproduzidas por qualquer pessoa a partir das fontes citadas.*</p>
+<p>Quem trabalha com dado de saúde no Brasil convive com duas classificações ao mesmo tempo, e elas não são versões uma da outra no sentido em que se costuma pensar. Este texto é sobre o que separa as duas, o que existe de oficial para ligá-las, e onde estão os erros mais comuns de quem faz essa ponte na mão.</p>
+<section id="o-que-é-a-cid-10-que-o-sus-usa" class="level2"><h2 class="anchored" data-anchor-id="o-que-é-a-cid-10-que-o-sus-usa">O que é a CID-10 que o SUS usa</h2>
+<p>O SUS opera sobre a <strong>CID-10, versão V2008</strong>, traduzida para o português pelo Centro Brasileiro de Classificação de Doenças (CBCD, da Faculdade de Saúde Pública da USP) e publicada eletronicamente pelo DataSUS. É o que preenche o campo de diagnóstico da AIH, do SIA, da declaração de óbito, do SINAN. Não é uma tradução informal: é o padrão operacional.</p>
+<p>A estrutura tem quatro níveis, e as contagens exatas do arquivo V2008 são estas:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th>Nível</th>
+<th>Quantidade</th>
+<th>Exemplo</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Capítulos</td>
+<td><strong>22</strong></td>
+<td>
+<code>Capítulo I — Algumas doenças infecciosas e parasitárias</code> (A00–B99)</td>
+</tr>
+<tr class="even">
+<td>Grupos</td>
+<td><strong>275</strong></td>
+<td><code>A00–A09 — Doenças infecciosas intestinais</code></td>
+</tr>
+<tr class="odd">
+<td>Categorias (3 caracteres)</td>
+<td><strong>2.045</strong></td>
+<td><code>A00 — Cólera</code></td>
+</tr>
+<tr class="even">
+<td>Subcategorias (4 caracteres)</td>
+<td><strong>12.451</strong></td>
+<td><code>A00.0 — Cólera devida a Vibrio cholerae 01, biótipo cholerae</code></td>
+</tr>
+</tbody>
+</table>
+<p><em>Fonte: DataSUS / CBCD, CID-10 V2008, http://www2.datasus.gov.br/cid10/V2008/ — contagens extraídas do conjunto embutido em <code>medical-terminologies-mcp</code>.</em></p>
+<p>Três detalhes desse arquivo derrubam quem cruza bases:</p>
+<p><strong>1. O código tem duas grafias.</strong> A subcategoria aparece como <code>A000</code> na chave e como <code>A00.0</code> na exibição. Bases diferentes escolhem grafias diferentes, e um <code>JOIN</code> ingênuo entre elas casa zero linhas sem reclamar. Normalize antes.</p>
+<p><strong>2. Nem todo código é usável em qualquer contexto.</strong> O arquivo traz marcadores de restrição por sexo e de causa de óbito. Um código restrito a um sexo que aparece com o outro é erro de digitação na origem, não achado epidemiológico — mas só aparece se alguém for olhar o marcador.</p>
+<p><strong>3. Categoria não é subcategoria.</strong> <code>I21</code> (infarto agudo do miocárdio) e <code>I21.0</code> não são o mesmo grão. Contar as duas na mesma tabela dupla-conta. É o erro mais comum em contagem de morbidade a partir de dado bruto.</p>
+</section><section id="o-que-é-a-cid-11-e-por-que-ela-ainda-não-substituiu-nada-aqui" class="level2"><h2 class="anchored" data-anchor-id="o-que-é-a-cid-11-e-por-que-ela-ainda-não-substituiu-nada-aqui">O que é a CID-11, e por que ela ainda não substituiu nada aqui</h2>
+<p>A <strong>CID-11</strong> é a revisão vigente da OMS. Ela não é uma CID-10 renumerada: mudou o número de capítulos, criou capítulos novos (medicina tradicional, saúde sexual), introduziu <strong>pós-coordenação</strong> — a possibilidade de compor um código principal com eixos adicionais (gravidade, lateralidade, agente etiológico) —, e sua identidade canônica não é o código alfanumérico, e sim uma <strong>URI</strong>.</p>
+<p>Enquanto isso, os sistemas de informação do SUS seguem em CID-10 V2008. Na prática, quem trabalha com dado brasileiro precisa dos dois: a CID-10 para operar, a CID-11 para comparar internacionalmente e para acompanhar a literatura recente.</p>
+</section><section id="as-tabelas-de-transição-o-que-elas-são-e-o-que-não-são" class="level2"><h2 class="anchored" data-anchor-id="as-tabelas-de-transição-o-que-elas-são-e-o-que-não-são">As tabelas de transição: o que elas são, e o que não são</h2>
+<p>A OMS publica, dentro de cada release da CID-11, tabelas de correspondência entre as duas revisões. Na release <strong>2025-01</strong> (publicada em 24/01/2025), o conteúdo é este:</p>
+<ul>
+<li>
+<strong>11.243</strong> entradas de CID-10 mapeadas;</li>
+<li>
+<strong>1.461</strong> delas trazem alternativas documentadas pela própria OMS, além do código principal;</li>
+<li>nenhuma entrada fica sem código principal.</li>
+</ul>
+<p>Um exemplo, o diabetes tipo 2:</p>
+<pre><code>CID-10  E11   Type 2 diabetes mellitus     (capítulo IV)
+CID-11  5A11  Type 2 diabetes mellitus     (capítulo 05)
+        URI: http://id.who.int/icd/entity/119724091</code></pre>
+<p><em>Fonte: OMS, tabelas de transição da release 2025-01, https://icdcdn.who.int/static/releasefiles/2025-01/mapping.zip</em></p>
+<p>E aqui vem a parte que costuma ser ignorada. A orientação da própria OMS sobre essas tabelas é explícita: elas mostram a correspondência entre as revisões e <strong>“não se destinam a converter dados diretamente de uma revisão para a outra”</strong>.</p>
+<p>Isso não é formalidade jurídica. As 1.461 entradas com alternativas são exatamente os casos em que a correspondência não é de um para um: uma categoria da CID-10 que se desdobrou, ou que foi absorvida por um agrupamento diferente. Rodar a tabela como se fosse um dicionário de tradução, sobre uma base de milhões de registros, produz uma série histórica que parece contínua e não é. O uso legítimo é outro: <strong>consultar caso a caso, com a alternativa à vista, para decidir com critério clínico ou epidemiológico</strong>.</p>
+</section><section id="uma-nota-sobre-tradução" class="level2"><h2 class="anchored" data-anchor-id="uma-nota-sobre-tradução">Uma nota sobre tradução</h2>
+<p>Nenhum dos textos acima é traduzido por máquina, e isso é uma escolha deliberada de quem serve terminologia.</p>
+<ul>
+<li>A CID-10 em português é a <strong>tradução oficial</strong> do CBCD. Não há por que traduzir o que já foi traduzido por quem tem autoridade para isso.</li>
+<li>A CID-11 tem <strong>linearização oficial em português da OMS</strong> — pede-se com o parâmetro de idioma, e vem o rótulo oficial.</li>
+<li>O MeSH tem traduções da própria NLM, onde elas existem.</li>
+</ul>
+<p>Quando a fonte não tem tradução oficial para uma entrada, a resposta honesta é devolver o idioma de origem. Um rótulo clínico traduzido por máquina parece serviço e é passivo: uma diferença sutil de termo muda o que o código significa, e quem lê não tem como saber que aquele texto não é oficial.</p>
+</section><section id="licenças-porque-elas-diferem-entre-as-fontes" class="level2"><h2 class="anchored" data-anchor-id="licenças-porque-elas-diferem-entre-as-fontes">Licenças, porque elas diferem entre as fontes</h2>
+<p>Um detalhe que atrapalha mais projetos do que deveria: <strong>as classificações não compartilham licença</strong>, e o software que as serve não estende a sua própria.</p>
+<ul>
+<li>
+<strong>CID-10 V2008 (DataSUS/CBCD):</strong> © OMS; tradução © CBCD/FSP-USP; arquivos eletrônicos publicados pelo DataSUS. A permissão é de uso pelos desenvolvedores <strong>com o devido crédito e sem custo</strong>.</li>
+<li>
+<strong>CID-11 (OMS):</strong> Creative Commons Atribuição-SemDerivações 3.0 IGO (CC BY-ND 3.0 IGO), com citação exigida e a ressalva de que a OMS pode encerrar a licença mediante aviso.</li>
+<li>
+<strong>Tabelas de transição:</strong> © OMS, sob os Termos de Uso da CID-11.</li>
+<li>
+<strong>LOINC:</strong> © Regenstrief Institute, gratuito sob a licença própria.</li>
+<li>
+<strong>RxNorm e MeSH:</strong> obras do governo dos EUA, servidas pela NLM.</li>
+<li>
+<strong>SNOMED CT:</strong> exige licença da SNOMED International. O Brasil <strong>não</strong> é país membro — o caminho aqui é a licença de Afiliado.</li>
+</ul>
+<p>A regra que evita problema: a licença do código do software não vale para o conteúdo que ele serve. Cada resposta deve carregar a licença da fonte daquele número.</p>
+</section><section id="e-onde-entra-um-assistente-de-ia" class="level2"><h2 class="anchored" data-anchor-id="e-onde-entra-um-assistente-de-ia">E onde entra um assistente de IA</h2>
+<p>Perguntar a um modelo <em>“qual o código CID-10 do infarto agudo do miocárdio?”</em> devolve um código plausível. Costuma acertar nos casos famosos, e erra silenciosamente na cauda — que é justamente onde a consulta importa, porque nos casos famosos ninguém precisa perguntar.</p>
+<p>O ganho de ligar o assistente às fontes oficiais é o mesmo de sempre: <strong>procedência</strong>. O código vem com a fonte, a versão da terminologia, a URL canônica e a licença; o rótulo em português vem do CBCD ou da OMS, não de uma tradução inventada na hora; e o mapeamento entre revisões vem da tabela da OMS, com as alternativas à vista, em vez de uma escolha implícita.</p>
+<p>É o que o <a href="https://github.com/SidneyBissoli/medical-terminologies-mcp"><code>medical-terminologies-mcp</code></a> faz: 31 ferramentas sobre ICD-11, LOINC, RxNorm, MeSH, ATC e CID-10, para clientes que falam <a href="https://modelcontextprotocol.io">MCP</a>. A CID-10 vai embutida — consulta sem chamada de rede e sem limite de taxa —, e há validação em lote de até 100 códigos de uma vez, entre seis terminologias, para quem precisa auditar uma base inteira antes de analisá-la.</p>
+<p>Uma última recomendação, independente de ferramenta: <strong>antes de comparar duas séries de morbidade, verifique se as duas estão na mesma revisão e no mesmo grão.</strong> Boa parte das quebras inexplicáveis em série histórica de saúde é uma dessas duas coisas.</p>
+<hr>
+<p><em>Servidor: <a href="https://github.com/SidneyBissoli/medical-terminologies-mcp"><code>medical-terminologies-mcp</code></a> · endpoint hospedado em <code>https://medical.sidneybissoli.com/mcp</code> · pacote npm <a href="https://www.npmjs.com/package/medical-terminologies-mcp"><code>medical-terminologies-mcp</code></a> · código sob licença MIT. As terminologias servidas têm licenças próprias — veja <a href="https://github.com/SidneyBissoli/medical-terminologies-mcp/blob/main/../NOTICE.md">NOTICE.md</a>.</em></p>
 
 
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="list grid quarto-listing-cols-3">
-
-</div>
-<div class="listing-no-matching d-none">Nenhum item correspondente</div>
-</div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();

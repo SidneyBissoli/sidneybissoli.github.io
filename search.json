@@ -1,31 +1,276 @@
 [
   {
-    "objectID": "research/index.html",
-    "href": "research/index.html",
-    "title": "Pesquisa",
+    "objectID": "tools/index.html",
+    "href": "tools/index.html",
+    "title": "Servidores MCP",
     "section": "",
-    "text": "A noção de transferência nos “Estudos sobre a histeria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nEste artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos “Estudos sobre a histeria”, este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.\nArtigo"
+    "text": "Pergunte a um assistente de IA a população de Belo Horizonte no Censo 2022 e ele devolve um número plausível, tirado do treino: talvez certo, talvez de outro censo, sem fonte. Eu resolvi isso de outra maneira — estes servidores fazem o assistente consultar a API oficial na hora.\nTodos falam MCP (Model Context Protocol), o padrão aberto que conecta assistentes a fontes de dados. Funcionam com Claude, ChatGPT e qualquer cliente compatível, e não exigem instalação: basta apontar o cliente para o endereço."
   },
   {
-    "objectID": "research/index.html#publicações-acadêmicas",
-    "href": "research/index.html#publicações-acadêmicas",
-    "title": "Pesquisa",
-    "section": "",
-    "text": "A noção de transferência nos “Estudos sobre a histeria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nEste artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos “Estudos sobre a histeria”, este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.\nArtigo"
+    "objectID": "tools/index.html#o-que-eu-garanti-nos-seis",
+    "href": "tools/index.html#o-que-eu-garanti-nos-seis",
+    "title": "Servidores MCP",
+    "section": "O que eu garanti nos seis",
+    "text": "O que eu garanti nos seis\nProcedência em toda resposta. Fiz cada número sair com a fonte, o período de referência, a URL canônica que reproduz a consulta, o instante real da extração e a licença. Não é um rodapé decorativo: é o que permite conferir, citar e auditar. Quando o servidor calcula alguma coisa — uma variação, uma distribuição —, o resultado vem marcado como derivado, com a convenção usada.\nConformidade de protocolo verificada. Deixei os seis em 100% no mcpscore, com uma catraca no CI que impede regressão: uma alteração que derrube a nota não é aceita.\nCódigo aberto sob licença MIT. Os dados, não — cada fonte tem a sua licença, e eu a faço viajar junto com o número."
   },
   {
-    "objectID": "research/index.html#projetos-de-análise-em-r",
-    "href": "research/index.html#projetos-de-análise-em-r",
-    "title": "Pesquisa",
-    "section": "Projetos de Análise em R",
-    "text": "Projetos de Análise em R\nVisite minha página de Projetos para ver análises detalhadas em R sobre:\n\nPesquisa psicológica e comportamental\nAnálise de dados em saúde pública\nPesquisa em mercados financeiros\nAplicações de modelagem preditiva\n\n\nPortfólio no RPubs\nVocê também pode explorar meu portfólio completo no RPubs.com/Bissoli.\n\nEsta página será atualizada conforme novas publicações e projetos forem concluídos."
+    "objectID": "tools/index.html#os-servidores",
+    "href": "tools/index.html#os-servidores",
+    "title": "Servidores MCP",
+    "section": "Os servidores",
+    "text": "Os servidores\n\n\n\n\nIBGE\n21 ferramentas sobre as APIs do IBGE: geografia, Censo (1970–2022), indicadores econômicos e sociais, tabelas SIDRA, malhas cartográficas, nomes, CNAE e saúde. Ranqueia os 5.570 municípios numa chamada só, com a distribuição completa em vez de um top 10 que esconde a assimetria.\nibge.sidneybissoli.com · GitHub · npm\n\n\n\n\n\n\nBanco Central\n15 ferramentas sobre três fontes do BCB: as séries temporais do SGS, a pesquisa de expectativas de mercado Focus e as cotações oficiais PTAX. Resolve sozinho os limites da API — janela diária de 15 anos é fatiada e fundida — e usa encadeamento, não soma, nas séries que já são variação.\nbcb.sidneybissoli.com · GitHub · npm\n\n\n\n\n\n\nSenado Federal\n67 ferramentas sobre os dados abertos do Senado: senadores, matérias, votações, comissões, plenário, e-Cidadania e a camada administrativa (CEAPS, contratações, servidores, orçamento). Serviço independente, somente leitura, não afiliado ao Senado.\nsenado.sidneybissoli.com · GitHub · npm\n\n\n\n\n\n\nTerminologias médicas\n31 ferramentas sobre ICD-11, LOINC, RxNorm, MeSH, ATC e a CID-10 brasileira (DataSUS V2008, embutida — sem chamada de rede), mais as tabelas oficiais de transição ICD-10 → ICD-11 da OMS. Rótulos em português vêm da OMS e da NLM; nunca de tradução de máquina.\nmedical.sidneybissoli.com · GitHub · npm\n\n\n\n\n\n\nILOSTAT (OIT)\n4 ferramentas sobre a base estatística da Organização Internacional do Trabalho: mais de 1.200 fluxos de indicadores de trabalho por país, ano, sexo e faixa etária. Busca-se o fluxo antes de puxar o dado, para não ter que adivinhar código de indicador.\nilo.sidneybissoli.com · GitHub · npm\n\n\n\n\n\n\nUNESCO UIS\n3 ferramentas sobre o Instituto de Estatística da UNESCO: cerca de 5.000 indicadores de educação, ciência e P&D, cultura e comunicação, por país, região e ano. A release dos dados é fixada em toda consulta, então a mesma pergunta dá a mesma resposta amanhã.\nuis.sidneybissoli.com · GitHub"
+  },
+  {
+    "objectID": "tools/index.html#como-usar",
+    "href": "tools/index.html#como-usar",
+    "title": "Servidores MCP",
+    "section": "Como usar",
+    "text": "Como usar\nEm qualquer cliente MCP com suporte a HTTP, aponte para o endereço do servidor seguido de /mcp. Por exemplo, para o do IBGE:\nhttps://ibge.sidneybissoli.com/mcp\nNão há instalação, cadastro nem chave de API. Para uso local, os cinco publicados no npm rodam com npx — por exemplo, npx -y ibge-br-mcp.\nDepois é só perguntar em português:\n\n“Qual era a população de Belo Horizonte no Censo 2022?”\n“O que o mercado espera do IPCA em 2027?”\n“Como cada senador votou na última votação nominal do plenário?”"
   },
   {
     "objectID": "projects/index.html",
     "href": "projects/index.html",
     "title": "Projetos",
     "section": "",
-    "text": "Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.\n\n\n\n\n\n\nTipFiltrando projetos\n\n\n\nUse as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).\n\n\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.\n\n\n\n\n\n\nDicaFiltrando projetos\n\n\n\nUse as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).\n\n\n\n\n\n\n\n\n\n\nNenhum item correspondente"
+  },
+  {
+    "objectID": "packages/index.html",
+    "href": "packages/index.html",
+    "title": "Pacotes R",
+    "section": "",
+    "text": "Dado público brasileiro raramente vem pronto. Está em arquivo de largura fixa, em planilha com cabeçalho de três linhas, atrás de um formulário, ou numa API que devolve JSON aninhado com nomes em maiúsculas. O trabalho de limpar isso é sempre o mesmo, e sempre refeito por quem chega depois.\nEscrevi estes pacotes para fazer esse trabalho uma vez, em R, e devolver data.frame arrumado."
+  },
+  {
+    "objectID": "packages/index.html#no-cran",
+    "href": "packages/index.html#no-cran",
+    "title": "Pacotes R",
+    "section": "No CRAN",
+    "text": "No CRAN\nO CRAN não é hospedagem: é um portão com revisor humano, verificação em várias plataformas e exigência de documentação e exemplos que rodam. Passei dois pacotes por ele.\n\n\n\n\neducabR\nDados educacionais do INEP — Censo Escolar, IDEB, ENEM, SAEB, Censo da Educação Superior, ENCCEJA, IDD e ENADE. Baixa, descompacta e organiza.\ninstall.packages(\"educabR\")\nVersão 1.1.0 no CRAN desde 23/08/2026 · documentação · GitHub\n\n\n\n\n\n\nhealthbR\nDados de saúde pública brasileiros de várias fontes do DATASUS e do Ministério da Saúde — internações, mortalidade, nascimentos, estabelecimentos, inquéritos como o VIGITEL.\ninstall.packages(\"healthbR\")\nVersão 0.2.0 no CRAN desde 15/02/2026 · documentação · GitHub"
+  },
+  {
+    "objectID": "packages/index.html#em-desenvolvimento-no-github",
+    "href": "packages/index.html#em-desenvolvimento-no-github",
+    "title": "Pacotes R",
+    "section": "Em desenvolvimento, no GitHub",
+    "text": "Em desenvolvimento, no GitHub\nInstaláveis com remotes::install_github(). Ainda não os submeti ao CRAN.\n\n\n\n\ncvmdata\nDados abertos da CVM — informações de companhias abertas e fundos, em formato arrumado.\n0.2.0.9000 · documentação · GitHub\n\n\n\n\n\n\nwelfarebR\nDados de assistência social brasileira — programas, benefícios e cobertura.\n0.1.0 · GitHub\n\n\n\n\n\n\nsenado\nAPI de Dados Abertos do Senado Federal, com interface arrumada. É o irmão em R do servidor MCP do Senado.\n0.0.0.9000 · GitHub"
+  },
+  {
+    "objectID": "packages/index.html#por-que-r-e-por-que-também-mcp",
+    "href": "packages/index.html#por-que-r-e-por-que-também-mcp",
+    "title": "Pacotes R",
+    "section": "Por que R, e por que também MCP",
+    "text": "Por que R, e por que também MCP\nOs servidores MCP e estes pacotes são meu ataque ao mesmo problema por lados opostos. O pacote serve quem já está numa análise, escrevendo código, e quer o dado dentro do ambiente onde vai modelar. O servidor MCP serve quem está conversando com um assistente e quer a resposta com fonte, sem escrever código nenhum.\nNenhum dos dois substitui o outro, e os dois dependem da mesma coisa: alguém ter lido a documentação da fonte, descoberto onde ela mente, e escrito isso em código que outra pessoa possa reusar. É esse o trabalho que eu faço."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html",
+    "href": "blog/posts/series-banco-central/index.html",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "",
+    "text": "Publicado em 31 de agosto de 2026. Todos os comportamentos e valores descritos aqui foram medidos ao vivo contra as APIs do Banco Central na data da publicação; nada é inferido da documentação. As URLs estão ao lado de cada medição.\nO Banco Central do Brasil publica três coisas diferentes, por três caminhos diferentes, e quem começa costuma tratar as três como se fossem a mesma:\nEste texto é sobre as armadilhas de cada uma. São armadilhas reais: todas as que estão aqui foram reproduzidas em 31/08/2026, com a requisição e o código de resposta anotados."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#o-sgs-tudo-é-um-número-de-série",
+    "href": "blog/posts/series-banco-central/index.html#o-sgs-tudo-é-um-número-de-série",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "O SGS: tudo é um número de série",
+    "text": "O SGS: tudo é um número de série\nNo SGS não se consulta “o IPCA”. Consulta-se a série 433. Não se consulta “o dólar”; consulta-se a série 1. A Selic meta é a 432; a Selic efetiva acumulada no mês é outra; a Selic diária é outra ainda. Achar o código é metade do trabalho, e é onde a maior parte do tempo se perde.\nA consulta em si é simples:\nGET https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/3?formato=json\nResposta real, em 31/08/2026 — o IPCA mensal:\n[{\"data\":\"01/05/2026\",\"valor\":\"0.58\"},\n {\"data\":\"01/06/2026\",\"valor\":\"0.16\"},\n {\"data\":\"01/07/2026\",\"valor\":\"0.07\"}]\nE a Selic meta, série 432, na mesma leitura: 14,00. (Note que o SGS publica a meta com data à frente, até a próxima reunião do Copom — a leitura de 31/08/2026 devolveu datas de 14 a 16/09/2026. Isso é característica da série, não erro.)"
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#três-limites-da-api-medidos",
+    "href": "blog/posts/series-banco-central/index.html#três-limites-da-api-medidos",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "Três limites da API, medidos",
+    "text": "Três limites da API, medidos\nEstes três não estão em lugar nenhum de forma explícita, e cada um derruba um script na primeira vez.\n1. Janela maior que 10 anos em série diária é recusada com HTTP 406.\nGET .../bcdata.sgs.1/dados?formato=json&dataInicial=01/01/2011&dataFinal=31/12/2025\n→ HTTP 406 Not Acceptable\nUma janela de 3 anos na mesma série passa e devolve 755 observações:\nGET .../bcdata.sgs.1/dados?formato=json&dataInicial=01/01/2019&dataFinal=31/12/2021\n→ HTTP 200, 755 registros\n2. Janela aberta também é recusada, e pela mesma razão. Pedir a série diária sem data nenhuma parece inofensivo, mas o limite vale sobre a janela implícita — sem dataFinal, a API assume hoje, e a série 1 começa em 1984:\nGET .../bcdata.sgs.1/dados?formato=json\n→ HTTP 406 Not Acceptable\n3. ultimos/N tem teto de 20, em qualquer periodicidade.\nGET .../bcdata.sgs.1/dados/ultimos/20?formato=json  → HTTP 200, 20 registros\nGET .../bcdata.sgs.1/dados/ultimos/25?formato=json  → HTTP 400 Bad Request\nNote que o erro é 400, não uma resposta truncada: acima de 20 a requisição falha, não devolve 20. Quem precisa de mais tem de trocar a estratégia e buscar por janela de datas — o que exige inferir a periodicidade da série, porque o SGS não tem endpoint de metadados por série (o caminho /metadados responde 404, e unidade de medida não está disponível em fonte nenhuma da API).\nJunte os três e o padrão fica claro: para uma série diária de 15 anos, o caminho é fatiar em janelas de até 10 anos, buscar cada pedaço e fundir em ordem de data, sem duplicar as emendas. Na prática convém fatiar em 3 anos, não nos 10 permitidos: uma janela diária de uma década custa de 10 a 20 segundos na origem e pode ser cortada por volta dos 30."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#a-armadilha-que-não-dá-erro-variação-de-série-que-já-é-variação",
+    "href": "blog/posts/series-banco-central/index.html#a-armadilha-que-não-dá-erro-variação-de-série-que-já-é-variação",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "A armadilha que não dá erro: variação de série que já é variação",
+    "text": "A armadilha que não dá erro: variação de série que já é variação\nEsta é a mais cara, porque produz um número.\nO IPCA mensal (série 433) já é uma variação percentual. Somar doze valores mensais para obter o acumulado do ano dá um resultado errado, e errado para menos, porque inflação compõe. O acumulado se obtém por encadeamento:\nacumulado = [ Π (1 + vᵢ/100) − 1 ] × 100\nCom os três meses reais acima (0,58, 0,16 e 0,07), a soma dá 0,8100 e o encadeamento dá 0,8114 — a soma subestima. A diferença é pequena em três meses e deixa de ser pequena em doze, ou em qualquer período com inflação alta.\nA regra prática: antes de calcular variação, pergunte se a série é de nível ou de taxa. Série de nível (o dólar, o saldo de crédito, o PIB) admite variação entre as pontas. Série que já é variação por período (IPCA, IGP-M, INPC) exige encadeamento. E o mesmo vale para reamostrar: transformar IPCA mensal em anual é composição geométrica, não média."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#focus-o-eixo-da-selic-não-é-um-horizonte",
+    "href": "blog/posts/series-banco-central/index.html#focus-o-eixo-da-selic-não-é-um-horizonte",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "Focus: o eixo da Selic não é um horizonte",
+    "text": "Focus: o eixo da Selic não é um horizonte\nA Focus é servida pela API Olinda, em cerca de 18 recursos OData distintos. Consolidá-los faz sentido — mas há uma diferença estrutural que não se pode consolidar sem mentir.\nPara a maior parte dos indicadores (IPCA, PIB, câmbio…), a expectativa tem um horizonte: mensal, trimestral, anual, ou inflação acumulada em 12 e 24 meses. Cada resposta traz média, mediana, desvio-padrão, mínimo, máximo e número de respondentes, e há a variante Top 5, com os cinco projetistas de melhor desempenho recente.\nA Selic é diferente: o eixo dela é a reunião do Copom (na forma R1/2026), não um horizonte de tempo. Tratar selic como se fosse mais um horizonte é o erro conceitual mais comum aqui, e leva a consultas que não retornam nada sem explicar por quê.\nOutra assimetria que surpreende: o conjunto de indicadores muda com o escopo. São 9 indicadores no escopo mensal e 26 no anual. Não existe “a lista de indicadores da Focus” — existe a lista daquele escopo."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#ptax-nem-toda-cotação-é-apurada-pelo-banco-central",
+    "href": "blog/posts/series-banco-central/index.html#ptax-nem-toda-cotação-é-apurada-pelo-banco-central",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "PTAX: nem toda cotação é apurada pelo Banco Central",
+    "text": "PTAX: nem toda cotação é apurada pelo Banco Central\nO BCB apura a PTAX do dólar. As paridades entre outras moedas não são apuradas por ele: vêm de agência de informação (Refinitiv) e são redistribuídas pelo Banco Central. A diferença é jurídica e metodológica, não cosmética — e as respostas do BCB carregam o aviso de responsabilidade dele próprio, que deve ser repassado literalmente.\nDetalhe de implementação que custa uma tarde: no recurso da Selic Top 5, os nomes de campo vêm em caixa diferente da dos outros doze recursos. Nenhuma documentação avisa; só aparece quando o parser devolve undefined."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#a-licença-odbl-e-ela-pede-coisas",
+    "href": "blog/posts/series-banco-central/index.html#a-licença-odbl-e-ela-pede-coisas",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "A licença: ODbL, e ela pede coisas",
+    "text": "A licença: ODbL, e ela pede coisas\nOs dados do Banco Central saem sob Open Data Commons Open Database License (ODbL) v1.0. Isso não é CC0, não é CC BY e não é domínio público. A ODbL tem três obrigações que sobrevivem à redistribuição:\n\natribuição — creditar a fonte;\nshare-alike sobre bases derivadas — uma base pública construída a partir desta sai sob a mesma licença;\ncláusula anti-DRM — não se pode distribuir a base com trava técnica que impeça o exercício dos direitos da licença.\n\nConferido contra a fonte em 13/08/2026: 4.259 dos 4.260 conjuntos do Portal de Dados Abertos do BCB declaram license_id: \"odc-odbl\".\nIsso muda como se cita. O mínimo honesto, junto de qualquer número: a série, a data da extração e a licença."
+  },
+  {
+    "objectID": "blog/posts/series-banco-central/index.html#e-onde-entra-um-assistente-de-ia",
+    "href": "blog/posts/series-banco-central/index.html#e-onde-entra-um-assistente-de-ia",
+    "title": "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas",
+    "section": "E onde entra um assistente de IA",
+    "text": "E onde entra um assistente de IA\nPerguntar a um modelo “qual a Selic hoje?” devolve um número do treino: pode estar certo, pode estar três reuniões do Copom atrasado, e não vem com fonte.\nPlugar o SGS resolve isso não por conveniência, mas por procedência: o valor vem com a série, o período, a URL canônica que reproduz a consulta, o instante real da extração e a licença. E as armadilhas acima ficam do lado do servidor — o fatiamento da janela, o teto de 20, o encadeamento das séries de taxa, os escopos da Focus, o aviso da PTAX.\nÉ o que o bcb-br-mcp faz: 15 ferramentas sobre SGS, Focus e PTAX, com catálogo curado de 135 séries verificadas contra a origem, para clientes que falam MCP. Quando ele calcula alguma coisa — variação, estatística descritiva, série harmonizada — o resultado vem marcado como derivado, com a convenção usada; o que o BCB publicou sai sempre verbatim.\nCom ou sem ferramenta, as duas perguntas que evitam a maioria dos erros são sempre as mesmas: esta série é de nível ou de taxa? e quem apurou este número?\n\nServidor: bcb-br-mcp · endpoint hospedado em https://bcb.sidneybissoli.com/mcp · pacote npm bcb-br-mcp · código sob licença MIT. Dados do Banco Central do Brasil sob ODbL v1.0 — https://opendatacommons.org/licenses/odbl/1-0/."
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Bem-vindo ao meu blog! Aqui compartilho insights, tutoriais e reflexões sobre psicologia, saúde pública e mercados financeiros, sempre com foco em análise de dados e programação em R.\n\n\n\n\n\n\n\n\n\n\n\n\nCID-10, CID-11 e o que muda para quem trabalha com dados do SUS\n\n\nA estrutura da V2008 em números, o que as tabelas de transição da OMS são — e o que elas não são\n\n6 minutos\n\n\nSaúde pública\n\nDataSUS\n\nCID-10\n\nMCP\n\n\n\n\n31 de ago. de 2026\n\n\n\n\n\n\n\n\n\n\n\nSéries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas\n\n\nOs três limites da API medidos ao vivo, série de nível contra série de taxa, e o que a ODbL exige\n\n7 minutos\n\n\nBanco Central\n\nSGS\n\nMercados financeiros\n\nMCP\n\n\n\n\n31 de ago. de 2026\n\n\n\n\n\n\n\n\n\n\n\nComo achar a tabela certa no SIDRA — e como saber que é a certa\n\n\nOs três passos, os metadados que decidem, e as quatro armadilhas que mais custam caro\n\n8 minutos\n\n\nIBGE\n\nSIDRA\n\nDados públicos\n\nMCP\n\n\n\n\n31 de ago. de 2026\n\n\n\n\n\n\nNenhum item correspondente"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Sobre mim",
+    "section": "",
+    "text": "Sou psicólogo, com mestrado e formação em psicanálise, e hoje trabalho com dados públicos brasileiros. Construo ferramentas que entregam esses dados prontos para conferir: cada número vem com a fonte e o caminho de volta até ela.\nEssa exigência não é preciosismo técnico. Ela vem de duas direções que se encontraram: da pesquisa, onde um número sem procedência não sustenta um argumento; e da clínica, onde aprendi que a coisa mais perigosa não é não saber, é achar que sabe."
+  },
+  {
+    "objectID": "about.html#quem-sou-eu",
+    "href": "about.html#quem-sou-eu",
+    "title": "Sobre mim",
+    "section": "",
+    "text": "Sou psicólogo, com mestrado e formação em psicanálise, e hoje trabalho com dados públicos brasileiros. Construo ferramentas que entregam esses dados prontos para conferir: cada número vem com a fonte e o caminho de volta até ela.\nEssa exigência não é preciosismo técnico. Ela vem de duas direções que se encontraram: da pesquisa, onde um número sem procedência não sustenta um argumento; e da clínica, onde aprendi que a coisa mais perigosa não é não saber, é achar que sabe."
+  },
+  {
+    "objectID": "about.html#o-que-eu-construí",
+    "href": "about.html#o-que-eu-construí",
+    "title": "Sobre mim",
+    "section": "O que eu construí",
+    "text": "O que eu construí\nServidores MCP — seis servidores que dão a assistentes de IA acesso ao vivo a dados do IBGE, do Banco Central, do Senado Federal, do DataSUS e de bases internacionais da OIT e da UNESCO. Toda resposta carrega procedência; os seis pontuam 100% em conformidade de protocolo, com verificação automática que impede regressão.\nPacotes R — cinco pacotes de acesso a dados públicos, dois deles publicados no CRAN: o educabR, de dados educacionais do INEP, e o healthbR, de saúde pública.\nPainéis (em preparação) — visualizações de indicadores epidemiológicos calculados a partir de dados oficiais do Ministério da Saúde e do IBGE.\nUm conjunto de dados citável — a camada de participação do portal e-Cidadania do Senado Federal, versionada, com DOI no Zenodo e envelope de procedência campo a campo. É a camada que nenhum pacote de acesso a dados legislativos cobria."
+  },
+  {
+    "objectID": "about.html#de-onde-eu-venho",
+    "href": "about.html#de-onde-eu-venho",
+    "title": "Sobre mim",
+    "section": "De onde eu venho",
+    "text": "De onde eu venho\nAntes de escrever código, escrevi sobre psicanálise. Meu primeiro artigo publicado examina como o conceito de transferência aparece nos Estudos sobre a histeria, de Breuer e Freud — e defende que aquilo que a tradição posterior tratou como “toda a relação entre paciente e analista” era, no texto original, uma coisa bem mais específica e mais estranha.\nIsso parece distante de baixar microdados do DATASUS, e não é. Nos dois casos o trabalho é o mesmo: ler a fonte com cuidado, descobrir onde ela diz menos do que parece dizer, e não deixar a interpretação passar por descrição."
+  },
+  {
+    "objectID": "about.html#como-eu-trabalho",
+    "href": "about.html#como-eu-trabalho",
+    "title": "Sobre mim",
+    "section": "Como eu trabalho",
+    "text": "Como eu trabalho\nTrês coisas que eu faço sempre, e que explicam a maior parte das minhas escolhas técnicas:\nProcedência antes de conveniência. Um número que não pode ser rastreado até a origem não entra numa análise minha. É por isso que todo servidor e todo pacote devolve a fonte junto com o dado.\nVerificação derivada da fonte. Contagem escrita à mão ao lado do que ela descreve apodrece em silêncio. Prefiro um teste que confronte a afirmação com a origem — e que reprove alto quando divergir.\nErro barulhento em vez de resposta plausível. Quando não dá para responder com segurança, a ferramenta tem que dizer isso. Dado errado com rótulo bonito é pior que erro, porque parece resposta."
+  },
+  {
+    "objectID": "about.html#fora-do-trabalho",
+    "href": "about.html#fora-do-trabalho",
+    "title": "Sobre mim",
+    "section": "Fora do trabalho",
+    "text": "Fora do trabalho\nLeio filosofia e história, assisto documentários e passo tempo com a família. Acho que uma vida equilibrada faz pensar melhor — e desconfio de quem só tem uma coisa na cabeça."
+  },
+  {
+    "objectID": "about.html#contato",
+    "href": "about.html#contato",
+    "title": "Sobre mim",
+    "section": "Contato",
+    "text": "Contato\nEscreva para sbissoli76@gmail.com, ou me encontre no GitHub e no LinkedIn."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html",
+    "href": "blog/posts/cid10-cid11-sus/index.html",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "",
+    "text": "conjuntos oficiais que acompanham o servidor — a CID-10 V2008 publicada pelo DataSUS e as tabelas de transição da OMS, release 2025-01 — e podem ser reproduzidas por qualquer pessoa a partir das fontes citadas.*\nQuem trabalha com dado de saúde no Brasil convive com duas classificações ao mesmo tempo, e elas não são versões uma da outra no sentido em que se costuma pensar. Este texto é sobre o que separa as duas, o que existe de oficial para ligá-las, e onde estão os erros mais comuns de quem faz essa ponte na mão."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html#o-que-é-a-cid-10-que-o-sus-usa",
+    "href": "blog/posts/cid10-cid11-sus/index.html#o-que-é-a-cid-10-que-o-sus-usa",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "O que é a CID-10 que o SUS usa",
+    "text": "O que é a CID-10 que o SUS usa\nO SUS opera sobre a CID-10, versão V2008, traduzida para o português pelo Centro Brasileiro de Classificação de Doenças (CBCD, da Faculdade de Saúde Pública da USP) e publicada eletronicamente pelo DataSUS. É o que preenche o campo de diagnóstico da AIH, do SIA, da declaração de óbito, do SINAN. Não é uma tradução informal: é o padrão operacional.\nA estrutura tem quatro níveis, e as contagens exatas do arquivo V2008 são estas:\n\n\n\n\n\n\n\n\nNível\nQuantidade\nExemplo\n\n\n\n\nCapítulos\n22\nCapítulo I — Algumas doenças infecciosas e parasitárias (A00–B99)\n\n\nGrupos\n275\nA00–A09 — Doenças infecciosas intestinais\n\n\nCategorias (3 caracteres)\n2.045\nA00 — Cólera\n\n\nSubcategorias (4 caracteres)\n12.451\nA00.0 — Cólera devida a Vibrio cholerae 01, biótipo cholerae\n\n\n\nFonte: DataSUS / CBCD, CID-10 V2008, http://www2.datasus.gov.br/cid10/V2008/ — contagens extraídas do conjunto embutido em medical-terminologies-mcp.\nTrês detalhes desse arquivo derrubam quem cruza bases:\n1. O código tem duas grafias. A subcategoria aparece como A000 na chave e como A00.0 na exibição. Bases diferentes escolhem grafias diferentes, e um JOIN ingênuo entre elas casa zero linhas sem reclamar. Normalize antes.\n2. Nem todo código é usável em qualquer contexto. O arquivo traz marcadores de restrição por sexo e de causa de óbito. Um código restrito a um sexo que aparece com o outro é erro de digitação na origem, não achado epidemiológico — mas só aparece se alguém for olhar o marcador.\n3. Categoria não é subcategoria. I21 (infarto agudo do miocárdio) e I21.0 não são o mesmo grão. Contar as duas na mesma tabela dupla-conta. É o erro mais comum em contagem de morbidade a partir de dado bruto."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html#o-que-é-a-cid-11-e-por-que-ela-ainda-não-substituiu-nada-aqui",
+    "href": "blog/posts/cid10-cid11-sus/index.html#o-que-é-a-cid-11-e-por-que-ela-ainda-não-substituiu-nada-aqui",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "O que é a CID-11, e por que ela ainda não substituiu nada aqui",
+    "text": "O que é a CID-11, e por que ela ainda não substituiu nada aqui\nA CID-11 é a revisão vigente da OMS. Ela não é uma CID-10 renumerada: mudou o número de capítulos, criou capítulos novos (medicina tradicional, saúde sexual), introduziu pós-coordenação — a possibilidade de compor um código principal com eixos adicionais (gravidade, lateralidade, agente etiológico) —, e sua identidade canônica não é o código alfanumérico, e sim uma URI.\nEnquanto isso, os sistemas de informação do SUS seguem em CID-10 V2008. Na prática, quem trabalha com dado brasileiro precisa dos dois: a CID-10 para operar, a CID-11 para comparar internacionalmente e para acompanhar a literatura recente."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html#as-tabelas-de-transição-o-que-elas-são-e-o-que-não-são",
+    "href": "blog/posts/cid10-cid11-sus/index.html#as-tabelas-de-transição-o-que-elas-são-e-o-que-não-são",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "As tabelas de transição: o que elas são, e o que não são",
+    "text": "As tabelas de transição: o que elas são, e o que não são\nA OMS publica, dentro de cada release da CID-11, tabelas de correspondência entre as duas revisões. Na release 2025-01 (publicada em 24/01/2025), o conteúdo é este:\n\n11.243 entradas de CID-10 mapeadas;\n1.461 delas trazem alternativas documentadas pela própria OMS, além do código principal;\nnenhuma entrada fica sem código principal.\n\nUm exemplo, o diabetes tipo 2:\nCID-10  E11   Type 2 diabetes mellitus     (capítulo IV)\nCID-11  5A11  Type 2 diabetes mellitus     (capítulo 05)\n        URI: http://id.who.int/icd/entity/119724091\nFonte: OMS, tabelas de transição da release 2025-01, https://icdcdn.who.int/static/releasefiles/2025-01/mapping.zip\nE aqui vem a parte que costuma ser ignorada. A orientação da própria OMS sobre essas tabelas é explícita: elas mostram a correspondência entre as revisões e “não se destinam a converter dados diretamente de uma revisão para a outra”.\nIsso não é formalidade jurídica. As 1.461 entradas com alternativas são exatamente os casos em que a correspondência não é de um para um: uma categoria da CID-10 que se desdobrou, ou que foi absorvida por um agrupamento diferente. Rodar a tabela como se fosse um dicionário de tradução, sobre uma base de milhões de registros, produz uma série histórica que parece contínua e não é. O uso legítimo é outro: consultar caso a caso, com a alternativa à vista, para decidir com critério clínico ou epidemiológico."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html#uma-nota-sobre-tradução",
+    "href": "blog/posts/cid10-cid11-sus/index.html#uma-nota-sobre-tradução",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "Uma nota sobre tradução",
+    "text": "Uma nota sobre tradução\nNenhum dos textos acima é traduzido por máquina, e isso é uma escolha deliberada de quem serve terminologia.\n\nA CID-10 em português é a tradução oficial do CBCD. Não há por que traduzir o que já foi traduzido por quem tem autoridade para isso.\nA CID-11 tem linearização oficial em português da OMS — pede-se com o parâmetro de idioma, e vem o rótulo oficial.\nO MeSH tem traduções da própria NLM, onde elas existem.\n\nQuando a fonte não tem tradução oficial para uma entrada, a resposta honesta é devolver o idioma de origem. Um rótulo clínico traduzido por máquina parece serviço e é passivo: uma diferença sutil de termo muda o que o código significa, e quem lê não tem como saber que aquele texto não é oficial."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html#licenças-porque-elas-diferem-entre-as-fontes",
+    "href": "blog/posts/cid10-cid11-sus/index.html#licenças-porque-elas-diferem-entre-as-fontes",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "Licenças, porque elas diferem entre as fontes",
+    "text": "Licenças, porque elas diferem entre as fontes\nUm detalhe que atrapalha mais projetos do que deveria: as classificações não compartilham licença, e o software que as serve não estende a sua própria.\n\nCID-10 V2008 (DataSUS/CBCD): © OMS; tradução © CBCD/FSP-USP; arquivos eletrônicos publicados pelo DataSUS. A permissão é de uso pelos desenvolvedores com o devido crédito e sem custo.\nCID-11 (OMS): Creative Commons Atribuição-SemDerivações 3.0 IGO (CC BY-ND 3.0 IGO), com citação exigida e a ressalva de que a OMS pode encerrar a licença mediante aviso.\nTabelas de transição: © OMS, sob os Termos de Uso da CID-11.\nLOINC: © Regenstrief Institute, gratuito sob a licença própria.\nRxNorm e MeSH: obras do governo dos EUA, servidas pela NLM.\nSNOMED CT: exige licença da SNOMED International. O Brasil não é país membro — o caminho aqui é a licença de Afiliado.\n\nA regra que evita problema: a licença do código do software não vale para o conteúdo que ele serve. Cada resposta deve carregar a licença da fonte daquele número."
+  },
+  {
+    "objectID": "blog/posts/cid10-cid11-sus/index.html#e-onde-entra-um-assistente-de-ia",
+    "href": "blog/posts/cid10-cid11-sus/index.html#e-onde-entra-um-assistente-de-ia",
+    "title": "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS",
+    "section": "E onde entra um assistente de IA",
+    "text": "E onde entra um assistente de IA\nPerguntar a um modelo “qual o código CID-10 do infarto agudo do miocárdio?” devolve um código plausível. Costuma acertar nos casos famosos, e erra silenciosamente na cauda — que é justamente onde a consulta importa, porque nos casos famosos ninguém precisa perguntar.\nO ganho de ligar o assistente às fontes oficiais é o mesmo de sempre: procedência. O código vem com a fonte, a versão da terminologia, a URL canônica e a licença; o rótulo em português vem do CBCD ou da OMS, não de uma tradução inventada na hora; e o mapeamento entre revisões vem da tabela da OMS, com as alternativas à vista, em vez de uma escolha implícita.\nÉ o que o medical-terminologies-mcp faz: 31 ferramentas sobre ICD-11, LOINC, RxNorm, MeSH, ATC e CID-10, para clientes que falam MCP. A CID-10 vai embutida — consulta sem chamada de rede e sem limite de taxa —, e há validação em lote de até 100 códigos de uma vez, entre seis terminologias, para quem precisa auditar uma base inteira antes de analisá-la.\nUma última recomendação, independente de ferramenta: antes de comparar duas séries de morbidade, verifique se as duas estão na mesma revisão e no mesmo grão. Boa parte das quebras inexplicáveis em série histórica de saúde é uma dessas duas coisas.\n\nServidor: medical-terminologies-mcp · endpoint hospedado em https://medical.sidneybissoli.com/mcp · pacote npm medical-terminologies-mcp · código sob licença MIT. As terminologias servidas têm licenças próprias — veja NOTICE.md."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html",
+    "href": "blog/posts/sidra-tabela-certa/index.html",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "",
+    "text": "Publicado em 31 de agosto de 2026. Todos os números deste texto foram capturados ao vivo nas APIs do IBGE na data da publicação; nenhum é ilustrativo. As URLs de origem estão ao lado de cada um.\nO SIDRA é o Banco de Tabelas Estatísticas do IBGE. Praticamente tudo o que o instituto publica passa por lá: Censo, PNAD Contínua, PIB, produção industrial, pesquisas agropecuárias. É a fonte primária brasileira de estatística pública, e é aberta.\nO problema não é o acesso. É que a pergunta que uma pessoa faz — “quantos domicílios têm ligação à rede de esgoto?” — não se parece em nada com o que o SIDRA entende, que é um código de tabela, um conjunto de variáveis, uma classificação, um período e um nível territorial. Entre a pergunta e a consulta existe um passo que quase todo tutorial pula: descobrir qual é a tabela — e, mais difícil, ter certeza de que é aquela mesmo.\nEste texto é sobre esse passo. Ele vale para quem consulta o SIDRA por qualquer caminho: pelo site, pela API, pelo sidrapy, ou por um assistente de IA com o ibge-br-mcp. O erro que ele descreve não é do software — é da forma de procurar."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html#o-modelo-do-sidra-em-um-parágrafo",
+    "href": "blog/posts/sidra-tabela-certa/index.html#o-modelo-do-sidra-em-um-parágrafo",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "O modelo do SIDRA em um parágrafo",
+    "text": "O modelo do SIDRA em um parágrafo\nCada pesquisa (Censo Demográfico, PNAD Contínua, IPCA…) tem suas tabelas, que a API chama de agregados. Cada tabela publica um conjunto de variáveis (o que se mede, com sua unidade), zero ou mais classificações (os cortes: sexo, cor ou raça, situação do domicílio…), uma lista de períodos e uma lista de níveis territoriais (Brasil, região, UF, município, e vários outros). Uma consulta é a escolha de um valor em cada um desses eixos.\nDuas consequências práticas, e as duas mordem:\n\nUma tabela não cobre todos os níveis territoriais. Existe tabela que só publica Brasil. Pedir UF nela devolve erro, não devolve zero.\nO nome da tabela não diz de qual pesquisa ela é. E é daí que vem o erro que este texto quer evitar."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html#passo-1-procurar-e-não-confiar-no-resultado",
+    "href": "blog/posts/sidra-tabela-certa/index.html#passo-1-procurar-e-não-confiar-no-resultado",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "Passo 1: procurar — e não confiar no resultado",
+    "text": "Passo 1: procurar — e não confiar no resultado\nA busca por nome é o ponto de partida óbvio:\nGET https://servicodados.ibge.gov.br/api/v3/agregados?...\nProcurando por “esgotamento sanitário” no catálogo, em 31/08/2026, voltaram 108 tabelas. As primeiras da lista são estas:\n\n\n\n\n\n\n\nCódigo\nNome (abreviado)\n\n\n\n\n2074\nDomicílios… por existência de banheiro ou sanitário e tipo de esgotamento sanitário\n\n\n10053\nDomicílios… em setores selecionados para a Pesquisa Urbanística do Entorno\n\n\n10099\nDomicílios… total e com pelo menos um morador quilombola…\n\n\n10230\nDomicílios… localizados em Unidades de Conservação…\n\n\n1453\nDomicílios particulares permanentes por tipo de esgotamento sanitário e abastecimento de água\n\n\n\nNenhuma das quatro primeiras é a tabela geral. São recortes — entorno urbano, quilombolas, unidades de conservação — que contêm o termo procurado porque também classificam por esgotamento sanitário. A lista está correta; a expectativa é que estava errada. Buscar por nome devolve tudo o que menciona o assunto, não o que é sobre o assunto."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html#passo-2-os-metadados-são-o-que-decide",
+    "href": "blog/posts/sidra-tabela-certa/index.html#passo-2-os-metadados-são-o-que-decide",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "Passo 2: os metadados são o que decide",
+    "text": "Passo 2: os metadados são o que decide\nO passo que separa um número certo de um número plausível é este:\nGET https://servicodados.ibge.gov.br/api/v3/agregados/{tabela}/metadados\nA resposta diz quatro coisas que a lista de busca não diz, e as quatro importam:\n\npesquisa — de qual pesquisa a tabela é. Este é o campo decisivo.\nperiodicidade — o intervalo de períodos que ela realmente cobre.\nnivelTerritorial — até onde ela desce.\nvariaveis — o que ela mede, com a unidade.\n\nVale a pena ver o contraste em dois casos reais, os dois consultados em 31/08/2026.\nTabela 6803, a que responde a pergunta original:\npesquisa:        Censo Demográfico\nperiodicidade:   2022–2022\nníveis:          N1 (Brasil), N2 (região), N3 (UF), N6 (município)\nnome:            Domicílios particulares permanentes ocupados, por existência de\n                 ligação à rede geral de distribuição de água…\nTabela 9696, cujo nome, num catálogo, passa fácil por “algo de domicílios”:\npesquisa:        Pesquisa Nacional por Amostra de Domicílios Contínua anual\nperiodicidade:   2022–2025\nníveis:          N1 (Brasil), N2 (Grande Região) — e só\nnome:            Rendimento médio mensal real domiciliar per capita em domicílios\n                 com televisão, por situação do domicílio e acesso a serviço de\n                 televisão por assinatura no domicílio\nAs duas falam de domicílios. As duas têm dado de 2022. Uma é do Censo; a outra é da PNAD Contínua e mede renda em domicílio com TV por assinatura. Trocar uma pela outra não dá erro nenhum: dá uma tabela de números que parece resposta.\n\nO autor deste texto cometeu exatamente esse erro, e em escala. O ibge-br-mcp tem um atalho, a ferramenta ibge_censo, que traduz tema + ano em código de tabela para que ninguém precise saber isso tudo. O mapa desse atalho era escrito à mão. Em 31/08/2026 uma varredura contra o catálogo oficial encontrou 15 das 41 tabelas do mapa fora do Censo Demográfico ou fora do assunto do tema: saneamento/2022 apontava justamente para a 9696; fecundidade/2010, para o INPC de 1990; rendimento/2000, para o Censo Agropecuário; quilombolas/2022, para uma tabela de uso de Internet. Cada uma respondia normalmente, com o rótulo escrito à mão no cabeçalho — dado de outra pesquisa sob um nome que mentia. Nada quebrava, e por isso nada aparecia. As tabelas foram corrigidas e o repositório passou a manter um espelho do catálogo do Censo e um teste que confere, uma a uma, se cada código é do Censo e do assunto que promete. A lição não é sobre esse produto: código de tabela escrito à mão ao lado da descrição escrita à mão é uma combinação que apodrece em silêncio. Confira contra a fonte."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html#passo-3-consultar",
+    "href": "blog/posts/sidra-tabela-certa/index.html#passo-3-consultar",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "Passo 3: consultar",
+    "text": "Passo 3: consultar\nCom a tabela confirmada, a consulta é direta:\nGET https://apisidra.ibge.gov.br/values/t/6803/n3/all/v/allxp/p/2022\nLendo os pedaços: tabela t/6803, nível territorial n3 (UF) com all as unidades, variáveis v/allxp (todas, exceto as de percentual), período p/2022.\nResultado real, capturado em 31/08/2026 — 27 registros, um por UF mais o Distrito Federal:\n\n\n\n\nDomicílios particulares permanentes ocupados\n\n\n\n\nTotal (soma das 27 unidades)\n72.456.368\n\n\nMaior — São Paulo\n16.224.248\n\n\nMinas Gerais\n7.533.434\n\n\nRio de Janeiro\n6.152.051\n\n\nBahia\n5.088.635\n\n\nRio Grande do Sul\n4.256.082\n\n\n…\n\n\n\nRondônia\n555.099\n\n\nTocantins\n513.796\n\n\nAcre\n261.001\n\n\nAmapá\n201.021\n\n\nMenor — Roraima\n177.418\n\n\n\nE a distribuição, que é o que quase sempre interessa mais do que o topo da lista: média 2.683.569, mediana 1.372.108, desvio-padrão 3.236.025. A média é quase o dobro da mediana. Isso não é curiosidade estatística: é o retrato de uma federação em que uma unidade sozinha responde por 22% do total. Um “top 10” esconderia isso; a distribuição inteira, não.\nFonte: IBGE — SIDRA, Tabela 6803, https://apisidra.ibge.gov.br/values/t/6803/n3/all/v/allxp/p/2022, extraído em 31/08/2026."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html#quatro-armadilhas-que-valem-por-si",
+    "href": "blog/posts/sidra-tabela-certa/index.html#quatro-armadilhas-que-valem-por-si",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "Quatro armadilhas que valem por si",
+    "text": "Quatro armadilhas que valem por si\n1. allxp mistura unidades. Pedir todas as variáveis numa tabela que publica valor absoluto e percentual devolve as duas coisas na mesma coluna V, sem que nada avise. Somar isso dá um número sem significado. Ou peça a variável explicitamente, ou separe por Unidade de Medida antes de qualquer conta.\n2. Ausência não é zero. O SIDRA marca ausência com -, .., ... e X, cada um com um sentido diferente (não aplicável, não disponível, dado suprimido). Um parser distraído converte tudo em 0 e produz uma série que desce quando o que aconteceu foi a informação faltar.\n3. O código do município tem 7 dígitos, e o sétimo é verificador. São Paulo é 3550308, não 355030. Truncar o dígito verificador é um erro comum quando se cruza tabela do IBGE com base de outra origem.\n4. Confira por dois caminhos. A verificação que vale é a que usa uma tabela diferente: some os municípios e compare com o total da UF; compare o total do Censo com a estimativa do mesmo ano. Se os dois caminhos fecham, o número está de pé. Se não fecham, você achou alguma coisa — e às vezes é a sua consulta."
+  },
+  {
+    "objectID": "blog/posts/sidra-tabela-certa/index.html#e-onde-entra-um-assistente-de-ia",
+    "href": "blog/posts/sidra-tabela-certa/index.html#e-onde-entra-um-assistente-de-ia",
+    "title": "Como achar a tabela certa no SIDRA — e como saber que é a certa",
+    "section": "E onde entra um assistente de IA",
+    "text": "E onde entra um assistente de IA\nPerguntar a um modelo “quantos domicílios brasileiros têm ligação à rede de esgoto?” devolve um número plausível, tirado do treino: talvez certo, talvez de outro censo, sem fonte. O ganho de plugar o SIDRA não é conveniência — é que a resposta passa a ter procedência: a tabela, o período, a URL que reproduz a consulta e a data da extração vêm junto com o valor, e qualquer pessoa pode refazer o caminho.\nÉ o que o ibge-br-mcp faz: 21 ferramentas sobre as APIs do IBGE, com um bloco de procedência em toda resposta, para clientes que falam MCP — Claude, ChatGPT e afins. Os três passos deste texto viram ibge_sidra_tabelas → ibge_sidra_metadados → ibge_sidra; e, para os assuntos mais comuns, os atalhos ibge_censo, ibge_indicadores, ibge_cidades e ibge_comparar.\nMas o passo 2 continua sendo seu, com ou sem ferramenta. Antes de publicar um número, olhe de qual pesquisa a tabela é. Foi a única coisa que faltava para que quinze erros não tivessem existido.\n\nServidor: ibge-br-mcp · endpoint hospedado em https://ibge.sidneybissoli.com/mcp · pacote npm ibge-br-mcp · licença MIT. Dados do IBGE sob o regime brasileiro de dados abertos (Lei 12.527/2011 e Decreto 8.777/2016): uso livre, com a obrigação de creditar a fonte."
   },
   {
     "objectID": "projects/finance/liquidity-analysis/index.html",
@@ -98,115 +343,24 @@
     "text": "Technical Implementation\nData Sources: B3 (Brazilian Stock Exchange) official financial reports\nAnalysis Tools: R (tidyverse, GetDFPData2, ggplot2, plotly)\nMethodology: Balance sheet analysis with sector benchmarking\nInteractivity: Dynamic plots with hover information and classification tooltips\n_____________________________________________________________________________________________________________\nThis analysis demonstrates the integration of financial data extraction, statistical analysis, and interactive visualization techniques using R programming. The complete methodology can be adapted for analyzing any publicly traded company on B3."
   },
   {
-    "objectID": "blog/index.en.html",
-    "href": "blog/index.en.html",
-    "title": "Blog",
+    "objectID": "research/index.html",
+    "href": "research/index.html",
+    "title": "Pesquisa",
     "section": "",
-    "text": "Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets, always with a focus on data analysis and R programming.\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "A noção de transferência nos “Estudos sobre a histeria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nEste artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos “Estudos sobre a histeria”, este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.\nArtigo"
   },
   {
-    "objectID": "about.en.html",
-    "href": "about.en.html",
-    "title": "About me",
+    "objectID": "research/index.html#publicações-acadêmicas",
+    "href": "research/index.html#publicações-acadêmicas",
+    "title": "Pesquisa",
     "section": "",
-    "text": "I’m a psychologist with a master’s degree, experienced in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior.\nMy background in psychology, with emphasis on psychoanalysis, has given me a unique perspective on human decision-making — something I apply to both health data analysis and financial market studies."
+    "text": "A noção de transferência nos “Estudos sobre a histeria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nEste artigo faz parte de um projeto maior que examina como o conceito de transferência é tratado na psicanálise freudiana. Como a noção de transferência aparece pela primeira vez no capítulo 4 dos “Estudos sobre a histeria”, este trabalho adquire o status de ponto de partida para esse exame. Verifica-se que a noção de transferência não pode ser entendida como toda a relação que um paciente estabelece com seu psicanalista. Também não pode ser entendida como a perturbação total nesse tipo de relação, como foi posteriormente interpretado por outros autores. É apenas um ponto muito específico desta relação, no qual, através de um falso vínculo, e de maneira incomum, a figura do médico substitui alguém do passado do paciente.\nArtigo"
   },
   {
-    "objectID": "about.en.html#who-i-am",
-    "href": "about.en.html#who-i-am",
-    "title": "About me",
-    "section": "",
-    "text": "I’m a psychologist with a master’s degree, experienced in public health research and financial markets analysis. I use R programming to explore complex data and uncover insights that bridge psychology, health policy, and economic behavior.\nMy background in psychology, with emphasis on psychoanalysis, has given me a unique perspective on human decision-making — something I apply to both health data analysis and financial market studies."
-  },
-  {
-    "objectID": "about.en.html#areas-of-work",
-    "href": "about.en.html#areas-of-work",
-    "title": "About me",
-    "section": "Areas of work",
-    "text": "Areas of work\n\nPublic Health\nAnalysis of population health patterns, epidemiological research, and health policy evaluation. I work with data from the Brazilian public health system (SUS) and other sources to understand trends and inform decisions.\n\n\nFinancial Markets\nInvestment analysis, market behavior, and economic indicators. Special focus on Brazilian companies listed on B3, using balance sheet and financial statement data.\n\n\nData Science\nStatistical modeling, data visualization, and predictive analytics. I use the R tidyverse ecosystem to transform raw data into actionable insights."
-  },
-  {
-    "objectID": "about.en.html#technical-skills",
-    "href": "about.en.html#technical-skills",
-    "title": "About me",
-    "section": "Technical skills",
-    "text": "Technical skills\n\nProgramming: R (tidyverse, ggplot2, tidymodels, Shiny)\nAnalysis: Statistical modeling, data visualization, predictive analytics\nTools: Quarto, Git/GitHub, RStudio\nData: API extraction, web scraping, large dataset manipulation"
-  },
-  {
-    "objectID": "about.en.html#outside-of-work",
-    "href": "about.en.html#outside-of-work",
-    "title": "About me",
-    "section": "Outside of work",
-    "text": "Outside of work\nWhen I’m not analyzing data or studying markets, I enjoy reading about philosophy and history, watching documentaries, and spending time with family. I believe a balanced life contributes to more creative thinking and sharper analysis.\n\n\nDownload CV (PDF)"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "Sobre mim",
-    "section": "",
-    "text": "Sou psicólogo com mestrado, com experiência em pesquisa em saúde pública e análise de mercados financeiros. Utilizo a programação em R para explorar dados complexos e descobrir insights que conectam psicologia, políticas de saúde e comportamento econômico.\nMinha formação em psicologia, com ênfase em psicanálise, me proporcionou uma perspectiva única sobre tomada de decisão humana — algo que aplico tanto na análise de dados de saúde quanto no estudo de mercados financeiros."
-  },
-  {
-    "objectID": "about.html#quem-sou-eu",
-    "href": "about.html#quem-sou-eu",
-    "title": "Sobre mim",
-    "section": "",
-    "text": "Sou psicólogo com mestrado, com experiência em pesquisa em saúde pública e análise de mercados financeiros. Utilizo a programação em R para explorar dados complexos e descobrir insights que conectam psicologia, políticas de saúde e comportamento econômico.\nMinha formação em psicologia, com ênfase em psicanálise, me proporcionou uma perspectiva única sobre tomada de decisão humana — algo que aplico tanto na análise de dados de saúde quanto no estudo de mercados financeiros."
-  },
-  {
-    "objectID": "about.html#áreas-de-atuação",
-    "href": "about.html#áreas-de-atuação",
-    "title": "Sobre mim",
-    "section": "Áreas de atuação",
-    "text": "Áreas de atuação\n\nSaúde Pública\nAnálise de padrões de saúde populacional, pesquisa epidemiológica e avaliação de políticas de saúde. Trabalho com dados do SUS e outras fontes para entender tendências e informar decisões.\n\n\nMercados Financeiros\nAnálise de investimentos, comportamento de mercado e indicadores econômicos. Foco especial em empresas brasileiras listadas na B3, utilizando dados de balanços e demonstrações financeiras.\n\n\nCiência de Dados\nModelagem estatística, visualização de dados e análise preditiva. Utilizo o ecossistema tidyverse do R para transformar dados brutos em insights acionáveis."
-  },
-  {
-    "objectID": "about.html#habilidades-técnicas",
-    "href": "about.html#habilidades-técnicas",
-    "title": "Sobre mim",
-    "section": "Habilidades técnicas",
-    "text": "Habilidades técnicas\n\nProgramação: R (tidyverse, ggplot2, tidymodels, Shiny)\nAnálise: Modelagem estatística, visualização de dados, análise preditiva\nFerramentas: Quarto, Git/GitHub, RStudio\nDados: Extração de APIs, web scraping, manipulação de grandes conjuntos de dados"
-  },
-  {
-    "objectID": "about.html#fora-do-trabalho",
-    "href": "about.html#fora-do-trabalho",
-    "title": "Sobre mim",
-    "section": "Fora do trabalho",
-    "text": "Fora do trabalho\nQuando não estou analisando dados ou estudando mercados, gosto de ler sobre filosofia e história, assistir documentários e passar tempo com a família. Acredito que uma vida equilibrada contribui para um pensamento mais criativo e uma análise mais perspicaz.\n\n\nBaixar CV (PDF)"
-  },
-  {
-    "objectID": "blog/index.html",
-    "href": "blog/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Bem-vindo ao meu blog! Aqui compartilho insights, tutoriais e reflexões sobre psicologia, saúde pública e mercados financeiros, sempre com foco em análise de dados e programação em R.\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "projects/index.en.html",
-    "href": "projects/index.en.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Explore my data analysis projects organized by theme and programming language. Each project includes reproducible code, interactive visualizations, and actionable insights.\n\n\n\n\n\n\nTipFiltering projects\n\n\n\nUse the categories on the right to filter by theme (Finance, Public Health, Machine Learning) or language (R, Python).\n\n\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "research/index.en.html",
-    "href": "research/index.en.html",
-    "title": "Research",
-    "section": "",
-    "text": "The notion of transference in “Studies on hysteria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nThis article is part of a larger project examining how the concept of transference is dealt with in Freudian psychoanalysis. As the notion of transference appears for the first time in chapter 4 of “Studies on hysteria”, this work acquires the status of the starting point for that examination. It verifies that the notion of transference cannot be understood as the whole relationship that a patient establishes with their psychoanalyst. It cannot either be understood as the total perturbation in this type of relationship, as it was later interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient’s past.\nPaper"
-  },
-  {
-    "objectID": "research/index.en.html#academic-publications",
-    "href": "research/index.en.html#academic-publications",
-    "title": "Research",
-    "section": "",
-    "text": "The notion of transference in “Studies on hysteria” (Breuer & Freud, 1895)\nPaidéia (Ribeirão Preto)\nThis article is part of a larger project examining how the concept of transference is dealt with in Freudian psychoanalysis. As the notion of transference appears for the first time in chapter 4 of “Studies on hysteria”, this work acquires the status of the starting point for that examination. It verifies that the notion of transference cannot be understood as the whole relationship that a patient establishes with their psychoanalyst. It cannot either be understood as the total perturbation in this type of relationship, as it was later interpreted by other authors. It is only a very specific point of this relationship, in which, through a false bond, and in an uncommon way, the figure of the doctor replaces someone from the patient’s past.\nPaper"
-  },
-  {
-    "objectID": "research/index.en.html#r-analysis-projects",
-    "href": "research/index.en.html#r-analysis-projects",
-    "title": "Research",
-    "section": "R Analysis Projects",
-    "text": "R Analysis Projects\nVisit my Projects page to see detailed R analysis on:\n\nPsychological and behavioral research\nPublic health data analysis\nFinancial markets research\nPredictive modeling applications\n\n\nRPubs Portfolio\nYou can also explore my complete portfolio at RPubs.com/Bissoli.\n\nThis page will be updated as new publications and projects are completed."
+    "objectID": "research/index.html#projetos-de-análise-em-r",
+    "href": "research/index.html#projetos-de-análise-em-r",
+    "title": "Pesquisa",
+    "section": "Projetos de Análise em R",
+    "text": "Projetos de Análise em R\nVisite minha página de Projetos para ver análises detalhadas em R sobre:\n\nPesquisa psicológica e comportamental\nAnálise de dados em saúde pública\nPesquisa em mercados financeiros\nAplicações de modelagem preditiva\n\n\nPortfólio no RPubs\nVocê também pode explorar meu portfólio completo no RPubs.com/Bissoli.\n\nEsta página será atualizada conforme novas publicações e projetos forem concluídos."
   }
 ]

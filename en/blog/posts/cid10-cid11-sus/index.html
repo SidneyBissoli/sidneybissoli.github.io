@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/projects/index.html" />
-<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/projects/index.en.html" />
+<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/blog/posts/cid10-cid11-sus/index.html" />
+<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/blog/posts/cid10-cid11-sus/index.en.html" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Projetos – Sidney Bissoli</title>
+<meta name="author" content="Sidney Bissoli">
+<meta name="dcterms.date" content="2026-08-31">
+<title>ICD-10, ICD-11 and what changes for people working with Brazilian health data – Sidney Bissoli</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,11 +26,11 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 </style>
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script><script src="../site_libs/clipboard/clipboard.min.js"></script><script src="../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../site_libs/quarto-search/fuse.min.js"></script><script src="../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script><script src="../site_libs/quarto-listing/quarto-listing.js"></script><script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script><link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script><script src="../../../site_libs/clipboard/clipboard.min.js"></script><script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../../../site_libs/quarto-search/fuse.min.js"></script><script src="../../../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script><script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../../../site_libs/quarto-html/popper.min.js"></script><script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../../../site_libs/quarto-html/anchor.min.js"></script><link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script><link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -43,114 +45,61 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Nenhum resultado",
-    "search-matching-documents-text": "documentos correspondentes",
-    "search-copy-link-title": "Copiar link para a busca",
-    "search-hide-matches-text": "Esconder correspondências adicionais",
-    "search-more-match-text": "mais correspondência neste documento",
-    "search-more-matches-text": "mais correspondências neste documento",
-    "search-clear-button-title": "Limpar",
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancelar",
-    "search-submit-button-title": "Enviar",
-    "search-label": "Procurar"
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
-}</script><script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-title','listing-subtitle','listing-categories','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="../styles.css">
+}</script><link rel="stylesheet" href="../../../styles.css">
 </head>
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Sidney Bissoli</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Procurar"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Alternar de navegação" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
 <li class="nav-item"><div class="dropdown" id="languages-links-parent">
-<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/projects/index.html" id="language-link-en">English</a></li></ul>
+<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> English</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/blog/posts/cid10-cid11-sus/index.html" id="language-link-pt">Português</a></li></ul>
 </div></li>
 <li class="nav-item">
-    <a class="nav-link" href="../tools/index.html"> 
-<span class="menu-text">Servidores MCP</span></a>
+    <a class="nav-link" href="../../../tools/index.html"> 
+<span class="menu-text">MCP servers</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../packages/index.html"> 
-<span class="menu-text">Pacotes R</span></a>
+    <a class="nav-link" href="../../../packages/index.html"> 
+<span class="menu-text">R packages</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
-<span class="menu-text">Projetos</span></a>
+    <a class="nav-link" href="../../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
-<span class="menu-text">Escritos</span></a>
+    <a class="nav-link" href="../../../blog/index.html"> 
+<span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../research/index.html"> 
-<span class="menu-text">Publicações</span></a>
+    <a class="nav-link" href="../../../research/index.html"> 
+<span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
-<span class="menu-text">Sobre mim</span></a>
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
   </li>  
 </ul>
 <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -178,51 +127,139 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categorias</h5>
-<div class="quarto-listing-category category-default"><div class="category" data-category="">Tudo <span class="quarto-category-count">(0)</span>
-</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#the-icd-10-the-brazilian-health-system-actually-uses" id="toc-the-icd-10-the-brazilian-health-system-actually-uses" class="nav-link active" data-scroll-target="#the-icd-10-the-brazilian-health-system-actually-uses">The ICD-10 the Brazilian health system actually uses</a></li>
+  <li><a href="#what-icd-11-is-and-why-it-has-not-replaced-anything-here" id="toc-what-icd-11-is-and-why-it-has-not-replaced-anything-here" class="nav-link" data-scroll-target="#what-icd-11-is-and-why-it-has-not-replaced-anything-here">What ICD-11 is, and why it has not replaced anything here</a></li>
+  <li><a href="#the-transition-tables-what-they-are-and-what-they-are-not" id="toc-the-transition-tables-what-they-are-and-what-they-are-not" class="nav-link" data-scroll-target="#the-transition-tables-what-they-are-and-what-they-are-not">The transition tables: what they are, and what they are not</a></li>
+  <li><a href="#a-note-on-translation" id="toc-a-note-on-translation" class="nav-link" data-scroll-target="#a-note-on-translation">A note on translation</a></li>
+  <li><a href="#licences-differ-between-sources" id="toc-licences-differ-between-sources" class="nav-link" data-scroll-target="#licences-differ-between-sources">Licences differ between sources</a></li>
+  <li><a href="#where-an-ai-assistant-fits" id="toc-where-an-ai-assistant-fits" class="nav-link" data-scroll-target="#where-an-ai-assistant-fits">Where an AI assistant fits</a></li>
+  </ul></nav>
 </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Projetos</h1>
-<p class="subtitle lead">Análises em R para Psicologia, Saúde Pública e Mercados Financeiros</p>
-</div>
+<h1 class="title">ICD-10, ICD-11 and what changes for people working with Brazilian health data</h1>
+<p class="subtitle lead">The V2008 structure in numbers, and what WHO’s transition tables are — and are not</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Public health</div>
+    <div class="quarto-category">DataSUS</div>
+    <div class="quarto-category">ICD-10</div>
+    <div class="quarto-category">MCP</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sidney Bissoli </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 31, 2026</p>
+    </div>
+  </div>
   
     
   </div>
   
 
 
-</header><p>Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Dica</span>Filtrando projetos
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).</p>
-</div>
-</div>
+</header><p><em>Published 31 August 2026. The counts here were extracted from the official datasets bundled with the server — the DataSUS CID-10 V2008 release and WHO’s transition tables, release 2025-01 — and can be reproduced from the cited sources.</em></p>
+<p>Anyone working with Brazilian health data lives with two classifications at once, and they are not versions of one another in the way people assume.</p>
+<section id="the-icd-10-the-brazilian-health-system-actually-uses" class="level2"><h2 class="anchored" data-anchor-id="the-icd-10-the-brazilian-health-system-actually-uses">The ICD-10 the Brazilian health system actually uses</h2>
+<p>Brazil’s public health system (SUS) runs on <strong>ICD-10, version V2008</strong>, translated into Portuguese by the Brazilian Centre for Disease Classification (CBCD, University of São Paulo) and published electronically by DataSUS. It is what fills the diagnosis field in hospital admissions, outpatient records, death certificates and notifiable-disease reports. It is not an informal translation: it is the operational standard.</p>
+<p>The structure has four levels, and the exact counts in the V2008 file are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th>Level</th>
+<th>Count</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Chapters</td>
+<td><strong>22</strong></td>
+<td>Chapter I — Certain infectious and parasitic diseases (A00–B99)</td>
+</tr>
+<tr class="even">
+<td>Blocks</td>
+<td><strong>275</strong></td>
+<td>A00–A09 — Intestinal infectious diseases</td>
+</tr>
+<tr class="odd">
+<td>Categories (3 characters)</td>
+<td><strong>2,045</strong></td>
+<td>A00 — Cholera</td>
+</tr>
+<tr class="even">
+<td>Subcategories (4 characters)</td>
+<td><strong>12,451</strong></td>
+<td>A00.0 — Cholera due to <em>Vibrio cholerae</em> 01, biovar cholerae</td>
+</tr>
+</tbody>
+</table>
+<p>Three details in that file trip up anyone joining datasets:</p>
+<p><strong>1. The code has two spellings.</strong> A subcategory appears as <code>A000</code> in the key and <code>A00.0</code> in the display. Different bases pick different ones, and a naive join matches zero rows without complaining.</p>
+<p><strong>2. Not every code is usable in every context.</strong> The file carries sex-restriction and cause-of-death markers. A sex-restricted code appearing with the other sex is a data-entry error at source, not an epidemiological finding — but it only shows if someone looks at the marker.</p>
+<p><strong>3. A category is not a subcategory.</strong> <code>I21</code> (acute myocardial infarction) and <code>I21.0</code> are not the same grain. Counting both in one table double-counts. It is the most common error in morbidity counts from raw data.</p>
+</section><section id="what-icd-11-is-and-why-it-has-not-replaced-anything-here" class="level2"><h2 class="anchored" data-anchor-id="what-icd-11-is-and-why-it-has-not-replaced-anything-here">What ICD-11 is, and why it has not replaced anything here</h2>
+<p><strong>ICD-11</strong> is WHO’s current revision. It is not a renumbered ICD-10: the number of chapters changed, new chapters appeared (traditional medicine, sexual health), it introduced <strong>post-coordination</strong> — composing a main code with additional axes such as severity, laterality and causal agent — and its canonical identity is a <strong>URI</strong>, not the alphanumeric code.</p>
+<p>Meanwhile Brazil’s health information systems remain on ICD-10 V2008. In practice you need both: ICD-10 to operate, ICD-11 to compare internationally and to follow recent literature.</p>
+</section><section id="the-transition-tables-what-they-are-and-what-they-are-not" class="level2"><h2 class="anchored" data-anchor-id="the-transition-tables-what-they-are-and-what-they-are-not">The transition tables: what they are, and what they are not</h2>
+<p>WHO publishes correspondence tables between the two revisions inside each ICD-11 release. In release <strong>2025-01</strong> (published 24/01/2025):</p>
+<ul>
+<li>
+<strong>11,243</strong> ICD-10 entries mapped;</li>
+<li>
+<strong>1,461</strong> of them carry WHO-documented alternatives beyond the primary code;</li>
+<li>no entry is left without a primary code.</li>
+</ul>
+<p>Type 2 diabetes, for example: ICD-10 <code>E11</code> → ICD-11 <code>5A11</code>, URI <code>http://id.who.int/icd/entity/119724091</code>.</p>
+<p>And here is the part usually ignored. WHO’s own guidance on these tables is explicit: they show correspondence between revisions and <strong>“are not intended for directly converting data from one revision to the other.”</strong></p>
+<p>That is not legal boilerplate. The 1,461 entries with alternatives are precisely the cases where correspondence is not one-to-one: a category that split, or was absorbed into a different grouping. Running the table as a translation dictionary over millions of records produces a historical series that looks continuous and is not. The legitimate use is different: <strong>consulting case by case, with the alternatives visible, and deciding with clinical or epidemiological judgement.</strong></p>
+</section><section id="a-note-on-translation" class="level2"><h2 class="anchored" data-anchor-id="a-note-on-translation">A note on translation</h2>
+<p>None of the labels above is machine-translated, and that is deliberate. The Portuguese ICD-10 is the CBCD’s <strong>official</strong> translation; ICD-11 has an official Portuguese linearisation from WHO; MeSH has NLM’s own translations where they exist. When a source has no official translation for an entry, the honest answer is to return the source language. A machine-translated clinical label looks like a service and is a liability: a subtle difference in wording changes what the code means, and the reader has no way to know the text is not official.</p>
+</section><section id="licences-differ-between-sources" class="level2"><h2 class="anchored" data-anchor-id="licences-differ-between-sources">Licences differ between sources</h2>
+<p>A detail that derails more projects than it should: <strong>the classifications do not share a licence</strong>, and the software serving them does not extend its own.</p>
+<ul>
+<li>
+<strong>CID-10 V2008 (DataSUS/CBCD):</strong> © WHO; Portuguese translation © CBCD/USP; electronic files published by DataSUS. Developers may use them <strong>with due credit and at no charge</strong>.</li>
+<li>
+<strong>ICD-11 (WHO):</strong> CC BY-ND 3.0 IGO, with a required citation, and WHO may terminate the licence on notice.</li>
+<li>
+<strong>Transition tables:</strong> © WHO, under the ICD-11 Terms of Use.</li>
+<li>
+<strong>LOINC:</strong> © Regenstrief Institute, free under its own licence.</li>
+<li>
+<strong>RxNorm and MeSH:</strong> US government works, served by NLM.</li>
+<li>
+<strong>SNOMED CT:</strong> requires a SNOMED International licence. Brazil is <strong>not</strong> a member country — the route here is an Affiliate licence.</li>
+</ul>
+<p>The rule that avoids trouble: the software’s licence does not cover the content it serves. Each response should carry the licence of the source of that number.</p>
+</section><section id="where-an-ai-assistant-fits" class="level2"><h2 class="anchored" data-anchor-id="where-an-ai-assistant-fits">Where an AI assistant fits</h2>
+<p>Asking a model <em>“what is the ICD-10 code for acute myocardial infarction?”</em> returns a plausible code. It usually gets the famous ones right and fails silently in the tail — which is exactly where lookup matters, because nobody needs to ask about the famous ones.</p>
+<p>The gain from wiring the assistant to the official sources is <strong>provenance</strong>: the code comes with its source, the terminology version, the canonical URL and the licence; the Portuguese label comes from CBCD or WHO rather than an on-the-fly translation; and the mapping between revisions comes from WHO’s table, with the alternatives visible, instead of an implicit choice.</p>
+<p>That is what <a href="https://github.com/SidneyBissoli/medical-terminologies-mcp"><code>medical-terminologies-mcp</code></a> does: 31 tools over ICD-11, LOINC, RxNorm, MeSH, ATC and CID-10, for clients that speak <a href="https://modelcontextprotocol.io">MCP</a>. The CID-10 ships bundled — no network call, no rate limit — and there is batch validation of up to 100 codes across six terminologies, for auditing a whole dataset before analysing it.</p>
+<p>One closing recommendation, tool or no tool: <strong>before comparing two morbidity series, check that both are on the same revision and the same grain.</strong> Most unexplained breaks in Brazilian health time series are one of those two things.</p>
+<hr>
+<p><em>Server: <a href="https://github.com/SidneyBissoli/medical-terminologies-mcp"><code>medical-terminologies-mcp</code></a> · hosted endpoint at <code>https://medical.sidneybissoli.com/mcp</code> · code under MIT. The terminologies served carry their own licences.</em></p>
 
 
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="list grid quarto-listing-cols-3">
-
-</div>
-<div class="listing-no-matching d-none">Nenhum item correspondente</div>
-</div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -247,12 +284,12 @@ window.Quarto = {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiada");
+      button.setAttribute("title", "Copied!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiada");
+        button.setAttribute("data-bs-title", "Copied!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -295,7 +332,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io");
+        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io\/en");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -628,7 +665,7 @@ window.Quarto = {
        
     </div>   
     <div class="nav-footer-center">
-<p>© 2025 Sidney Bissoli · Feito com <a href="https://quarto.org/">Quarto</a></p>
+<p>© 2025 Sidney Bissoli · Made with <a href="https://quarto.org/">Quarto</a></p>
 </div>
     <div class="nav-footer-right">
        

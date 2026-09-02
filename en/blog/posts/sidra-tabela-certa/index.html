@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/projects/index.html" />
-<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/projects/index.en.html" />
+<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/blog/posts/sidra-tabela-certa/index.html" />
+<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/blog/posts/sidra-tabela-certa/index.en.html" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Projetos – Sidney Bissoli</title>
+<meta name="author" content="Sidney Bissoli">
+<meta name="dcterms.date" content="2026-08-31">
+<title>Finding the right SIDRA table — and knowing that it is the right one – Sidney Bissoli</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,11 +26,11 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 </style>
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script><script src="../site_libs/clipboard/clipboard.min.js"></script><script src="../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../site_libs/quarto-search/fuse.min.js"></script><script src="../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script><script src="../site_libs/quarto-listing/quarto-listing.js"></script><script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script><link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script><script src="../../../site_libs/clipboard/clipboard.min.js"></script><script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../../../site_libs/quarto-search/fuse.min.js"></script><script src="../../../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script><script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../../../site_libs/quarto-html/popper.min.js"></script><script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../../../site_libs/quarto-html/anchor.min.js"></script><link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script><link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -43,114 +45,61 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Nenhum resultado",
-    "search-matching-documents-text": "documentos correspondentes",
-    "search-copy-link-title": "Copiar link para a busca",
-    "search-hide-matches-text": "Esconder correspondências adicionais",
-    "search-more-match-text": "mais correspondência neste documento",
-    "search-more-matches-text": "mais correspondências neste documento",
-    "search-clear-button-title": "Limpar",
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancelar",
-    "search-submit-button-title": "Enviar",
-    "search-label": "Procurar"
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
-}</script><script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-title','listing-subtitle','listing-categories','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="../styles.css">
+}</script><link rel="stylesheet" href="../../../styles.css">
 </head>
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Sidney Bissoli</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Procurar"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Alternar de navegação" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
 <li class="nav-item"><div class="dropdown" id="languages-links-parent">
-<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/projects/index.html" id="language-link-en">English</a></li></ul>
+<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> English</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/blog/posts/sidra-tabela-certa/index.html" id="language-link-pt">Português</a></li></ul>
 </div></li>
 <li class="nav-item">
-    <a class="nav-link" href="../tools/index.html"> 
-<span class="menu-text">Servidores MCP</span></a>
+    <a class="nav-link" href="../../../tools/index.html"> 
+<span class="menu-text">MCP servers</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../packages/index.html"> 
-<span class="menu-text">Pacotes R</span></a>
+    <a class="nav-link" href="../../../packages/index.html"> 
+<span class="menu-text">R packages</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
-<span class="menu-text">Projetos</span></a>
+    <a class="nav-link" href="../../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
-<span class="menu-text">Escritos</span></a>
+    <a class="nav-link" href="../../../blog/index.html"> 
+<span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../research/index.html"> 
-<span class="menu-text">Publicações</span></a>
+    <a class="nav-link" href="../../../research/index.html"> 
+<span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
-<span class="menu-text">Sobre mim</span></a>
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
   </li>  
 </ul>
 <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -178,51 +127,130 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categorias</h5>
-<div class="quarto-listing-category category-default"><div class="category" data-category="">Tudo <span class="quarto-category-count">(0)</span>
-</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#the-sidra-model-in-one-paragraph" id="toc-the-sidra-model-in-one-paragraph" class="nav-link active" data-scroll-target="#the-sidra-model-in-one-paragraph">The SIDRA model in one paragraph</a></li>
+  <li><a href="#step-1-search-and-do-not-trust-the-result" id="toc-step-1-search-and-do-not-trust-the-result" class="nav-link" data-scroll-target="#step-1-search-and-do-not-trust-the-result">Step 1: search — and do not trust the result</a></li>
+  <li><a href="#step-2-the-metadata-is-what-decides" id="toc-step-2-the-metadata-is-what-decides" class="nav-link" data-scroll-target="#step-2-the-metadata-is-what-decides">Step 2: the metadata is what decides</a></li>
+  <li><a href="#step-3-query" id="toc-step-3-query" class="nav-link" data-scroll-target="#step-3-query">Step 3: query</a></li>
+  <li><a href="#four-traps-worth-knowing" id="toc-four-traps-worth-knowing" class="nav-link" data-scroll-target="#four-traps-worth-knowing">Four traps worth knowing</a></li>
+  <li><a href="#where-an-ai-assistant-fits" id="toc-where-an-ai-assistant-fits" class="nav-link" data-scroll-target="#where-an-ai-assistant-fits">Where an AI assistant fits</a></li>
+  </ul></nav>
 </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Projetos</h1>
-<p class="subtitle lead">Análises em R para Psicologia, Saúde Pública e Mercados Financeiros</p>
-</div>
+<h1 class="title">Finding the right SIDRA table — and knowing that it is the right one</h1>
+<p class="subtitle lead">The three steps, the metadata that settles it, and the four traps that cost the most</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">IBGE</div>
+    <div class="quarto-category">SIDRA</div>
+    <div class="quarto-category">Public data</div>
+    <div class="quarto-category">MCP</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sidney Bissoli </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 31, 2026</p>
+    </div>
+  </div>
   
     
   </div>
   
 
 
-</header><p>Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Dica</span>Filtrando projetos
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).</p>
-</div>
-</div>
+</header><p><em>Published 31 August 2026. Every figure here was captured live from the IBGE APIs on the publication date; none is illustrative.</em></p>
+<p>SIDRA is IBGE’s statistical table bank — the primary source for Brazilian official statistics, and it is open. Census, continuous household survey, GDP, industrial output, agriculture: nearly everything the institute publishes goes through it.</p>
+<p>Access is not the problem. The problem is that the question a person asks — <em>how many households are connected to the sewage network?</em> — looks nothing like what SIDRA understands, which is a table code, a set of variables, a classification, a period and a territorial level. Between the question and the query there is a step most tutorials skip: <strong>finding out which table</strong> — and, harder, <strong>being sure it is that one</strong>.</p>
+<section id="the-sidra-model-in-one-paragraph" class="level2"><h2 class="anchored" data-anchor-id="the-sidra-model-in-one-paragraph">The SIDRA model in one paragraph</h2>
+<p>Each <strong>survey</strong> (Demographic Census, continuous PNAD, IPCA…) has its <strong>tables</strong>, which the API calls <em>aggregates</em>. Each table publishes <strong>variables</strong> (what is measured, with its unit), zero or more <strong>classifications</strong> (the cuts: sex, race, urban/rural…), a list of <strong>periods</strong> and a list of <strong>territorial levels</strong>.</p>
+<p>Two consequences bite:</p>
+<ol type="1">
+<li>
+<strong>A table does not cover every territorial level.</strong> Some publish Brazil only. Asking for states returns an error, not a zero.</li>
+<li>
+<strong>A table’s name does not say which survey it belongs to.</strong> That is where the error this article is about comes from.</li>
+</ol></section><section id="step-1-search-and-do-not-trust-the-result" class="level2"><h2 class="anchored" data-anchor-id="step-1-search-and-do-not-trust-the-result">Step 1: search — and do not trust the result</h2>
+<p>Searching the catalogue for <em>“esgotamento sanitário”</em> (sanitary sewage) on 2026-08-31 returned <strong>108 tables</strong>. None of the top hits was the general one: they were subsets — urban surroundings, quilombola households, conservation units — that contain the term because they <em>also</em> classify by sewage. The list was right; the expectation was wrong. <strong>Searching by name returns everything that mentions the subject, not what is about the subject.</strong></p>
+</section><section id="step-2-the-metadata-is-what-decides" class="level2"><h2 class="anchored" data-anchor-id="step-2-the-metadata-is-what-decides">Step 2: the metadata is what decides</h2>
+<pre><code>GET https://servicodados.ibge.gov.br/api/v3/agregados/{table}/metadados</code></pre>
+<p>Four fields the search listing does not give you, and all four matter: <strong><code>pesquisa</code></strong> (which survey — the decisive one), <strong><code>periodicidade</code></strong> (the periods actually covered), <strong><code>nivelTerritorial</code></strong> (how far down it goes) and <strong><code>variaveis</code></strong> (what is measured, with units).</p>
+<p>Two real cases, both checked on 2026-08-31:</p>
+<p><strong>Table 6803</strong>, the one that answers the question:</p>
+<pre><code>survey:      Demographic Census
+periods:     2022–2022
+levels:      Brazil, region, state, municipality</code></pre>
+<p><strong>Table 9696</strong>, which in a catalogue passes easily for “something about households”:</p>
+<pre><code>survey:      Continuous PNAD, annual
+periods:     2022–2025
+levels:      Brazil and major region only
+name:        Average real monthly household income per capita in households
+             with a television, by television subscription service</code></pre>
+<p>Both mention households. Both have 2022 data. One is the Census; the other measures income in households with pay TV. Swapping them raises no error at all: it gives you a table of numbers that looks like an answer.</p>
+<blockquote class="blockquote">
+<p><strong>I made exactly this mistake, at scale.</strong> The <code>ibge-br-mcp</code> server has a shortcut that turns <code>theme</code> + <code>year</code> into a table code so nobody needs to know any of this. The map behind it was written by hand. On 2026-08-31 a sweep against the official catalogue found <strong>15 of its 41 tables outside the Demographic Census, or outside the theme’s subject</strong>: <code>sanitation</code>/2022 pointed at 9696 above; <code>fertility</code>/2010 at the <strong>consumer price index</strong> for 1990; <code>income</code>/2000 at the <strong>Agricultural</strong> Census. Each answered normally, with the hand-written label in the header — data from another survey under a name that lied. Nothing broke, so nothing showed. The tables were fixed and the repository now keeps a mirror of the Census catalogue plus a test that checks, one by one, that each code belongs to the Census and to the subject it promises. The lesson is not about that product: <strong>a hand-written table code next to a hand-written description is a pair that rots in silence.</strong></p>
+</blockquote>
+</section><section id="step-3-query" class="level2"><h2 class="anchored" data-anchor-id="step-3-query">Step 3: query</h2>
+<pre><code>GET https://apisidra.ibge.gov.br/values/t/6803/n3/all/v/allxp/p/2022</code></pre>
+<p>Real result, captured on 2026-08-31 — 27 rows, one per state plus the Federal District:</p>
+<table class="caption-top table">
+<thead><tr class="header">
+<th></th>
+<th>Occupied permanent private households</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Total</strong></td>
+<td>72,456,368</td>
+</tr>
+<tr class="even">
+<td>Highest — São Paulo</td>
+<td>16,224,248</td>
+</tr>
+<tr class="odd">
+<td>Lowest — Roraima</td>
+<td>177,418</td>
+</tr>
+<tr class="even">
+<td>mean</td>
+<td>2,683,569</td>
+</tr>
+<tr class="odd">
+<td><strong>median</strong></td>
+<td><strong>1,372,108</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The mean is nearly double the median. That is not a statistical curiosity: it is the portrait of a federation where one unit alone accounts for 22% of the total. A “top 10” would hide it; the full distribution does not.</p>
+<p><em>Source: IBGE — SIDRA, Table 6803, https://apisidra.ibge.gov.br/values/t/6803/n3/all/v/allxp/p/2022, retrieved 2026-08-31.</em></p>
+</section><section id="four-traps-worth-knowing" class="level2"><h2 class="anchored" data-anchor-id="four-traps-worth-knowing">Four traps worth knowing</h2>
+<p><strong>1. <code>allxp</code> mixes units.</strong> Asking for every variable in a table that publishes both absolute values and percentages returns both in the same <code>V</code> column, with no warning. Summing that produces a meaningless number.</p>
+<p><strong>2. Absence is not zero.</strong> SIDRA marks absence with <code>-</code>, <code>..</code>, <code>...</code> and <code>X</code>, each meaning something different. A careless parser turns all of them into <code>0</code> and produces a series that falls when what actually happened is that the information was missing.</p>
+<p><strong>3. The municipality code has 7 digits, and the seventh is a check digit.</strong> São Paulo is <code>3550308</code>, not <code>355030</code>.</p>
+<p><strong>4. Check by two paths.</strong> Sum the municipalities and compare with the state total; compare the Census figure with the estimate for the same year. If both paths close, the number stands.</p>
+</section><section id="where-an-ai-assistant-fits" class="level2"><h2 class="anchored" data-anchor-id="where-an-ai-assistant-fits">Where an AI assistant fits</h2>
+<p>Asking a model <em>“how many Brazilian households have a sewage connection?”</em> returns a plausible number from training: maybe right, maybe from another census, with no source. The gain from plugging in SIDRA is not convenience — it is <strong>provenance</strong>: the table, the period, the URL that reproduces the query and the extraction date travel with the value, and anyone can retrace the path.</p>
+<p>That is what <a href="https://github.com/SidneyBissoli/ibge-br-mcp"><code>ibge-br-mcp</code></a> does: 21 tools over the IBGE APIs, with a provenance block on every response, for clients that speak <a href="https://modelcontextprotocol.io">MCP</a>.</p>
+<p>But step 2 stays yours, with or without a tool. <strong>Before publishing a number, look at which survey the table belongs to.</strong> It is the only thing that stood between fifteen wrong mappings and none.</p>
+<hr>
+<p><em>Server: <a href="https://github.com/SidneyBissoli/ibge-br-mcp"><code>ibge-br-mcp</code></a> · hosted endpoint at <code>https://ibge.sidneybissoli.com/mcp</code> · MIT. IBGE data under Brazil’s open-data framework (Law 12.527/2011 and Decree 8.777/2016): free use, with the obligation to credit the source.</em></p>
 
 
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="list grid quarto-listing-cols-3">
-
-</div>
-<div class="listing-no-matching d-none">Nenhum item correspondente</div>
-</div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -247,12 +275,12 @@ window.Quarto = {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiada");
+      button.setAttribute("title", "Copied!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiada");
+        button.setAttribute("data-bs-title", "Copied!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -295,7 +323,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io");
+        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io\/en");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -628,7 +656,7 @@ window.Quarto = {
        
     </div>   
     <div class="nav-footer-center">
-<p>© 2025 Sidney Bissoli · Feito com <a href="https://quarto.org/">Quarto</a></p>
+<p>© 2025 Sidney Bissoli · Made with <a href="https://quarto.org/">Quarto</a></p>
 </div>
     <div class="nav-footer-right">
        

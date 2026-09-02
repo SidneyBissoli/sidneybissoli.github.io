@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/projects/index.html" />
-<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/projects/index.en.html" />
+<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/packages/index.html" />
+<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/packages/index.en.html" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Projetos – Sidney Bissoli</title>
+<title>R packages – Sidney Bissoli</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 </style>
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script><script src="../site_libs/clipboard/clipboard.min.js"></script><script src="../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../site_libs/quarto-search/fuse.min.js"></script><script src="../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script><script src="../site_libs/quarto-listing/quarto-listing.js"></script><script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script><link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -43,72 +43,19 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Nenhum resultado",
-    "search-matching-documents-text": "documentos correspondentes",
-    "search-copy-link-title": "Copiar link para a busca",
-    "search-hide-matches-text": "Esconder correspondências adicionais",
-    "search-more-match-text": "mais correspondência neste documento",
-    "search-more-matches-text": "mais correspondências neste documento",
-    "search-clear-button-title": "Limpar",
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancelar",
-    "search-submit-button-title": "Enviar",
-    "search-label": "Procurar"
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
-}</script><script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-title','listing-subtitle','listing-categories','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="../styles.css">
+}</script><link rel="stylesheet" href="../styles.css">
 </head>
 <body class="nav-fixed quarto-light">
 
@@ -119,38 +66,38 @@ window.Quarto = {
     <span class="navbar-title">Sidney Bissoli</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Procurar"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Alternar de navegação" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
 <li class="nav-item"><div class="dropdown" id="languages-links-parent">
-<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/projects/index.html" id="language-link-en">English</a></li></ul>
+<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> English</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/packages/index.html" id="language-link-pt">Português</a></li></ul>
 </div></li>
 <li class="nav-item">
     <a class="nav-link" href="../tools/index.html"> 
-<span class="menu-text">Servidores MCP</span></a>
+<span class="menu-text">MCP servers</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../packages/index.html"> 
-<span class="menu-text">Pacotes R</span></a>
+    <a class="nav-link active" href="../packages/index.html" aria-current="page"> 
+<span class="menu-text">R packages</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
-<span class="menu-text">Projetos</span></a>
+    <a class="nav-link" href="../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../blog/index.html"> 
-<span class="menu-text">Escritos</span></a>
+<span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../research/index.html"> 
-<span class="menu-text">Publicações</span></a>
+<span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../about.html"> 
-<span class="menu-text">Sobre mim</span></a>
+<span class="menu-text">About me</span></a>
   </li>  
 </ul>
 <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -177,20 +124,16 @@ window.Quarto = {
     </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categorias</h5>
-<div class="quarto-listing-category category-default"><div class="category" data-category="">Tudo <span class="quarto-category-count">(0)</span>
-</div></div>
-</div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Projetos</h1>
-<p class="subtitle lead">Análises em R para Psicologia, Saúde Pública e Mercados Financeiros</p>
+<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title">R packages</h1>
+<p class="subtitle lead">I write packages that hand back Brazilian public data tidy, straight from R</p>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-left">
+<div class="quarto-title-meta column-page">
 
     
   
@@ -199,30 +142,64 @@ window.Quarto = {
   
 
 
-</header><p>Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+</header><p>Brazilian public data rarely arrives ready to use. It comes as a fixed-width file, a spreadsheet with a three-row header, something behind a form, or an API returning nested JSON with uppercase field names. The cleanup work is always the same, and always redone by whoever arrives next.</p>
+<p>I wrote these packages to do that work once, in R, and hand back a tidy data frame.</p>
+<section id="on-cran" class="level2"><h2 class="anchored" data-anchor-id="on-cran">On CRAN</h2>
+<p>CRAN is not hosting: it is a gate with a human reviewer, checks across several platforms, and a requirement that documentation and examples actually run. I put two packages through it.</p>
+<div class="grid">
+<div class="g-col-12 g-col-md-6">
+<div class="card h-100">
+<section id="educabr" class="level3 card-title card-body"><h3 class="card-title anchored" data-anchor-id="educabr">educabR</h3>
+<p><strong>Brazilian education data from INEP</strong> — school census, IDEB, ENEM, SAEB, higher education census, ENCCEJA, IDD and ENADE. Downloads, unpacks and tidies.</p>
+<p><code>install.packages("educabR")</code></p>
+<p>Version 1.1.0 on CRAN since 2026-08-23 · <a href="https://sidneybissoli.github.io/educabR/">documentation</a> · <a href="https://github.com/SidneyBissoli/educabR">GitHub</a></p>
+</section>
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Dica</span>Filtrando projetos
+</div>
+<div class="g-col-12 g-col-md-6">
+<div class="card h-100">
+<section id="healthbr" class="level3 card-title card-body"><h3 class="card-title anchored" data-anchor-id="healthbr">healthbR</h3>
+<p><strong>Brazilian public health data</strong> from several DATASUS and Ministry of Health sources — hospital admissions, mortality, births, facilities, and surveys such as VIGITEL.</p>
+<p><code>install.packages("healthbR")</code></p>
+<p>Version 0.2.0 on CRAN since 2026-02-15 · <a href="https://sidneybissoli.github.io/healthbR/">documentation</a> · <a href="https://github.com/SidneyBissoli/healthbR">GitHub</a></p>
+</section>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).</p>
+</div>
+</section><section id="in-development-on-github" class="level2"><h2 class="anchored" data-anchor-id="in-development-on-github">In development, on GitHub</h2>
+<p>Installable with <code>remotes::install_github()</code>. I have not submitted these to CRAN yet.</p>
+<div class="grid">
+<div class="g-col-12 g-col-md-4">
+<div class="card h-100">
+<section id="cvmdata" class="level3 card-title card-body"><h3 class="card-title anchored" data-anchor-id="cvmdata">cvmdata</h3>
+<p><strong>Open data from the CVM</strong>, Brazil’s securities regulator — listed companies and funds, in tidy form.</p>
+<p><code>0.2.0.9000</code> · <a href="https://sidneybissoli.github.io/cvmdata/">documentation</a> · <a href="https://github.com/SidneyBissoli/cvmdata">GitHub</a></p>
+</section>
 </div>
 </div>
+<div class="g-col-12 g-col-md-4">
+<div class="card h-100">
+<section id="welfarebr" class="level3 card-title card-body"><h3 class="card-title anchored" data-anchor-id="welfarebr">welfarebR</h3>
+<p><strong>Brazilian social assistance data</strong> — programmes, benefits and coverage.</p>
+<p><code>0.1.0</code> · <a href="https://github.com/SidneyBissoli/welfarebR">GitHub</a></p>
+</section>
+</div>
+</div>
+<div class="g-col-12 g-col-md-4">
+<div class="card h-100">
+<section id="senado" class="level3 card-title card-body"><h3 class="card-title anchored" data-anchor-id="senado">senado</h3>
+<p><strong>The Brazilian Federal Senate open data API</strong>, with a tidy interface. The R sibling of the Senate MCP server.</p>
+<p><code>0.0.0.9000</code> · <a href="https://github.com/SidneyBissoli/senado">GitHub</a></p>
+</section>
+</div>
+</div>
+</div>
+</section><section id="why-r-and-why-mcp-as-well" class="level2"><h2 class="anchored" data-anchor-id="why-r-and-why-mcp-as-well">Why R, and why MCP as well</h2>
+<p>The <a href="..\tools/">MCP servers</a> and these packages are how I attack the same problem from opposite sides. A package serves someone already inside an analysis, writing code, who wants the data in the environment where the modelling will happen. An MCP server serves someone talking to an assistant who wants the answer with its source, without writing any code.</p>
+<p>Neither replaces the other, and both depend on the same thing: somebody having read the source’s documentation, found where it lies, and written that down in code someone else can reuse. That is the work I do.</p>
 
 
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="list grid quarto-listing-cols-3">
-
-</div>
-<div class="listing-no-matching d-none">Nenhum item correspondente</div>
-</div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -247,12 +224,12 @@ window.Quarto = {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiada");
+      button.setAttribute("title", "Copied!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiada");
+        button.setAttribute("data-bs-title", "Copied!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -295,7 +272,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io");
+        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io\/en");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -628,7 +605,7 @@ window.Quarto = {
        
     </div>   
     <div class="nav-footer-center">
-<p>© 2025 Sidney Bissoli · Feito com <a href="https://quarto.org/">Quarto</a></p>
+<p>© 2025 Sidney Bissoli · Made with <a href="https://quarto.org/">Quarto</a></p>
 </div>
     <div class="nav-footer-right">
        

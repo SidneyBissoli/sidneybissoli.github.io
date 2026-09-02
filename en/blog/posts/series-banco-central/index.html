@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="pt" xml:lang="pt">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/projects/index.html" />
-<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/projects/index.en.html" />
+<link rel="alternate" hreflang="pt" href="https://sidneybissoli.github.io/blog/posts/series-banco-central/index.html" />
+<link rel="alternate" hreflang="en" href="https://sidneybissoli.github.io/en/blog/posts/series-banco-central/index.en.html" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.9.38">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Projetos – Sidney Bissoli</title>
+<meta name="author" content="Sidney Bissoli">
+<meta name="dcterms.date" content="2026-08-31">
+<title>Central Bank of Brazil series: SGS, Focus and PTAX without the traps – Sidney Bissoli</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,12 +25,47 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script><script src="../site_libs/clipboard/clipboard.min.js"></script><script src="../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../site_libs/quarto-search/fuse.min.js"></script><script src="../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script><script src="../site_libs/quarto-listing/quarto-listing.js"></script><script src="../site_libs/quarto-html/quarto.js" type="module"></script><script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../site_libs/quarto-html/popper.min.js"></script><script src="../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../site_libs/quarto-html/anchor.min.js"></script><link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script><link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script><script src="../../../site_libs/clipboard/clipboard.min.js"></script><script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script><script src="../../../site_libs/quarto-search/fuse.min.js"></script><script src="../../../site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script><script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script><script src="../../../site_libs/quarto-html/popper.min.js"></script><script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script><script src="../../../site_libs/quarto-html/anchor.min.js"></script><link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script><link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-542d75de3f90a829d6cb8a8a329b8b9b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -43,114 +80,61 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "Nenhum resultado",
-    "search-matching-documents-text": "documentos correspondentes",
-    "search-copy-link-title": "Copiar link para a busca",
-    "search-hide-matches-text": "Esconder correspondências adicionais",
-    "search-more-match-text": "mais correspondência neste documento",
-    "search-more-matches-text": "mais correspondências neste documento",
-    "search-clear-button-title": "Limpar",
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancelar",
-    "search-submit-button-title": "Enviar",
-    "search-label": "Procurar"
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
-}</script><script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-image','listing-title','listing-subtitle','listing-categories','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script><link rel="stylesheet" href="../styles.css">
+}</script><link rel="stylesheet" href="../../../styles.css">
 </head>
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg " data-bs-theme="dark"><div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Sidney Bissoli</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Procurar"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Alternar de navegação" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
 <li class="nav-item"><div class="dropdown" id="languages-links-parent">
-<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> Português</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/en/projects/index.html" id="language-link-en">English</a></li></ul>
+<button class="btn btn-primary dropdown-toggle babelquarto-languages-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="languages-button"><i class="bi bi-globe2"></i> English</button><ul class="dropdown-menu" id="languages-links"><li><a class="dropdown-item" href="https://sidneybissoli.github.io/blog/posts/series-banco-central/index.html" id="language-link-pt">Português</a></li></ul>
 </div></li>
 <li class="nav-item">
-    <a class="nav-link" href="../tools/index.html"> 
-<span class="menu-text">Servidores MCP</span></a>
+    <a class="nav-link" href="../../../tools/index.html"> 
+<span class="menu-text">MCP servers</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../packages/index.html"> 
-<span class="menu-text">Pacotes R</span></a>
+    <a class="nav-link" href="../../../packages/index.html"> 
+<span class="menu-text">R packages</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../projects/index.html" aria-current="page"> 
-<span class="menu-text">Projetos</span></a>
+    <a class="nav-link" href="../../../projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
-<span class="menu-text">Escritos</span></a>
+    <a class="nav-link" href="../../../blog/index.html"> 
+<span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../research/index.html"> 
-<span class="menu-text">Publicações</span></a>
+    <a class="nav-link" href="../../../research/index.html"> 
+<span class="menu-text">Publications</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about.html"> 
-<span class="menu-text">Sobre mim</span></a>
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">About me</span></a>
   </li>  
 </ul>
 <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -178,51 +162,102 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categorias</h5>
-<div class="quarto-listing-category category-default"><div class="category" data-category="">Tudo <span class="quarto-category-count">(0)</span>
-</div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">On this page</h2>
+   
+  <ul>
+<li><a href="#the-sgs-everything-is-a-series-number" id="toc-the-sgs-everything-is-a-series-number" class="nav-link active" data-scroll-target="#the-sgs-everything-is-a-series-number">The SGS: everything is a series number</a></li>
+  <li><a href="#three-api-limits-measured" id="toc-three-api-limits-measured" class="nav-link" data-scroll-target="#three-api-limits-measured">Three API limits, measured</a></li>
+  <li><a href="#the-trap-that-raises-no-error-variation-on-a-series-that-already-is-variation" id="toc-the-trap-that-raises-no-error-variation-on-a-series-that-already-is-variation" class="nav-link" data-scroll-target="#the-trap-that-raises-no-error-variation-on-a-series-that-already-is-variation">The trap that raises no error: variation on a series that already is variation</a></li>
+  <li><a href="#focus-the-policy-rates-axis-is-not-a-horizon" id="toc-focus-the-policy-rates-axis-is-not-a-horizon" class="nav-link" data-scroll-target="#focus-the-policy-rates-axis-is-not-a-horizon">Focus: the policy rate’s axis is not a horizon</a></li>
+  <li><a href="#ptax-not-every-quote-is-compiled-by-the-central-bank" id="toc-ptax-not-every-quote-is-compiled-by-the-central-bank" class="nav-link" data-scroll-target="#ptax-not-every-quote-is-compiled-by-the-central-bank">PTAX: not every quote is compiled by the Central Bank</a></li>
+  <li><a href="#the-licence-asks-for-things" id="toc-the-licence-asks-for-things" class="nav-link" data-scroll-target="#the-licence-asks-for-things">The licence asks for things</a></li>
+  <li><a href="#where-an-ai-assistant-fits" id="toc-where-an-ai-assistant-fits" class="nav-link" data-scroll-target="#where-an-ai-assistant-fits">Where an AI assistant fits</a></li>
+  </ul></nav>
 </div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Projetos</h1>
-<p class="subtitle lead">Análises em R para Psicologia, Saúde Pública e Mercados Financeiros</p>
-</div>
+<h1 class="title">Central Bank of Brazil series: SGS, Focus and PTAX without the traps</h1>
+<p class="subtitle lead">Three API limits measured live, level series vs. rate series, and what the ODbL requires</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Central Bank</div>
+    <div class="quarto-category">SGS</div>
+    <div class="quarto-category">Financial markets</div>
+    <div class="quarto-category">MCP</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta column-page-left">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Sidney Bissoli </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">August 31, 2026</p>
+    </div>
+  </div>
   
     
   </div>
   
 
 
-</header><p>Explore meus projetos de análise de dados organizados por tema e linguagem de programação. Cada projeto inclui código reproduzível, visualizações interativas e insights acionáveis.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+</header><p><em>Published 31 August 2026. Every behaviour and value described here was measured live against the Central Bank APIs on the publication date; nothing is inferred from documentation.</em></p>
+<p>The Central Bank of Brazil publishes three different things, by three different routes, and beginners tend to treat them as one:</p>
+<ul>
+<li>the <strong>SGS</strong> (time series management system) — thousands of numbered series: the policy rate, inflation, exchange rates, credit, monetary aggregates;</li>
+<li>
+<strong>Focus</strong> — the weekly market-expectations survey, which is not a time series but a matrix of indicator × horizon × statistic;</li>
+<li>
+<strong>PTAX</strong> — the official closing exchange rates, served by a separate API.</li>
+</ul>
+<section id="the-sgs-everything-is-a-series-number" class="level2"><h2 class="anchored" data-anchor-id="the-sgs-everything-is-a-series-number">The SGS: everything is a series number</h2>
+<p>You do not query “inflation”. You query <strong>series 433</strong>. Not “the dollar”; <strong>series 1</strong>. The policy rate target is <strong>432</strong>. Finding the code is half the work.</p>
+<p>Real response on 2026-08-31 — monthly IPCA inflation:</p>
+<div class="code-copy-outer-scaffold">
+<div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span><span class="fu">{</span><span class="dt">"data"</span><span class="fu">:</span><span class="st">"01/05/2026"</span><span class="fu">,</span><span class="dt">"valor"</span><span class="fu">:</span><span class="st">"0.58"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">{</span><span class="dt">"data"</span><span class="fu">:</span><span class="st">"01/06/2026"</span><span class="fu">,</span><span class="dt">"valor"</span><span class="fu">:</span><span class="st">"0.16"</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">{</span><span class="dt">"data"</span><span class="fu">:</span><span class="st">"01/07/2026"</span><span class="fu">,</span><span class="dt">"valor"</span><span class="fu">:</span><span class="st">"0.07"</span><span class="fu">}</span><span class="ot">]</span></span></code></pre></div>
+<button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button>
 </div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Dica</span>Filtrando projetos
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Use as categorias à direita para filtrar por tema (Finanças, Saúde Pública, Machine Learning) ou linguagem (R, Python).</p>
-</div>
-</div>
+</section><section id="three-api-limits-measured" class="level2"><h2 class="anchored" data-anchor-id="three-api-limits-measured">Three API limits, measured</h2>
+<p><strong>1. A window longer than 10 years on a daily series is refused with HTTP 406.</strong></p>
+<pre><code>.../bcdata.sgs.1/dados?formato=json&amp;dataInicial=01/01/2011&amp;dataFinal=31/12/2025
+→ HTTP 406</code></pre>
+<p>A 3-year window on the same series returns 755 observations.</p>
+<p><strong>2. An open window is refused too</strong>, for the same reason: with no end date the API assumes today, and series 1 begins in 1984.</p>
+<p><strong>3. <code>ultimos/N</code> is capped at 20</strong>, in every periodicity — and above it the request <em>fails</em> with HTTP 400 rather than returning 20.</p>
+<p>Put the three together and a 15-year daily series has to be sliced, fetched and merged without duplicating the seams. In practice slice at <strong>3 years</strong>, not the permitted 10: a decade-long daily window costs 10–20 seconds upstream and can be cut off around 30.</p>
+</section><section id="the-trap-that-raises-no-error-variation-on-a-series-that-already-is-variation" class="level2"><h2 class="anchored" data-anchor-id="the-trap-that-raises-no-error-variation-on-a-series-that-already-is-variation">The trap that raises no error: variation on a series that already is variation</h2>
+<p>Monthly IPCA <strong>already is a percentage change</strong>. Summing twelve monthly values to get the annual figure is wrong, because inflation compounds:</p>
+<pre><code>compounded = [ Π (1 + vᵢ/100) − 1 ] × 100</code></pre>
+<p>With the three real months above, the sum gives 0.8100 and compounding gives 0.8114 — the sum understates. Small over three months; not small over twelve, or in any period with high inflation.</p>
+<p>The rule: <strong>before computing a variation, ask whether the series is a level or a rate.</strong> Levels (the exchange rate, credit stock, GDP) admit endpoint-to-endpoint change. Series that already are period-on-period rates require compounding. The same applies to resampling: turning monthly inflation into annual is geometric composition, not an average.</p>
+</section><section id="focus-the-policy-rates-axis-is-not-a-horizon" class="level2"><h2 class="anchored" data-anchor-id="focus-the-policy-rates-axis-is-not-a-horizon">Focus: the policy rate’s axis is not a horizon</h2>
+<p>For most indicators the expectation has a <strong>horizon</strong> — monthly, quarterly, annual, or inflation accumulated over 12 and 24 months. Each response carries mean, median, standard deviation, minimum, maximum and the number of respondents, plus a <strong>Top 5</strong> variant for the best recent forecasters.</p>
+<p>The policy rate is different: its axis is the <strong>monetary policy committee meeting</strong> (in the form <code>R1/2026</code>), not a time horizon. Treating it as one more horizon is the most common conceptual error here.</p>
+<p>Another asymmetry: <strong>the set of indicators changes with the scope</strong> — 9 in the monthly scope, 26 in the annual. There is no single “list of Focus indicators”; there is the list <em>of that scope</em>.</p>
+</section><section id="ptax-not-every-quote-is-compiled-by-the-central-bank" class="level2"><h2 class="anchored" data-anchor-id="ptax-not-every-quote-is-compiled-by-the-central-bank">PTAX: not every quote is compiled by the Central Bank</h2>
+<p>The Central Bank compiles the US dollar PTAX. <strong>Cross-currency parities are not</strong>: they come from an information agency (Refinitiv) and are redistributed by the Central Bank. The difference is legal and methodological, not cosmetic — and the Bank’s own liability disclaimer must be passed through verbatim.</p>
+</section><section id="the-licence-asks-for-things" class="level2"><h2 class="anchored" data-anchor-id="the-licence-asks-for-things">The licence asks for things</h2>
+<p>Central Bank data is released under the <strong>Open Data Commons Open Database License (ODbL) v1.0</strong>. That is <strong>not</strong> CC0, not CC BY and not public domain. The ODbL carries three obligations that survive redistribution: <strong>attribution</strong>, <strong>share-alike on derived databases</strong>, and an <strong>anti-DRM</strong> clause.</p>
+<p>Checked against the source on 2026-08-13: 4,259 of the 4,260 datasets in the Bank’s open-data portal declare <code>license_id: "odc-odbl"</code>.</p>
+</section><section id="where-an-ai-assistant-fits" class="level2"><h2 class="anchored" data-anchor-id="where-an-ai-assistant-fits">Where an AI assistant fits</h2>
+<p>Asking a model <em>“what is the policy rate today?”</em> returns a number from training: possibly right, possibly three committee meetings out of date, with no source. Plugging in the SGS buys <strong>provenance</strong> — the series, the period, the canonical URL, the real extraction instant and the licence — and moves the traps above to the server side.</p>
+<p>That is what <a href="https://github.com/SidneyBissoli/bcb-br-mcp"><code>bcb-br-mcp</code></a> does: 15 tools over SGS, Focus and PTAX, with a curated catalogue of 135 series verified against the source, for clients that speak <a href="https://modelcontextprotocol.io">MCP</a>.</p>
+<p>With or without a tool, the two questions that avoid most errors are the same: <strong>is this series a level or a rate?</strong> and <strong>who compiled this number?</strong></p>
+<hr>
+<p><em>Server: <a href="https://github.com/SidneyBissoli/bcb-br-mcp"><code>bcb-br-mcp</code></a> · hosted endpoint at <code>https://bcb.sidneybissoli.com/mcp</code> · code under MIT. Central Bank data under ODbL v1.0 — https://opendatacommons.org/licenses/odbl/1-0/.</em></p>
 
 
-
-
-<div class="quarto-listing quarto-listing-container-grid" id="listing-listing">
-<div class="list grid quarto-listing-cols-3">
-
-</div>
-<div class="listing-no-matching d-none">Nenhum item correspondente</div>
-</div></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
     const anchorJS = new window.AnchorJS();
@@ -247,12 +282,12 @@ window.Quarto = {
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copiada");
+      button.setAttribute("title", "Copied!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copiada");
+        button.setAttribute("data-bs-title", "Copied!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",
@@ -295,7 +330,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io");
+        var filterRegex = new RegExp("https:\/\/sidneybissoli\.github\.io\/en");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
@@ -628,7 +663,7 @@ window.Quarto = {
        
     </div>   
     <div class="nav-footer-center">
-<p>© 2025 Sidney Bissoli · Feito com <a href="https://quarto.org/">Quarto</a></p>
+<p>© 2025 Sidney Bissoli · Made with <a href="https://quarto.org/">Quarto</a></p>
 </div>
     <div class="nav-footer-right">
        

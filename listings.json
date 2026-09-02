@@ -4,15 +4,11 @@
     "items": []
   },
   {
-    "listing": "/blog/index.en.html",
-    "items": []
-  },
-  {
     "listing": "/blog/index.html",
-    "items": []
-  },
-  {
-    "listing": "/projects/index.en.html",
-    "items": []
+    "items": [
+      "/blog/posts/cid10-cid11-sus/index.html",
+      "/blog/posts/series-banco-central/index.html",
+      "/blog/posts/sidra-tabela-certa/index.html"
+    ]
   }
 ]
