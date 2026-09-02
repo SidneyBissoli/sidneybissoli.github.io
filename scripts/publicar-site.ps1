@@ -45,10 +45,23 @@ try {
     # Um deploy novo pode levar alguns segundos para chegar em todos os isolates.
     Start-Sleep -Seconds 5
 
+    # HttpWebRequest direto, e nao Invoke-WebRequest: o powershell.exe 5.1
+    # nao tem -SkipHttpErrorCheck e trata 301/404 como excecao (medido no
+    # primeiro deploy, 02/09/2026). Aqui 3xx/4xx sao respostas como as outras.
     function Status($url) {
         try {
-            $r = Invoke-WebRequest -Uri $url -MaximumRedirection 0 -SkipHttpErrorCheck -TimeoutSec 30 -UseBasicParsing
-            return @{ code = [int]$r.StatusCode; location = [string]$r.Headers['Location'] }
+            $req = [System.Net.HttpWebRequest]::Create($url)
+            $req.AllowAutoRedirect = $false
+            $req.Timeout = 30000
+            $req.UserAgent = 'publicar-site.ps1'
+            try { $resp = $req.GetResponse() }
+            catch [System.Net.WebException] {
+                if ($null -eq $_.Exception.Response) { throw }
+                $resp = $_.Exception.Response
+            }
+            $out = @{ code = [int]$resp.StatusCode; location = [string]$resp.Headers['Location'] }
+            $resp.Close()
+            return $out
         } catch {
             return @{ code = -1; location = $_.Exception.Message }
         }
