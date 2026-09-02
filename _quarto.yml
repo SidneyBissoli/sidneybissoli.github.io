@@ -51,8 +51,11 @@ website:
         text: Servidores MCP
       - href: packages/index.qmd
         text: Pacotes R
-      - href: dashboard/index.qmd
-        text: Painéis
+      # "Paineis" (dashboard/index.qmd) fica FORA da barra enquanto
+      # `dashboard/**` estiver fora do render (ver `project.render` acima):
+      # com o item, a barra apontava para o .qmd cru e o visitante recebia o
+      # fonte em vez de uma pagina (medido em 03/09/2026 antes de publicar).
+      # Reincluir junto com a reinclusao do render dos paineis.
       - href: projects/index.qmd
         text: Projetos
       - href: blog/index.qmd

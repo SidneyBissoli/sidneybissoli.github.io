@@ -27,7 +27,7 @@ que impede regressão.
 deles publicados no CRAN: o `educabR`, de dados educacionais do INEP, e o
 `healthbR`, de saúde pública.
 
-**[Painéis](/dashboard/)** — visualizações de indicadores epidemiológicos
+**Painéis** (em preparação) — visualizações de indicadores epidemiológicos
 calculados a partir de dados oficiais do Ministério da Saúde e do IBGE.
 
 **Um conjunto de dados citável** — a camada de participação do portal

@@ -27,7 +27,7 @@ automated checks that block regression.
 them published on CRAN: `educabR`, for education data from INEP, and `healthbR`,
 for public health.
 
-**[Dashboards](/dashboard/)** — visualisations of epidemiological indicators
+**Dashboards** (in preparation) — visualisations of epidemiological indicators
 computed from official data published by the Brazilian Ministry of Health and
 IBGE.
 

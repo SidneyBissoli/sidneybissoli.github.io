@@ -24,7 +24,7 @@
 setwd(here::here())
 library(stringr)
 
-message("[1/2] renderizando os dois idiomas...")
+message("[1/3] renderizando os dois idiomas...")
 babelquarto::render_website(".", preview = FALSE)
 
 # ---- 2. tradução da barra na versão em inglês -------------------------------
@@ -41,7 +41,7 @@ ROTULOS <- c(
   "Sobre mim"      = "About me"
 )
 
-message("[2/2] traduzindo a barra em _site/en/ ...")
+message("[2/3] traduzindo a barra em _site/en/ ...")
 arquivos <- list.files("_site/en", pattern = "\\.html$", recursive = TRUE,
                        full.names = TRUE)
 if (length(arquivos) == 0) stop("nenhum HTML em _site/en/ — o render em inglês falhou?")
@@ -77,4 +77,44 @@ if (length(desconhecidos) > 0) {
 }
 
 message(sprintf("  %d arquivo(s) em inglês com a barra traduzida.", tocados))
+
+# ---- 3. redirecionamentos das URLs do site antigo ---------------------------
+# O gh-pages de 08/01/2026 servia caminhos que o layout atual não gera:
+# `publications/` (hoje `research/`) e as cópias `*.en.html` na raiz que a
+# versão anterior do babelquarto emitia (hoje tudo em inglês mora em `en/`).
+# Quem chega por link ou índice antigo cai aqui em vez de num 404.
+#
+# Por que não `aliases:` do Quarto: a versão em inglês é renderizada à parte
+# e movida para `_site/en/`, então um alias declarado num `.en.qmd` nasceria
+# DENTRO de `en/`, nunca na raiz. Mapa explícito, como o de rótulos acima: o
+# destino tem de existir no `_site/` recém-gerado, senão o script para.
+REDIRECIONAMENTOS <- c(
+  "publications/index.html" = "research/index.html",
+  "index.en.html"           = "en/index.html",
+  "about.en.html"           = "en/about.html"
+)
+
+message("[3/3] redirecionamentos das URLs antigas ...")
+for (antigo in names(REDIRECIONAMENTOS)) {
+  novo <- REDIRECIONAMENTOS[[antigo]]
+  if (!file.exists(file.path("_site", novo))) {
+    stop("redirecionamento ", antigo, " -> ", novo,
+         ": o destino não existe em _site/. Corrija o mapa REDIRECIONAMENTOS.")
+  }
+  dir.create(dirname(file.path("_site", antigo)), showWarnings = FALSE,
+             recursive = TRUE)
+  writeLines(c(
+    "<!DOCTYPE html>",
+    '<html><head><meta charset="utf-8">',
+    sprintf('<meta http-equiv="refresh" content="0; url=/%s">', novo),
+    sprintf('<link rel="canonical" href="/%s">', novo),
+    '<meta name="robots" content="noindex">',
+    "</head><body>",
+    sprintf('<p>Esta página mudou de endereço: <a href="/%s">/%s</a></p>',
+            novo, novo),
+    "</body></html>"
+  ), file.path("_site", antigo), useBytes = TRUE)
+  message(sprintf("  /%s -> /%s", antigo, novo))
+}
+
 message("pronto: _site/ (pt na raiz, en em _site/en/)")
