@@ -8,8 +8,9 @@
 #      render` direto -- ver o cabecalho daquele script);
 #   2. `wrangler deploy` do _site/ conforme wrangler.jsonc;
 #   3. conferencia AO VIVO: paginas-chave em 200 nos dois idiomas, o www
-#      e as URLs antigas em 301, o llms.txt e os .md dos posts em text/*,
-#      e o sitemap apontando para o dominio proprio.
+#      e as URLs antigas em 301, o llms.txt e os .md dos posts em text/* com
+#      charset e canonical, Content-Language por pasta, hreflang e sitemap
+#      na forma canonica (200, nao 307) e no dominio proprio.
 #      Conferir depois de publicar, nunca confiar no log do deploy.
 #
 # Uso:  powershell -File scripts/publicar-site.ps1
@@ -33,6 +34,7 @@ try {
     if (-not (Test-Path '_site\_redirects'))      { throw "_site\_redirects nao existe" }
     if (-not (Test-Path '_site\llms.txt'))        { throw "_site\llms.txt nao existe" }
     if (-not (Test-Path '_site\llms-full.txt'))   { throw "_site\llms-full.txt nao existe" }
+    if (-not (Test-Path '_site\_headers'))       { throw "_site\_headers nao existe" }
 
     # --- 2. deploy ----------------------------------------------------------
     # `npx.cmd` e nao `npx` (no PowerShell `npx` resolve para um shim .ps1 que
@@ -62,11 +64,12 @@ try {
                 if ($null -eq $_.Exception.Response) { throw }
                 $resp = $_.Exception.Response
             }
-            $out = @{ code = [int]$resp.StatusCode; location = [string]$resp.Headers['Location']; ctype = [string]$resp.ContentType }
+            $out = @{ code = [int]$resp.StatusCode; location = [string]$resp.Headers['Location']; ctype = [string]$resp.ContentType; hdr = @{} }
+            foreach ($k in $resp.Headers.AllKeys) { $out.hdr[$k] = [string]$resp.Headers[$k] }
             $resp.Close()
             return $out
         } catch {
-            return @{ code = -1; location = $_.Exception.Message; ctype = '' }
+            return @{ code = -1; location = $_.Exception.Message; ctype = ''; hdr = @{} }
         }
     }
 
@@ -100,17 +103,46 @@ try {
     # vier outro, e caso para o _headers).
     foreach ($p in @('/llms.txt', '/llms-full.txt')) {
         $s = Status ($dominio + $p)
-        if ($s.code -ne 200)               { $falhas += ("$p -> " + $s.code + " (esperado 200)") }
-        elseif ($s.ctype -notlike 'text/*') { $falhas += ("$p -> Content-Type '" + $s.ctype + "' (esperado text/*)") }
+        if ($s.code -ne 200)                             { $falhas += ("$p -> " + $s.code + " (esperado 200)") }
+        elseif ($s.ctype -notlike 'text/*charset=utf-8*') { $falhas += ("$p -> Content-Type '" + $s.ctype + "' (esperado text/* com charset=utf-8)") }
     }
     $posts = $devem200 | Where-Object { $_ -like '*/blog/posts/*/' }
     if ($posts.Count -eq 0) { throw "nenhum post na lista devem200 para derivar o .md" }
     foreach ($p in $posts) {
         $md = $p + 'index.md'
         $s = Status ($dominio + $md)
-        if ($s.code -ne 200)                       { $falhas += ("$md -> " + $s.code + " (esperado 200)") }
-        elseif ($s.ctype -notlike 'text/markdown*') { $falhas += ("$md -> Content-Type '" + $s.ctype + "' (esperado text/markdown)") }
+        if ($s.code -ne 200) { $falhas += ("$md -> " + $s.code + " (esperado 200)"); continue }
+        if ($s.ctype -notlike 'text/markdown*charset=utf-8*') { $falhas += ("$md -> Content-Type '" + $s.ctype + "' (esperado text/markdown; charset=utf-8)") }
+        # o canonical do .md (_headers) tem de apontar para uma URL que responde 200, nao 307
+        $link = [string]$s.hdr['Link']
+        if ($link -notmatch '<([^>]+)>; rel="canonical"') { $falhas += ("$md -> sem Link canonical (" + $link + ")"); continue }
+        $can = Status $Matches[1]
+        if ($can.code -ne 200) { $falhas += ("$md -> canonical " + $Matches[1] + " responde " + $can.code + " (esperado 200)") }
     }
+
+    # Cabecalhos do _headers (render-site.R, passo 6): idioma por pasta -- o
+    # /en/* DESTACA o do /* antes de por o seu; se a concatenacao voltar
+    # ("pt-BR, en"), o Worker mudou de comportamento -- e a higiene basica.
+    $s = Status ($dominio + '/')
+    if ($s.hdr['Content-Language'] -ne 'pt-BR')          { $falhas += ("/ -> Content-Language '" + $s.hdr['Content-Language'] + "' (esperado pt-BR)") }
+    if ($s.hdr['X-Content-Type-Options'] -ne 'nosniff')  { $falhas += ("/ -> sem X-Content-Type-Options: nosniff") }
+    $s = Status ($dominio + '/en/')
+    if ($s.hdr['Content-Language'] -ne 'en')             { $falhas += ("/en/ -> Content-Language '" + $s.hdr['Content-Language'] + "' (esperado en, sem concatenar)") }
+
+    # URLs canonicas (render-site.R, passo 5), DERIVADAS da pagina inicial ao
+    # vivo: cada hreflang dela e o primeiro .js de site_libs (cache de uma
+    # semana) tem de responder 200 -- hreflang em 404 foi o defeito de 02/09.
+    $inicio = (Invoke-WebRequest -Uri ($dominio + '/') -UseBasicParsing -TimeoutSec 30).Content
+    $alts = [regex]::Matches($inicio, 'hreflang="[a-z]+" href="([^"]+)"') | ForEach-Object { $_.Groups[1].Value }
+    if ($alts.Count -lt 2) { $falhas += "pagina inicial sem os dois hreflang (pt e en)" }
+    foreach ($a in $alts) {
+        $s = Status $a
+        if ($s.code -ne 200) { $falhas += ("hreflang $a -> " + $s.code + " (esperado 200)") }
+    }
+    if ($inicio -match 'src="(site_libs/[^"]+\.js)"') {
+        $s = Status ($dominio + '/' + $Matches[1])
+        if ($s.hdr['Cache-Control'] -notlike '*max-age=604800*') { $falhas += ($Matches[1] + " -> Cache-Control '" + $s.hdr['Cache-Control'] + "' (esperado max-age=604800)") }
+    } else { $falhas += "pagina inicial sem script de site_libs para conferir o cache" }
 
     $s = Status ($dominio + '/nao-existe-' + [guid]::NewGuid().ToString('N').Substring(0, 6))
     if ($s.code -ne 404) { $falhas += ("pagina inexistente -> " + $s.code + " (esperado 404)") }
@@ -118,12 +150,20 @@ try {
     $sitemap = (Invoke-WebRequest -Uri ($dominio + '/sitemap.xml') -UseBasicParsing -TimeoutSec 30).Content
     if ($sitemap -match 'github\.io') { $falhas += "sitemap ainda cita github.io -- site-url errado no _quarto.yml" }
     if ($sitemap -notmatch 'sidneybissoli\.com/en/blog/posts/') { $falhas += "sitemap sem os posts em ingles" }
+    # forma canonica: nenhuma <loc> em .html (o Worker responderia 307), e as
+    # tres primeiras respondem 200
+    $locs = [regex]::Matches($sitemap, '<loc>([^<]+)</loc>') | ForEach-Object { $_.Groups[1].Value }
+    if (($locs | Where-Object { $_ -like '*.html' }).Count -gt 0) { $falhas += "sitemap com <loc> em .html (esperado forma canonica)" }
+    foreach ($u in ($locs | Select-Object -First 3)) {
+        $s = Status $u
+        if ($s.code -ne 200) { $falhas += ("sitemap <loc> $u -> " + $s.code + " (esperado 200)") }
+    }
 
     if ($falhas.Count -gt 0) {
         foreach ($f in $falhas) { Registrar ("FALHA: " + $f) }
         throw "conferencia ao vivo falhou (" + $falhas.Count + ")"
     }
-    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown, 404 ok, sitemap no dominio proprio")
+    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown com charset e canonical em 200, Content-Language por pasta, " + $alts.Count + " hreflang em 200, cache de site_libs, 404 ok, sitemap canonico no dominio proprio")
 }
 catch {
     Registrar ("ERRO: " + $_.Exception.Message)

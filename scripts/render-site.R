@@ -24,7 +24,7 @@
 setwd(here::here())
 library(stringr)
 
-message("[1/4] renderizando os dois idiomas...")
+message("[1/6] renderizando os dois idiomas...")
 babelquarto::render_website(".", preview = FALSE)
 
 # ---- 2. tradução da barra na versão em inglês -------------------------------
@@ -41,7 +41,7 @@ ROTULOS <- c(
   "Sobre mim"      = "About me"
 )
 
-message("[2/4] traduzindo a barra em _site/en/ ...")
+message("[2/6] traduzindo a barra em _site/en/ ...")
 arquivos <- list.files("_site/en", pattern = "\\.html$", recursive = TRUE,
                        full.names = TRUE)
 if (length(arquivos) == 0) stop("nenhum HTML em _site/en/ — o render em inglês falhou?")
@@ -103,7 +103,7 @@ REDIRECIONAMENTOS <- c(
   "/about.en.html"           = "/en/about.html"
 )
 
-message("[3/4] escrevendo _site/_redirects ...")
+message("[3/6] escrevendo _site/_redirects ...")
 for (antigo in names(REDIRECIONAMENTOS)) {
   novo  <- REDIRECIONAMENTOS[[antigo]]
   alvo  <- if (endsWith(novo, "/")) paste0(novo, "index.html") else novo
@@ -159,7 +159,7 @@ paginas <- lapply(fontes, function(f) {
 })
 paginas <- Filter(Negate(is.null), paginas)
 
-message("[4/4] escrevendo _site/llms.txt e _site/llms-full.txt ...")
+message("[4/6] escrevendo _site/llms.txt e _site/llms-full.txt ...")
 if (length(paginas) == 0) stop("nenhum .qmd declara `format: gfm` — o llms.txt ficaria vazio.")
 
 esperados <- vapply(paginas, `[[`, "", "md")
@@ -230,5 +230,122 @@ writeLines(c(llms, "", "---", "", full), "_site/llms-full.txt", useBytes = TRUE)
 
 message(sprintf("  %d documento(s) em Markdown (%d pt, %d en) listados no llms.txt; llms-full.txt com %d linhas.",
                 length(paginas), length(pt), length(en), length(full)))
+
+# ---- 5. URLs canônicas: hreflang e sitemap ---------------------------------
+# O Worker serve com `html_handling: auto-trailing-slash` (wrangler.jsonc):
+# `/x/index.html` responde 307 para `/x/` e `/about.html` para `/about`. A URL
+# que devolve 200 é essa forma curta — e é a que o buscador tem de receber
+# como oficial. Só que o Quarto escreve `index.html` no sitemap e o babelquarto
+# escreve os `hreflang` com o NOME DO FONTE (`/en/about.en.html`), que não
+# existe em `_site/`: em 02/09/2026 os 13 alternates `en` do site eram 404
+# (o seletor de idioma, que é outro link, estava certo). Uma regra só,
+# `url_canonica()`, espelha o Worker; vale para hreflang, `<loc>` do sitemap
+# e o `Link: canonical` dos `.md` no `_headers` (passo 6).
+#
+# Alternate que aponta para tradução que NÃO existe (a 404 e a página
+# pt-only de projetos) é removido — hreflang para 404 é pior que nenhum.
+url_canonica <- function(url) {
+  url <- sub("/index\\.html$", "/", url)
+  sub("\\.html$", "", url)
+}
+# caminho de arquivo em _site/ (relativo) a partir de um href absoluto
+arquivo_de <- function(href) {
+  p <- sub(paste0("^", DOMINIO), "", href)
+  p <- sub("/$", "/index.html", p)
+  file.path("_site", sub("^/", "", p))
+}
+
+message("[5/6] URLs canônicas nos hreflang e no sitemap ...")
+todos_html <- list.files("_site", pattern = "\\.html$", recursive = TRUE, full.names = TRUE)
+todos_html <- todos_html[!grepl("^_site/site_libs/", todos_html)]
+alt_corrigidos <- 0L; alt_removidos <- 0L
+for (f in todos_html) {
+  html <- paste(readLines(f, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  alts <- str_match_all(html, '<link rel="alternate" hreflang="([a-z]+)" href="([^"]+)" />')[[1]]
+  if (nrow(alts) == 0) next
+  for (i in seq_len(nrow(alts))) {
+    tag <- alts[i, 1]; href <- alts[i, 3]
+    # o nome do fonte (`.en.html`) vira o nome publicado (`.html`)
+    real <- sub("\\.en\\.html$", ".html", href)
+    if (!file.exists(arquivo_de(real))) {
+      html <- str_replace(html, fixed(paste0(tag, "\n")), "")
+      html <- str_replace(html, fixed(tag), "")
+      alt_removidos <- alt_removidos + 1L
+      next
+    }
+    novo <- sprintf('<link rel="alternate" hreflang="%s" href="%s" />', alts[i, 2], url_canonica(real))
+    if (novo != tag) alt_corrigidos <- alt_corrigidos + 1L
+    html <- str_replace(html, fixed(tag), novo)
+  }
+  writeLines(html, f, useBytes = TRUE)
+}
+message(sprintf("  hreflang: %d corrigido(s), %d removido(s) (sem tradução).",
+                alt_corrigidos, alt_removidos))
+
+sitemap <- paste(readLines("_site/sitemap.xml", warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+locs <- str_match_all(sitemap, "<loc>([^<]+)</loc>")[[1]][, 2]
+if (length(locs) == 0) stop("sitemap.xml sem <loc> — o render falhou?")
+sem_arquivo <- locs[!file.exists(arquivo_de(locs))]
+if (length(sem_arquivo) > 0) {
+  stop("sitemap lista URL sem arquivo em _site/: ", paste(sem_arquivo, collapse = ", "))
+}
+for (u in unique(locs)) {
+  sitemap <- str_replace_all(sitemap, fixed(paste0("<loc>", u, "</loc>")),
+                             paste0("<loc>", url_canonica(u), "</loc>"))
+}
+writeLines(sitemap, "_site/sitemap.xml", useBytes = TRUE)
+message(sprintf("  sitemap: %d URL(s) na forma canônica.", length(locs)))
+
+# ---- 6. cabeçalhos (arquivo _headers do Worker) ----------------------------
+# Lido pelo Worker com assets, como o `_redirects`; não é servido. Regras em
+# blocos "caminho + cabeçalhos indentados"; cabeçalho repetido em duas regras
+# que casam é CONCATENADO com vírgula (doc), por isso o `/en/*` DESTACA
+# (`! Nome`) o Content-Language do `/*` antes de pôr o seu. Limite: 100
+# regras, 2.000 caracteres por linha.
+#
+# O que cada bloco resolve (medido ao vivo em 02/09/2026, antes deste passo):
+# - `.md` e `llms*.txt` saíam SEM charset (o Worker deduz o tipo da extensão
+#   e para por aí): texto em português com acento, navegador pode exibir
+#   lixo. Aqui ganham `charset=utf-8`.
+# - Content-Language por pasta: pt-BR na raiz, en em `/en/`.
+# - `Link: canonical` em cada `.md` apontando para o HTML (forma canônica do
+#   passo 5): o `.md` é cópia para agentes, não página concorrente. Um bloco
+#   por `.md`, DERIVADO da lista do passo 4.
+# - `site_libs/` cacheável por uma semana (o bootstrap tem hash no nome; os
+#   .js do Quarto não, e uma semana é o teto aceitável de atraso quando o
+#   Quarto mudar de versão). O resto fica no default (max-age=0 + ETag).
+# - Higiene: nosniff, referrer, frame, permissions. Sem CSP (o Quarto usa
+#   script inline) e sem HSTS — HSTS é decisão da ZONA (afeta os produtos),
+#   não deste Worker.
+message("[6/6] escrevendo _site/_headers ...")
+cabecalhos <- c(
+  "# Gerado por scripts/render-site.R — não editar à mão.",
+  "/*",
+  "  X-Content-Type-Options: nosniff",
+  "  Referrer-Policy: strict-origin-when-cross-origin",
+  "  X-Frame-Options: SAMEORIGIN",
+  "  Permissions-Policy: camera=(), microphone=(), geolocation=()",
+  "  Content-Language: pt-BR",
+  "/en/*",
+  "  ! Content-Language",
+  "  Content-Language: en",
+  "/*.md",
+  "  Content-Type: text/markdown; charset=utf-8",
+  "/llms.txt",
+  "  Content-Type: text/plain; charset=utf-8",
+  "/llms-full.txt",
+  "  Content-Type: text/plain; charset=utf-8",
+  "/site_libs/*",
+  "  Cache-Control: public, max-age=604800",
+  unlist(lapply(paginas, function(p) c(
+    sub(paste0("^", DOMINIO), "", p$url),
+    sprintf('  Link: <%s>; rel="canonical"', url_canonica(sub("\\.md$", ".html", p$url)))
+  )))
+)
+n_regras <- sum(grepl("^/", cabecalhos))
+if (n_regras > 100) stop("_headers com ", n_regras, " regras — o limite do Worker é 100.")
+if (any(nchar(cabecalhos) > 2000)) stop("_headers com linha acima de 2.000 caracteres.")
+writeLines(cabecalhos, "_site/_headers", useBytes = TRUE)
+message(sprintf("  %d regra(s), %d delas de canonical dos .md.", n_regras, length(paginas)))
 
 message("pronto: _site/ (pt na raiz, en em _site/en/)")
