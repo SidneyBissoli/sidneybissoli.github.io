@@ -54,7 +54,7 @@ website:
       # "Paineis" (dashboard/index.qmd) fica FORA da barra enquanto
       # `dashboard/**` estiver fora do render (ver `project.render` acima):
       # com o item, a barra apontava para o .qmd cru e o visitante recebia o
-      # fonte em vez de uma pagina (medido em 03/09/2026 antes de publicar).
+      # fonte em vez de uma pagina (medido em 01/09/2026 antes de publicar).
       # Reincluir junto com a reinclusao do render dos paineis.
       - href: projects/index.qmd
         text: Projetos
