@@ -1,0 +1,321 @@
+---
+title: "Querying SIDRA through MCP in Claude and ChatGPT — IBGE inside the assistant, with provenance"
+subtitle: "How to connect ibge-br-mcp in each client, and one real query end to end: from the question to the URL that reproduces it"
+author: "Sidney Bissoli"
+date: "2026-09-02"
+categories: [IBGE, SIDRA, MCP, Claude, ChatGPT]
+toc: true
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
+---
+
+*Published 2 September 2026. Every figure here was captured live, through the
+production server, on the publication date; none is illustrative. The source
+URL sits next to each one.*
+
+Ask an AI assistant *"what is Brazil's unemployment rate?"* and it answers with
+a plausible number from training: maybe the right one, maybe two years old,
+with no source. Connect the same assistant to SIDRA — IBGE's statistical table
+bank — and the answer changes in kind: the table, the quarter, the URL that
+reproduces the query and the extraction date come with it. Anyone can retrace
+the path.
+
+This text is the **how**. It shows what it takes to connect
+[`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) — an
+[MCP](https://modelcontextprotocol.io) server over IBGE's public APIs — in each
+client that speaks the protocol (claude.ai, Claude Desktop, Claude Code,
+ChatGPT, Cursor, VS Code, Gemini CLI), then asks one real question end to end,
+with the output of every step pasted here. On *which* table to pick and how to
+be sure it is the right one, I wrote earlier: [Finding the right SIDRA
+table](/en/blog/posts/sidra-tabela-certa/). The two texts complete each other;
+this one is about the tool.
+
+## MCP in three lines
+
+The [Model Context Protocol](https://modelcontextprotocol.io) is an open
+standard for an AI assistant to call outside tools. A **server** exposes the
+tools (here: find a table, read its metadata, query the data); a **client** —
+the app you talk to — calls them when the question asks for it. The model
+decides which tool and which parameters; the server runs the real query against
+IBGE's API and returns the result with provenance.
+
+`ibge-br-mcp` comes in two forms, and the only difference is where it runs:
+
+| Form | Address | When |
+|:--|:--|:--|
+| **Remote** (hosted, nothing to install) | `https://ibge.sidneybissoli.com/mcp` | claude.ai, ChatGPT, and any client that accepts a remote server. No key, no sign-up. |
+| **Local** (runs on your machine, via Node.js) | `npx -y ibge-br-mcp` | Claude Desktop, Claude Code, editors — when you prefer the calls to leave from your own computer. |
+
+Same tools in both; same APIs behind them. The remote form is a Cloudflare
+Worker bound to the package published on
+[npm](https://www.npmjs.com/package/ibge-br-mcp); the local form is the package
+itself.
+
+## Connecting, client by client
+
+Each block below was checked against the client's official documentation on the
+publication date; where I ran the steps myself, I say so.
+
+### claude.ai (and Claude Desktop, through the same account)
+
+Custom connectors over remote MCP are available on the Free, Pro, Max, Team and
+Enterprise plans (Free allows one connector), per
+[Anthropic](https://support.claude.com/en/articles/11175166-getting-started-with-custom-connectors-using-remote-mcp).
+
+1. **Settings → Connectors → Add custom connector.**
+2. Name `IBGE`, URL `https://ibge.sidneybissoli.com/mcp`. Leave the advanced
+   settings (OAuth Client ID/Secret) blank: the server requires no
+   authentication.
+3. In the conversation, **+** → **Connectors** → switch IBGE on.
+
+The connector lives in the account, not in the app: Claude Desktop and Cowork
+see it without any further setup. This is the path I use daily — every number
+in this text came through it.
+
+### Claude Code
+
+One line in the terminal, for the remote or the local form:
+
+```bash
+claude mcp add --transport http ibge https://ibge.sidneybissoli.com/mcp
+claude mcp add --transport stdio ibge-local -- npx -y ibge-br-mcp
+```
+
+`--scope project` writes a `.mcp.json` at the project root, which can be
+committed and applies to everyone who opens the folder:
+
+```json
+{
+  "mcpServers": {
+    "ibge": { "type": "http", "url": "https://ibge.sidneybissoli.com/mcp" }
+  }
+}
+```
+
+`claude mcp list` shows the status; so does `/mcp` inside a session.
+[Documentation](https://code.claude.com/docs/en/mcp).
+
+### Claude Desktop (local server)
+
+Besides the account connector, Desktop runs local servers from a file:
+**Settings → Developer → Edit Config** opens `claude_desktop_config.json`
+(`~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on
+Windows). Requires Node.js 18 or newer.
+
+```json
+{
+  "mcpServers": {
+    "ibge-br-mcp": {
+      "command": "npx",
+      "args": ["-y", "ibge-br-mcp"]
+    }
+  }
+}
+```
+
+Restart the app; the server shows up under **+ → Connectors**. The `-y`
+matters: without it, `npx` stops on first run waiting for a confirmation nobody
+sees. [Documentation](https://modelcontextprotocol.io/docs/develop/connect-local-servers).
+
+### ChatGPT
+
+ChatGPT has two paths, and the server serves both. I ran both on 2 September
+2026, with the remote URL, no authentication.
+
+**Developer mode** (Pro, Plus, Business, Enterprise and Education plans, on the
+web, per [OpenAI](https://developers.openai.com/api/docs/guides/developer-mode)):
+
+1. **Settings → Security and login → Developer mode**, on.
+2. **Settings → Apps → Create**: name `IBGE`, a description, MCP server URL
+   `https://ibge.sidneybissoli.com/mcp`, Authentication **No authentication**,
+   tick that you trust the app → **Create**. The URL was accepted right away.
+3. In the conversation, **+ → Developer mode**, tick IBGE and ask explicitly:
+   *"use the IBGE app to…"*. Any tool on the server can be called; the `ibge_*`
+   ones are the ones that bring data.
+
+**Deep Research.** ChatGPT's deep research only accepts servers that expose two
+tools with names fixed by OpenAI, `search` and `fetch`
+([doc](https://developers.openai.com/api/docs/mcp)). `ibge-br-mcp` exposes them
+since version 4.3.0, on top of the `ibge_*` tools: `search` ranks the question
+against SIDRA tables, municipalities and the known indicators; `fetch` returns
+the document as Markdown with the public URL ChatGPT cites. With the app
+created above, **+ → Deep research → Sources** lists IBGE; tick it. In the run I
+did, the report called `search`, picked Table 6579 and assembled the population
+of the 34 municipalities of the Belo Horizonte metropolitan region, each line
+with its source.
+
+### Cursor, VS Code and Gemini CLI
+
+Same idea, different files. All three accept the remote form directly.
+
+**Cursor** — `.cursor/mcp.json` in the project or `~/.cursor/mcp.json`
+([doc](https://cursor.com/docs/context/mcp)):
+
+```json
+{ "mcpServers": { "ibge": { "url": "https://ibge.sidneybissoli.com/mcp" } } }
+```
+
+**VS Code** (Copilot) — `.vscode/mcp.json`; the key is `servers`, not
+`mcpServers` ([doc](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)):
+
+```json
+{ "servers": { "ibge": { "type": "http", "url": "https://ibge.sidneybissoli.com/mcp" } } }
+```
+
+**Gemini CLI** — `~/.gemini/settings.json`; for Streamable HTTP the key is
+`httpUrl` (`url` is the older SSE transport)
+([doc](https://geminicli.com/docs/tools/mcp-server/)):
+
+```json
+{ "mcpServers": { "ibge": { "httpUrl": "https://ibge.sidneybissoli.com/mcp" } } }
+```
+
+For the local form in any of them: `"command": "npx", "args": ["-y",
+"ibge-br-mcp"]` in place of the URL.
+
+## One question, end to end
+
+Once connected, the flow is conversation. The question I asked, in claude.ai,
+with the connector on:
+
+> What is the unemployment rate by state in the latest available quarter — and
+> where is it highest?
+
+The assistant does not know by heart which table answers that, and should not
+guess. The server's instructions walk it through SIDRA's three steps — the
+same ones as in the [earlier text](/en/blog/posts/sidra-tabela-certa/): find
+the table, read the metadata, query. Below, every call it made and what came
+back.
+
+### Step 1 — `ibge_sidra_tabelas`: which table?
+
+Searching `desocupação` (unemployment): 33 tables, from different surveys — the
+discontinued Monthly Employment Survey, the annual PNAD Contínua, the SDG
+indicators. Narrowing with `pesquisa: "trimestral"` (quarterly) leaves 7, all
+from the quarterly PNAD Contínua:
+
+| Code | Name |
+|--:|:--|
+| **4099** | Unemployment and labour underutilisation rates, in the reference week, persons aged 14 and over |
+| 6396 | … by sex |
+| 6397 | … by age group |
+| 6468 | Unemployment rate — total, coefficient of variation, change on the previous quarter and on the same quarter a year earlier |
+| 6467, 6483, 6484 | Unemployment level; combined underutilisation rates |
+
+Source: `https://servicodados.ibge.gov.br/api/v3/agregados`.
+
+4099 is the candidate: no breakdown by sex or age, and the rate itself rather
+than its change.
+
+### Step 2 — `ibge_sidra_metadados`: is it the right one?
+
+The metadata for 4099 say what the table is before any number:
+
+- Survey: **quarterly PNAD Contínua**; subject Labour; quarterly, from Q1 2012
+  to **Q2 2026**.
+- Territorial levels: Brazil, Major Region, **Federation Unit** (state),
+  Metropolitan Region, Municipality, Integrated Development Region.
+- Variable **4099** — Unemployment rate, in the reference week, persons aged 14
+  and over, in **%**. The other seven are coefficients of variation and combined
+  underutilisation rates.
+
+Source: `https://servicodados.ibge.gov.br/api/v3/agregados/4099/metadados`.
+
+This is where it is settled: states are there, the latest quarter is there, the
+variable is the rate and not the level or the change. Query it.
+
+### Step 3 — `ibge_sidra`: the data
+
+The call, as the assistant assembled it:
+
+```
+ibge_sidra(tabela="4099", variaveis="4099", nivel_territorial="3",
+           periodos="last", estatisticas=true, topN=5)
+```
+
+`estatisticas: true` makes the server compute the distribution over every row
+before returning — 27 federation units, one call:
+
+| | |
+|:--|--:|
+| Period | Q2 2026 |
+| Median across the 27 states | 5.6% |
+| Minimum | Santa Catarina, 2.1% |
+| Maximum | **Amapá, 9.8%** |
+| Highest | Amapá 9.8 · Bahia 9.1 · Piauí 8.3 · Pernambuco 8.3 · Alagoas 7.9 |
+| Lowest | Santa Catarina 2.1 · Mato Grosso 2.2 · Espírito Santo 2.3 · Rondônia 2.6 · Mato Grosso do Sul 2.7 |
+
+Source: `https://apisidra.ibge.gov.br/values/t/4099/n3/all/v/4099/p/last`.
+
+A second call with `nivel_territorial="1"` gives Brazil in the same quarter:
+**5.4%** (source:
+`https://apisidra.ibge.gov.br/values/t/4099/n1/all/v/4099/p/last`).
+
+### What travels with the number
+
+Every server response carries a provenance block. Step 3's, as returned:
+
+```json
+{
+  "source": "IBGE — SIDRA (Banco de Tabelas Estatísticas)",
+  "source_url": "https://apisidra.ibge.gov.br/values/t/4099/n3/all/v/4099/p/last",
+  "data_vintage": "2º trimestre 2026",
+  "retrieved_at": "2026-09-02T20:15:51-03:00",
+  "citation": "Fonte: IBGE — SIDRA, Tabela 4099 (PNAD Contínua - Taxa de desocupação (trimestral)), https://apisidra.ibge.gov.br/values/t/4099/n3/all/v/4099/p/last, extraído em 02/09/2026.",
+  "license": "Dados abertos do Poder Executivo federal (Lei 12.527/2011; Decreto 8.777/2016)"
+}
+```
+
+The `source_url` opens in a browser and returns the same 27 values. What the
+assistant writes for you is interpretation; this is the data.
+
+## In Deep Research: `search` and `fetch`, live
+
+The two tools of OpenAI's contract follow the same principle, in a shape
+ChatGPT can cite. Called through the same connector, on the same date:
+
+`search("taxa de desocupação trimestral")` returned ten results, each with
+`id`, `title` and `url`; the first ones:
+
+| id | title | url |
+|:--|:--|:--|
+| `ind:desemprego` | Taxa de Desocupação (indicador desemprego) | sidra.ibge.gov.br/tabela/4099 |
+| `sidra:6468` | Tabela 6468 — Taxa de desocupação … variações em relação ao trimestre anterior | sidra.ibge.gov.br/tabela/6468 |
+| `sidra:4099` | Tabela 4099 — Taxas de desocupação e de subutilização da força de trabalho … | sidra.ibge.gov.br/tabela/4099 |
+
+`fetch("sidra:4099")` returned the document: the table's metadata as Markdown
+(survey, period 201201–202602, levels, the eight variables) and the canonical
+URL `https://sidra.ibge.gov.br/tabela/4099` — which is what shows up in the
+report's citation. The Deep Research report is written by the model; what
+holds it up is that `url` on every source.
+
+## Before publishing a number
+
+The tool removes the manual work; it does not remove judgement. Three checks
+that stay yours, with or without an assistant:
+
+1. **Which survey the table belongs to.** Step 2 said *quarterly PNAD
+   Contínua*. An unemployment rate from the **annual** PNAD Contínua (Table
+   4562) or from the old Monthly Employment Survey (2179) has a different
+   coverage and period — and would show up in the same search as step 1. The
+   [earlier text](/en/blog/posts/sidra-tabela-certa/) is about this.
+2. **Which period.** `data_vintage` says *Q2 2026*; `periodos: "last"` takes
+   the latest published, which changes with every release. A number without
+   its quarter is a loose number.
+3. **Which unit and level.** Rate in %, persons aged 14 and over, by state.
+   The median across states (5.6%) is not Brazil's rate (5.4%): the first
+   counts each state as one; the second is weighted by the labour force.
+
+The provenance block exists so that these checks can be made by whoever reads,
+not only by whoever wrote.
+
+---
+
+*Server: [`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) · hosted
+endpoint at `https://ibge.sidneybissoli.com/mcp` · npm package
+[`ibge-br-mcp`](https://www.npmjs.com/package/ibge-br-mcp) · MIT. IBGE data
+under Brazil's open-data framework (Law 12.527/2011 and Decree 8.777/2016):
+free use, with the obligation to credit the source.*

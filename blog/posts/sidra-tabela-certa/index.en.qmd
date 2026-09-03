@@ -152,8 +152,10 @@ is **provenance**: the table, the period, the URL that reproduces the query and
 the extraction date travel with the value, and anyone can retrace the path.
 
 That is what [`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) does:
-21 tools over the IBGE APIs, with a provenance block on every response, for
-clients that speak [MCP](https://modelcontextprotocol.io).
+tools over the IBGE APIs, with a provenance block on every response, for
+clients that speak [MCP](https://modelcontextprotocol.io). How to connect the
+server in each client, and one query end to end, are in the next text:
+[Querying SIDRA through MCP in Claude and ChatGPT](/en/blog/posts/sidra-via-mcp/).
 
 But step 2 stays yours, with or without a tool. **Before publishing a number,
 look at which survey the table belongs to.** It is the only thing that stood

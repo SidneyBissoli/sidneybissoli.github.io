@@ -204,12 +204,15 @@ resposta passa a ter **procedência**: a tabela, o período, a URL que reproduz 
 consulta e a data da extração vêm junto com o valor, e qualquer pessoa pode
 refazer o caminho.
 
-É o que o [`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) faz: 21
+É o que o [`ibge-br-mcp`](https://github.com/SidneyBissoli/ibge-br-mcp) faz:
 ferramentas sobre as APIs do IBGE, com um bloco de procedência em toda resposta,
 para clientes que falam [MCP](https://modelcontextprotocol.io) — Claude, ChatGPT
 e afins. Os três passos deste texto viram `ibge_sidra_tabelas` →
 `ibge_sidra_metadados` → `ibge_sidra`; e, para os assuntos mais comuns, os
-atalhos `ibge_censo`, `ibge_indicadores`, `ibge_cidades` e `ibge_comparar`.
+atalhos `ibge_censo`, `ibge_indicadores`, `ibge_cidades` e `ibge_comparar`. Como
+conectar o servidor em cada cliente, e uma consulta de ponta a ponta, estão no
+texto seguinte: [Consultando o SIDRA por MCP no Claude e no
+ChatGPT](/blog/posts/sidra-via-mcp/).
 
 Mas o passo 2 continua sendo seu, com ou sem ferramenta. **Antes de publicar um
 número, olhe de qual pesquisa a tabela é.** Foi a única coisa que faltava para
