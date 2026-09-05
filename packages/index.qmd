@@ -56,7 +56,8 @@ inquéritos como o VIGITEL.
 
 Versão 0.2.0 no CRAN desde 15/02/2026 ·
 [documentação](https://sidneybissoli.github.io/healthbR/) ·
-[GitHub](https://github.com/SidneyBissoli/healthbR)
+[GitHub](https://github.com/SidneyBissoli/healthbR) ·
+[healthbR ou microdatasus?](/blog/posts/healthbr-vs-microdatasus/)
 :::
 :::
 :::

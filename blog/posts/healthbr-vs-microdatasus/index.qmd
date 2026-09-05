@@ -1,0 +1,427 @@
+---
+title: "healthbR ou microdatasus? Os dois pacotes R para o DATASUS, lado a lado no mesmo download"
+subtitle: "SIM, SINASC e SIH lidos pelos dois pacotes: o que cada um devolve, quanto demora, onde os códigos viram rótulos — e uma armadilha em cada lado"
+author: "Sidney Bissoli"
+date: "2026-09-05"
+categories: [Saúde pública, DataSUS, R, healthbR, microdatasus]
+toc: true
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
+---
+
+*Publicado em 5 de setembro de 2026. Todos os números deste texto foram
+medidos nesse dia, na mesma sessão de R, com healthbR 0.3.1 (versão de
+desenvolvimento), microdatasus 3.0.0, arrow 25.0.0, dplyr 1.2.1 e R 4.6.1 no
+Windows, numa conexão residencial no Brasil. O código de cada medição está
+colado aqui e na
+[vignette em inglês](https://sidneybissoli.github.io/healthbR/articles/healthbr-vs-microdatasus.html)
+do pacote; nada é ilustrativo.*
+
+Quem trabalha com microdado do SUS em R — óbitos do SIM, nascidos vivos do
+SINASC, internações do SIH — tem dois pacotes para escolher. O
+[microdatasus](https://CRAN.R-project.org/package=microdatasus), do Raphael
+Saldanha, descrito em Saldanha et al. (2019), é a resposta habitual para
+"como leio o DATASUS no R". O [healthbR](https://github.com/SidneyBissoli/healthbR)
+é o meu. Os dois se sobrepõem em seis sistemas do DATASUS e divergem em quase
+tudo o que fazem com os bytes depois do download.
+
+Este texto coloca os dois lado a lado **no mesmo download**, três vezes:
+internações de Roraima na competência 2023-01, óbitos do Acre em 2022 e
+nascimentos do Acre em 2022. Mostro o que cada um devolve, quanto demora e
+onde a escolha muda o resultado de um script. A intenção não é vencer uma
+comparação: é que quem chega ao DATASUS pelo R saiba o que está escolhendo,
+e que quem já usa um dos dois saiba o que o outro faz de diferente.
+
+## O que cada um cobre
+
+| | healthbR | microdatasus 3.0.0 |
+|:--|:--|:--|
+| SIM (mortalidade) | `sim_data()`: DO, 1996–2024 | DO, DOFET, DOEXT, DOINF, DOMAT |
+| SINASC (nascidos vivos) | `sinasc_data()`: 1996–2024 | SINASC |
+| SIH (internações) | `sih_data()`: RD (AIH reduzida), 2008–2026 | RD, RJ, SP, ER |
+| SIA (ambulatorial) | 13 tipos de arquivo, 2008–2026 | 12 tipos de arquivo |
+| CNES (estabelecimentos) | 13 tipos de arquivo, 2005–2026 | 13 tipos de arquivo |
+| SINAN (agravos) | 31 agravos, 2007–2026 | 8 agravos (dengue, chikungunya, zika, malária, Chagas, leishmanioses visceral e tegumentar, leptospirose) |
+| SI-PNI (vacinação) | 1994–2026 | — |
+| SISAB (atenção primária) | sim | — |
+| Inquéritos | VIGITEL, PNS, PNAD Contínua, POF, denominadores do Censo | — |
+| Agências | ANS, ANVISA | — |
+| Tabelas auxiliares | `*_dictionary()`, `*_variables()` por módulo | SIGTAP, CADGER, `tabMun`, `tabCBO`, `tabOcupacao`, `tabNaturalidade` |
+
+O microdatasus vai mais fundo no SIM e no SIH (os extratos fetal, de causas
+externas, infantil e materno do SIM; os arquivos RJ, SP e ER do SIH) e traz a
+tabela SIGTAP de procedimentos. O healthbR vai mais largo: mais agravos do
+SINAN, SI-PNI, SISAB, os inquéritos domiciliares e as agências, tudo sob a
+mesma API `*_years()` / `*_data()` / `*_dictionary()`.
+
+## O mesmo leitor, duas filosofias
+
+Os dois descompactam os `.dbc` do Ministério (DBF comprimido com PKWare DCL)
+com o **mesmo código C**: o microdatasus 3.0.0 abandonou a dependência do
+`read.dbc` e adotou a implementação vendorizada do healthbR — está no NEWS
+dele, com agradecimento. Os bytes que os dois leem são idênticos; a diferença
+começa logo depois.
+
+**O healthbR mantém os códigos e tipa as colunas.** `SEXO` continua `1`/`3`,
+`MORTE` continua `0`/`1`, `DT_INTER` vira `Date`, `VAL_TOT` vira número,
+`IDADE` vira inteiro. Os rótulos moram em `sih_dictionary()`,
+`sim_dictionary()`, `sinasc_dictionary()`, e entram por *join* quando você
+quiser. O `parse = TRUE` padrão converte só o que é quantitativo ou data;
+campo categórico codificado fica como texto, para cruzar limpo com o
+dicionário e com outros anos.
+
+**O microdatasus separa baixar de processar.** `fetch_datasus()` devolve toda
+coluna como texto, exatamente como está no DBF. `process_sih()`,
+`process_sim()`, `process_sinasc()` trocam os códigos por rótulos (`SEXO`
+vira `"Masculino"`/`"Feminino"`, `MORTE` vira `"Não"`/`"Sim"`), convertem
+datas, abrem o campo de idade do SIM em uma coluna por unidade e, com
+`municipality_data = TRUE`, juntam nome, coordenadas e altitude do município.
+O resultado é um tibble de colunas de texto.
+
+Nenhum dos dois está errado. Rótulo é o que se quer numa tabela de relatório;
+código é o que se quer para cruzar com dicionário, comparar anos ou alimentar
+um modelo. A armadilha é misturar: depois de `process_sih()`, `MORTE == 1` é
+`FALSE` em todas as linhas, e `substr(DT_INTER, 5, 6)` já não é o mês, porque
+os dois foram reescritos.
+
+## Um download nos dois: SIH, Roraima, competência 2023-01
+
+Roraima é o menor arquivo do SIH; janeiro de 2023 tem 4.734 internações. As
+duas leituras partem de cache vazio.
+
+```r
+library(healthbR)
+library(microdatasus)
+library(dplyr)
+
+# healthbR
+rr_h <- sih_data(year = 2023, month = 1, uf = "RR")
+#> ℹ Reading SIH data from R2: 2023/01 (1 UF(s))...
+dim(rr_h)
+#> [1] 4734  116
+table(vapply(rr_h, function(x) class(x)[1], ""))
+#> character      Date   integer   numeric
+#>       101         3         7         5
+
+# microdatasus
+rr_m <- fetch_datasus(year_start = 2023, month_start = 1,
+                      year_end = 2023, month_end = 1,
+                      uf = "RR", information_system = "SIH-RD")
+dim(rr_m)
+#> [1] 4734  113
+rr_mp <- process_sih(rr_m)
+dim(rr_mp)
+#> [1] 4734  121
+```
+
+As mesmas 4.734 linhas; os conjuntos de `N_AIH` são idênticos. O healthbR
+acrescenta três colunas (`year`, `month`, `uf_source`: a competência e a UF
+do arquivo, que o registro da AIH não carrega); o `process_sih()` acrescenta
+oito (`munResNome`, `munResUf`, latitude, longitude, altitude, área, status e
+tipo do município de residência).
+
+Os mesmos cinco registros, de três jeitos:
+
+```r
+cols <- c("N_AIH", "SEXO", "COD_IDADE", "IDADE", "MORTE", "DT_INTER",
+          "DIAG_PRINC", "MUNIC_RES", "VAL_TOT")
+
+as.data.frame(head(rr_h[cols], 5))              # healthbR
+#>           N_AIH SEXO COD_IDADE IDADE MORTE   DT_INTER DIAG_PRINC MUNIC_RES  VAL_TOT
+#> 1 1423100411392    3         4    18     0 2022-12-13       O809    140017   568.80
+#> 2 1423100911661    1         4    83     0 2022-12-26       J189    140010   994.59
+#> 3 1423100911672    3         4    65     0 2022-12-03       I219    140010   620.12
+#> 4 1423100911683    1         4    58     0 2022-12-26       I248    140020   333.08
+#> 5 1423100911694    1         4    35     0 2022-11-01       A499    140010 11202.59
+
+as.data.frame(head(rr_m[cols], 5))              # microdatasus, cru
+#>           N_AIH SEXO COD_IDADE IDADE MORTE DT_INTER DIAG_PRINC MUNIC_RES  VAL_TOT
+#> 1 1423100411392    3         4    18     0 20221213       O809    140017    568.8
+#> 2 1423100911661    1         4    83     0 20221226       J189    140010   994.59
+#> 3 1423100911672    3         4    65     0 20221203       I219    140010   620.12
+#> 4 1423100911683    1         4    58     0 20221226       I248    140020   333.08
+#> 5 1423100911694    1         4    35     0 20221101       A499    140010 11202.59
+
+as.data.frame(head(rr_mp[c(cols, "munResNome")], 5))   # microdatasus, processado
+#>           N_AIH      SEXO COD_IDADE IDADE MORTE   DT_INTER DIAG_PRINC MUNIC_RES  VAL_TOT munResNome
+#> 1 1423100411392  Feminino      Anos    18   Não 2022-12-13       O809    140017    568.8      Cantá
+#> 2 1423100911661 Masculino      Anos    83   Não 2022-12-26       J189    140010   994.59  Boa Vista
+#> 3 1423100911672  Feminino      Anos    65   Não 2022-12-03       I219    140010   620.12  Boa Vista
+#> 4 1423100911683 Masculino      Anos    58   Não 2022-12-26       I248    140020   333.08  Caracaraí
+#> 5 1423100911694 Masculino      Anos    35   Não 2022-11-01       A499    140010 11202.59  Boa Vista
+```
+
+Repare em `DT_INTER`: as internações faturadas na competência 2023-01
+aconteceram em novembro e dezembro de 2022. Nos dois pacotes, `year`/`month`
+(ou `year_start`/`month_start`) selecionam a **competência de faturamento**,
+não a data da internação; as internações de um ano-calendário seguem
+chegando por algumas competências depois dele (medido no espelho inteiro: as
+quatro competências seguintes fecham 99,7–99,9% das internações do ano).
+Nenhum pacote muda isso; os dois devem ser usados sabendo disso.
+
+E a armadilha, numa linha de cada:
+
+```r
+sum(rr_h$MORTE == 1)          # healthbR: código inteiro
+#> [1] 113
+sum(rr_m$MORTE == "1")        # microdatasus cru: código como texto
+#> [1] 113
+sum(rr_mp$MORTE == 1)         # microdatasus processado: o código se foi
+#> [1] 0
+table(rr_mp$MORTE)
+#>  Não  Sim
+#> 4621  113
+```
+
+Os mesmos 113 óbitos; a terceira linha é a que devolve zero em silêncio num
+script escrito contra códigos. Descobri isso da pior forma: um cubo de
+agregados do meu próprio servidor MCP do SIH ficou meses com sexo
+"ignorado" em todas as linhas e óbitos zerados, porque o script comparava
+códigos depois de um `process_sih()`. Nenhum teste reclamou — o rótulo é
+justamente o que impede a desconfiança. No healthbR o rótulo está a um *join*
+de distância:
+
+```r
+sih_dictionary("MORTE")
+#> # A tibble: 2 × 4
+#>   variable description              code  label
+#> 1 MORTE    Óbito durante internação 0     Não
+#> 2 MORTE    Óbito durante internação 1     Sim
+```
+
+### Tempo
+
+| Passo | healthbR | microdatasus |
+|:--|--:|--:|
+| Cache vazio, espelho (manifesto de 11.157 partições + um Parquet) | 11,4 s | — |
+| Cache vazio, FTP do DATASUS, `.dbc` (`source = "datasus"`) | 1,1 s | 2,7 s |
+| A mesma chamada de novo, na sessão | 0,5 s (cache Parquet local) | baixa de novo (não há cache) |
+| Rótulos (`process_sih()`) | — | 0,8 s |
+| Tamanho em memória | 4,8 MB | 5,4 MB cru, 5,7 MB processado |
+
+Num arquivo de 349 KB o FTP vence a primeira leitura: o preço de entrada do
+espelho é o manifesto de 10 MB, baixado uma vez e revalidado por ETag depois
+(`sih_status()` o lê em 0,4 s daí em diante). O espelho se paga nas leituras
+repetidas, nas consultas preguiçosas sobre muitas competências e no que vem
+junto com o dado.
+
+Uma confissão de medição: na primeira rodada, a leitura "quente" do healthbR
+levava 5,5 s — mais que o FTP frio. A causa era do pacote: montar o resumo do
+manifesto (11 mil partições) custava 4,6 s e rodava em *toda* chamada. Foi
+corrigido antes de publicar (o resumo agora é memorizado por conteúdo do
+manifesto) e os números acima são do código corrigido. Medir contra o
+concorrente é um bom jeito de achar as próprias lentidões.
+
+## O que vem junto com o dado: proveniência
+
+Do espelho, o tibble carrega a fonte que o serviu e uma linha por arquivo do
+DATASUS por trás dele — URL, MD5 e tamanho do `.dbc`, contagem de registros,
+quando foi processado e por qual versão do pipeline:
+
+```r
+attr(rr_h, "healthbr_source")
+#> [1] "r2"
+
+attr(rr_h, "healthbr_provenance") |>
+  select(year, month, uf, records, source_hash_md5, source_size_bytes)
+#>    year month uf    records source_hash_md5                  source_size_bytes
+#> 1  2023     1 RR       4734 12e74d4b059589ceb47e4136e3b2ce5f            349244
+```
+
+`sih_status()` dá o mesmo para toda partição publicada — é como se descobre
+quais competências existem e se o Ministério reeditou um arquivo (o MD5 muda):
+
+```r
+st <- sih_status()
+nrow(st)
+#> [1] 11157
+attr(st, "last_updated")
+#> [1] "2026-08-18T12:33:31"
+range(st$year)
+#> [1] 1992 2026
+```
+
+O microdatasus 3.0.0 tem `track_source = TRUE`, que acrescenta uma coluna
+`source` com o nome do `.dbc` de origem de cada linha; não registra hash nem
+data, e o FTP não os oferece. Se o seu produto derivado precisa dizer
+exatamente de quais arquivos foi construído, essa é a diferença que importa.
+
+## Consulta preguiçosa: um ano sem baixá-lo
+
+`lazy = TRUE` no healthbR devolve um dataset arrow (ou duckdb) sobre o
+espelho; filtros e seleções de coluna descem para o motor e só os bytes que
+casam viajam. Óbitos por competência em Roraima em todo o 2023, sem nada em
+cache:
+
+```r
+sih_data(year = 2023, uf = "RR", lazy = TRUE) |>
+  filter(MORTE == 1) |>
+  count(month) |>
+  collect() |>
+  arrange(month)
+#>    month     n
+#>  1     1   113
+#>  2     2   120
+#>  3     3   175
+#>  4     4   166
+#>  5     5   118
+#>  6     6    78
+#>  7     7    97
+#>  8     8   144
+#>  9     9   105
+#> 10    10   104
+#> 11    11   128
+#> 12    12   102
+```
+
+19,4 s para doze competências, sem cópia local. No microdatasus o
+equivalente é `fetch_datasus(2023, 1, 2023, 12, uf = "RR",
+information_system = "SIH-RD")`: doze `.dbc` baixados, todas as linhas em
+memória, depois o `filter()`. Para um estado pequeno é indiferente; para o
+país inteiro (um ano de SIH tem uns 2 GB de `.dbc`) a diferença decide se a
+consulta cabe num notebook.
+
+## SIM: óbitos, Acre 2022
+
+```r
+ac_h  <- sim_data(year = 2022, uf = "AC")                      # 1,5 s
+ac_m  <- fetch_datasus(2022, year_end = 2022, uf = "AC",
+                       information_system = "SIM-DO")          # 2,1 s
+ac_mp <- process_sim(ac_m)                                     # 0,7 s
+dim(ac_h); dim(ac_m); dim(ac_mp)
+#> [1] 4159   90
+#> [1] 4159   87
+#> [1] 4159  100
+```
+
+Os mesmos 4.159 óbitos. A coluna interessante é a idade. O SIM a guarda em
+três caracteres: o primeiro é a unidade (0 minutos, 1 horas, 2 dias, 3 meses,
+4 anos, 5 anos acima de 100) e os dois últimos o valor. Os dois pacotes a
+decodificam de modos diferentes:
+
+```r
+# seis óbitos infantis, as mesmas linhas nos dois
+#>   IDADE healthbR_age_years md_IDADEanos md_IDADEmeses md_IDADEdias md_IDADEhoras
+#> 1   021       3.992699e-05         <NA>          <NA>         <NA>          <NA>
+#> 2   101       1.140771e-04         <NA>          <NA>         <NA>             1
+#> 3   201       2.737851e-03         <NA>          <NA>            1          <NA>
+#> 4   302       1.666667e-01         <NA>             2         <NA>          <NA>
+#> 5   102       2.281542e-04         <NA>          <NA>         <NA>             2
+#> 6   108       9.126169e-04         <NA>          <NA>         <NA>             8
+```
+
+O healthbR (`decode_age = TRUE`, padrão) acrescenta uma coluna numérica
+`age_years` contínua — 21 minutos são 0,00004 ano, 2 meses são 0,167 —, de
+modo que faixas etárias e taxas saem de uma coluna só; o `IDADE` original
+fica. O microdatasus abre o campo em `IDADEminutos`, `IDADEhoras`,
+`IDADEdias`, `IDADEmeses`, `IDADEanos`, cada uma `NA` fora da sua unidade —
+mais próximo de como a DO se lê, com a unidade explícita. Para mortalidade
+adulta os dois concordam ao ano; para mortalidade infantil você vai buscar
+colunas diferentes.
+
+## SINASC: nascidos vivos, Acre 2022
+
+```r
+ac_n <- sinasc_data(year = 2022, uf = "AC")                    # 3,1 s
+class(ac_n$PESO); sum(is.na(ac_n$PESO)); median(ac_n$PESO, na.rm = TRUE)
+#> [1] "integer"
+#> [1] 94
+#> [1] 3230
+
+ac_nm  <- fetch_datasus(2022, year_end = 2022, uf = "AC",
+                        information_system = "SINASC")         # 3,3 s
+ac_nmp <- process_sinasc(ac_nm)                                # 3,5 s
+sum(is.na(ac_nm$PESO)); sum(is.na(ac_nmp$PESO))
+#> [1] 94
+#> [1] 14483
+```
+
+Os mesmos 14.483 nascimentos. Uma coisa a saber antes de confiar no
+`process_sinasc()` nas versões medidas aqui: ele devolveu `PESO` (peso ao
+nascer) como `NA` em todas as linhas, enquanto a coluna crua tinha 94
+faltantes em 14.483. O comportamento se reproduz sem rede, com a amostra do
+próprio pacote:
+
+```r
+sum(is.na(microdatasus::sinasc_sample$PESO))
+#> [1] 2
+sum(is.na(process_sinasc(microdatasus::sinasc_sample)$PESO))
+#> [1] 100
+```
+
+A recodificação dos sentinelas (`"0"` e `"9999"` para `NA`) é seguida de um
+`as.numeric()`, e com o dplyr 1.2.1 a coluna inteira volta faltante. É o tipo
+de coisa que um mantenedor conserta numa tarde depois de avisado — confira o
+NEWS e as issues do pacote para as suas versões e, enquanto isso, pegue o
+`PESO` do tibble cru. O healthbR não reescreve a coluna: `PESO` é lido como
+inteiro e os sentinelas ficam para você tratar.
+
+## De onde vêm os bytes
+
+| | healthbR | microdatasus |
+|:--|:--|:--|
+| SIM, SINASC, SIA, SINAN, CNES | FTP do DATASUS, `.dbc`, descompactado localmente | FTP do DATASUS, `.dbc`, descompactado localmente |
+| SIH, SI-PNI | espelho [healthbr-data](https://github.com/SidneyBissoli/healthbr-data): Parquet particionado no Cloudflare R2, uma partição por arquivo do DATASUS, valores idênticos byte a byte, proveniência por arquivo; FTP como reserva | FTP do DATASUS |
+| Cache local | Parquet particionado por módulo; a segunda chamada não toca a rede | não há; toda chamada baixa |
+| Arquivos reeditados | `sih_status()`: MD5 e tamanho por partição, `last_updated` do espelho | — |
+| Consulta preguiçosa | `lazy = TRUE`, arrow ou duckdb, sobre o cache ou o espelho | — |
+| Download paralelo | `future::plan(multisession)` + furrr | sequencial |
+
+O espelho é conferido toda semana contra o FTP por tamanho de arquivo (o FTP
+não oferece ETag nem hash), e um arquivo reeditado é republicado com MD5 novo
+no manifesto — é isso que o `sih_status()` lê.
+
+## Outros caminhos
+
+Dois outros projetos respondem à mesma pergunta e não foram medidos aqui: o
+[PySUS](https://github.com/AlertaDengue/PySUS), pacote Python que cobre SIM,
+SINASC, SIH, SIA, CNES e SINAN a partir do mesmo FTP, e a
+[Base dos Dados](https://basedosdados.org), que serve tabelas tratadas do SIM
+e do SINASC via BigQuery com cliente em R. Pipeline em Python, PySUS; SQL
+sobre tabela já tratada e uma conta no BigQuery, Base dos Dados.
+
+## Qual usar
+
+- **Quer rótulos no tibble e uma tabela rápida**: microdatasus. `process_*()`
+  faz numa chamada o que levaria alguns *joins* no healthbR, e ainda traz nome
+  e coordenadas do município.
+- **Cruza, compara anos ou modela**: healthbR. Código continua código, tipo já
+  vem convertido, dicionário é função e nada é reescrito por baixo de você.
+- **Lê SIH em escala, ou repetidamente**: healthbR. Cache Parquet local,
+  consulta preguiçosa sobre o espelho, proveniência citável.
+- **Precisa dos extratos fetal/infantil/materno do SIM, dos arquivos RJ/SP/ER
+  do SIH ou do SIGTAP**: microdatasus, que os tem e o healthbR (ainda) não.
+- **Precisa de SI-PNI, SISAB, inquéritos, ANS ou ANVISA**: healthbR; o
+  microdatasus para no DATASUS.
+
+Eles também se compõem. `fetch_datasus()` e `sih_data(parse = FALSE)`
+devolvem as mesmas colunas de texto para o mesmo arquivo, então um script
+pode ler com um e rotular com o outro:
+
+```r
+sih_data(year = 2023, month = 1, uf = "RR", parse = FALSE) |>
+  process_sih()
+```
+
+## Para reproduzir
+
+```r
+install.packages(c("microdatasus", "arrow"))
+# install.packages("pak"); pak::pak("SidneyBissoli/healthbR")   # versão dev
+
+sih_clear_cache(); sim_clear_cache(); sinasc_clear_cache()
+system.time(sih_data(year = 2023, month = 1, uf = "RR"))
+system.time(fetch_datasus(2023, 1, 2023, 1, uf = "RR",
+                          information_system = "SIH-RD"))
+```
+
+A versão em inglês, com as mesmas saídas, é a
+[vignette do pacote](https://sidneybissoli.github.io/healthbR/articles/healthbr-vs-microdatasus.html).
+O healthbR está no [CRAN](https://CRAN.R-project.org/package=healthbR) (0.2.0)
+e no [GitHub](https://github.com/SidneyBissoli/healthbR) (versão de
+desenvolvimento, com o espelho do SIH). Um agradecimento ao Raphael Saldanha:
+o microdatasus abriu o caminho que o healthbR percorre, e a adoção do leitor
+de `.dbc` do healthbR na 3.0.0 é o tipo de troca que faz os dois melhorarem.

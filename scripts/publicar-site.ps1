@@ -78,6 +78,7 @@ try {
     $devem200 = @('/', '/en/', '/blog/', '/en/blog/', '/tools/', '/en/tools/',
                   '/blog/posts/sidra-tabela-certa/', '/en/blog/posts/sidra-tabela-certa/',
                   '/blog/posts/sidra-via-mcp/', '/en/blog/posts/sidra-via-mcp/',
+                  '/blog/posts/healthbr-vs-microdatasus/', '/en/blog/posts/healthbr-vs-microdatasus/',
                   '/blog/posts/series-banco-central/', '/blog/posts/cid10-cid11-sus/',
                   '/sitemap.xml', '/robots.txt')
     foreach ($p in $devem200) {

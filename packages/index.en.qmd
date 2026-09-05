@@ -56,7 +56,8 @@ as VIGITEL.
 
 Version 0.2.0 on CRAN since 2026-02-15 ·
 [documentation](https://sidneybissoli.github.io/healthbR/) ·
-[GitHub](https://github.com/SidneyBissoli/healthbR)
+[GitHub](https://github.com/SidneyBissoli/healthbR) ·
+[healthbR or microdatasus?](/en/blog/posts/healthbr-vs-microdatasus/)
 :::
 :::
 :::
