@@ -1,6 +1,8 @@
 ---
 title: "Blog"
 subtitle: "Insights on Psychology, Public Health and Finance"
+# Feeds the RSS channel <description>; `subtitle` does not.
+description: "Tutorials and analyses on psychology, public health and financial markets, with a focus on data and R programming."
 listing:
   contents: posts
   sort: "date desc"
@@ -9,8 +11,12 @@ listing:
   fields: [image, title, subtitle, categories, date, reading-time]
   grid-columns: 3
   page-size: 9
+  # Feed do blog inteiro, em /en/blog/index.xml — o gêmeo do de blog/index.qmd.
+  feed: true
 page-layout: full
 toc: false
 ---
 
 Welcome to my blog! Here I share insights, tutorials, and thoughts on psychology, public health, and financial markets, always with a focus on data analysis and R programming.
+
+Subscribe to the [RSS feed](index.xml) for the whole blog, or to the [R posts feed](r.qmd) only.

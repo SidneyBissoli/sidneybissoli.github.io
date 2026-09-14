@@ -24,7 +24,7 @@
 setwd(here::here())
 library(stringr)
 
-message("[1/6] renderizando os dois idiomas...")
+message("[1/7] renderizando os dois idiomas...")
 babelquarto::render_website(".", preview = FALSE)
 
 # ---- 2. tradução da barra na versão em inglês -------------------------------
@@ -41,7 +41,7 @@ ROTULOS <- c(
   "Sobre mim"      = "About me"
 )
 
-message("[2/6] traduzindo a barra em _site/en/ ...")
+message("[2/7] traduzindo a barra em _site/en/ ...")
 arquivos <- list.files("_site/en", pattern = "\\.html$", recursive = TRUE,
                        full.names = TRUE)
 if (length(arquivos) == 0) stop("nenhum HTML em _site/en/ — o render em inglês falhou?")
@@ -78,7 +78,83 @@ if (length(desconhecidos) > 0) {
 
 message(sprintf("  %d arquivo(s) em inglês com a barra traduzida.", tocados))
 
-# ---- 3. redirecionamentos (arquivo _redirects do Worker) --------------------
+# ---- 3. barra invertida nas URLs (defeito do Quarto no Windows) ------------
+# Achado em 14/09/2026, ao validar o feed no validador do W3C: o feed do blog
+# não passava por "Invalid character in a URI: ../../..\\blog/posts/...". Não
+# era do feed. O Quarto, ao rodar no Windows, resolve link relativo juntando os
+# pedaços com o separador do SISTEMA, e a barra invertida sai no HTML:
+#
+#   href="../../..\\blog/posts/sidra-tabela-certa/"      (dentro dos posts)
+#   href="/.\\en/"   href="..\\projects/"                (barra e rodapé)
+#
+# A varredura do `_site/` naquele dia achou 15 URLs assim, em páginas de todo o
+# site — não só nos dois posts que se citam. Ninguém tinha visto porque o
+# NAVEGADOR normaliza `\\` para `/` em URL de esquema http (regra do WHATWG);
+# quem não normaliza é o resto: validador de feed, leitor de RSS, rastreador, e
+# o passo de hreflang aqui embaixo, que não acha o arquivo e REMOVE o alternate
+# em silêncio.
+#
+# Consertar os links no fonte não resolveria: `/.\\en/` é gerado pelo próprio
+# Quarto, não está escrito em .qmd nenhum. Por isso a normalização é aqui, no
+# HTML já gerado, como a tradução da barra — e vem ANTES do passo de hreflang,
+# que depende de href legível. Barra invertida em URL nunca é válida (teria de
+# ser %5C), então a troca é segura por definição.
+message("[3/7] normalizando barra invertida nas URLs ...")
+# A barra invertida é escrita UMA vez e conferida: montar o padrão a partir
+# dela evita a armadilha de contar escapadas, que foi como este passo nasceu
+# quebrado (o padrão saiu casando DUAS barras e não achava nada).
+UMA_BARRA <- "\\"
+stopifnot(nchar(UMA_BARRA) == 1L)
+PADRAO_URL_TORTA <- paste0('(href|src)="([^"]*[', UMA_BARRA, UMA_BARRA, '][^"]*)"')
+
+arquivos_url <- list.files("_site", pattern = "\\.(html|xml)$",
+                           recursive = TRUE, full.names = TRUE)
+arquivos_url <- arquivos_url[!grepl("_site/site_libs/", arquivos_url, fixed = TRUE)]
+urls_corrigidas <- 0L; arquivos_tocados <- 0L
+for (f in arquivos_url) {
+  linhas_antes <- readLines(f, warn = FALSE, encoding = "UTF-8")
+  txt <- paste(linhas_antes, collapse = "\n")
+  achados <- str_match_all(txt, PADRAO_URL_TORTA)[[1]]
+  if (nrow(achados) == 0) next
+  for (i in seq_len(nrow(achados))) {
+    novo <- sprintf('%s="%s"', achados[i, 2],
+                    str_replace_all(achados[i, 3], fixed(UMA_BARRA), "/"))
+    txt <- str_replace_all(txt, fixed(achados[i, 1]), novo)
+    urls_corrigidas <- urls_corrigidas + 1L
+  }
+  # Este passo troca CARACTERES dentro de atributos; o número de linhas não
+  # pode mudar. A conferência existe porque a primeira versão dele juntou as
+  # linhas com um "\\n" LITERAL em vez de quebra de linha e publicou 13
+  # arquivos numa linha só — HTML e feed — sem nada acusar: o passo dizia
+  # "31 URL(s) corrigidas" e estava destruindo os arquivos que consertava.
+  if (length(str_split(txt, fixed("\n"))[[1]]) != length(linhas_antes)) {
+    stop("normalização de URL mudou o número de linhas de ", f,
+         " (", length(linhas_antes), " -> ", length(str_split(txt, fixed("\n"))[[1]]), ")")
+  }
+  writeLines(txt, f, useBytes = TRUE)
+  arquivos_tocados <- arquivos_tocados + 1L
+}
+message(sprintf("  %d URL(s) em %d arquivo(s).", urls_corrigidas, arquivos_tocados))
+
+# Guarda por um caminho INDEPENDENTE do padrão acima: extrai TODO valor de
+# href/src com um padrão que não contém barra nenhuma e procura a barra com
+# fixed(). Guarda que reusa o padrão do consertador compartilha o defeito dele
+# — foi o que aconteceu aqui em 14/09/2026: o passo dizia "0 URL(s)" e havia 31,
+# e quem achou foi uma varredura escrita fora do R.
+sobraram <- character()
+for (f in arquivos_url) {
+  txt <- paste(readLines(f, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  valores <- str_match_all(txt, '(?:href|src)="([^"]*)"')[[1]]
+  if (nrow(valores) == 0) next
+  v <- valores[, 2]
+  sobraram <- c(sobraram, v[str_detect(v, fixed(UMA_BARRA))])
+}
+if (length(sobraram) > 0) {
+  stop("ainda há ", length(sobraram), " URL(s) com barra invertida em _site/: ",
+       paste(unique(sobraram), collapse = ", "))
+}
+
+# ---- 4. redirecionamentos (arquivo _redirects do Worker) --------------------
 # O site do GitHub Pages (até 01/09/2026) servia caminhos que o layout atual
 # não gera: `publications/` (hoje `research/`) e as cópias `*.en.html` na raiz
 # que a versão anterior do babelquarto emitia (hoje tudo em inglês mora em
@@ -103,7 +179,7 @@ REDIRECIONAMENTOS <- c(
   "/about.en.html"           = "/en/about.html"
 )
 
-message("[3/6] escrevendo _site/_redirects ...")
+message("[4/7] escrevendo _site/_redirects ...")
 for (antigo in names(REDIRECIONAMENTOS)) {
   novo  <- REDIRECIONAMENTOS[[antigo]]
   alvo  <- if (endsWith(novo, "/")) paste0(novo, "index.html") else novo
@@ -119,7 +195,7 @@ linhas <- c(
 )
 writeLines(linhas, "_site/_redirects", useBytes = TRUE)
 
-# ---- 4. superfície para agentes: llms.txt e llms-full.txt ------------------
+# ---- 5. superfície para agentes: llms.txt e llms-full.txt ------------------
 # Agentes e LLMs já pedem `/llms.txt` aqui (medido na zona em 02/09/2026: sete
 # pedidos em uma semana, todos em 404, de diretórios de agentes e de robôs de
 # inventário). O que se publica é o equivalente à mão do "Markdown para
@@ -159,7 +235,7 @@ paginas <- lapply(fontes, function(f) {
 })
 paginas <- Filter(Negate(is.null), paginas)
 
-message("[4/6] escrevendo _site/llms.txt e _site/llms-full.txt ...")
+message("[5/7] escrevendo _site/llms.txt e _site/llms-full.txt ...")
 if (length(paginas) == 0) stop("nenhum .qmd declara `format: gfm` — o llms.txt ficaria vazio.")
 
 esperados <- vapply(paginas, `[[`, "", "md")
@@ -255,7 +331,7 @@ arquivo_de <- function(href) {
   file.path("_site", sub("^/", "", p))
 }
 
-message("[5/6] URLs canônicas nos hreflang e no sitemap ...")
+message("[6/7] URLs canônicas nos hreflang e no sitemap ...")
 todos_html <- list.files("_site", pattern = "\\.html$", recursive = TRUE, full.names = TRUE)
 todos_html <- todos_html[!grepl("^_site/site_libs/", todos_html)]
 alt_corrigidos <- 0L; alt_removidos <- 0L
@@ -296,7 +372,7 @@ for (u in unique(locs)) {
 writeLines(sitemap, "_site/sitemap.xml", useBytes = TRUE)
 message(sprintf("  sitemap: %d URL(s) na forma canônica.", length(locs)))
 
-# ---- 6. cabeçalhos (arquivo _headers do Worker) ----------------------------
+# ---- 7. cabeçalhos (arquivo _headers do Worker) ----------------------------
 # Lido pelo Worker com assets, como o `_redirects`; não é servido. Regras em
 # blocos "caminho + cabeçalhos indentados"; cabeçalho repetido em duas regras
 # que casam é CONCATENADO com vírgula (doc), por isso o `/en/*` DESTACA
@@ -317,7 +393,27 @@ message(sprintf("  sitemap: %d URL(s) na forma canônica.", length(locs)))
 # - Higiene: nosniff, referrer, frame, permissions. Sem CSP (o Quarto usa
 #   script inline) e sem HSTS — HSTS é decisão da ZONA (afeta os produtos),
 #   não deste Worker.
-message("[6/6] escrevendo _site/_headers ...")
+message("[7/7] escrevendo _site/_headers ...")
+
+# Os feeds gerados pelas listagens com `feed:` — derivados do _site/, nunca de
+# uma lista à mão: o sitemap.xml e qualquer outro XML que não seja RSS ficam de
+# fora pelo conteúdo, não pelo nome. Se um dia não houver feed nenhum, o script
+# PARA: o blog sem feed foi o defeito que isto existe para não ter de volta
+# (14/09/2026, r-bloggers não sindicaliza sem RSS).
+feeds_publicados <- local({
+  xmls <- list.files("_site", pattern = "\\.xml$", recursive = TRUE, full.names = TRUE)
+  eh_rss <- vapply(xmls, function(f) {
+    cab <- paste(readLines(f, n = 8, warn = FALSE, encoding = "UTF-8"), collapse = " ")
+    grepl("<rss", cab, fixed = TRUE)
+  }, logical(1))
+  sub("^_site", "", xmls[eh_rss])
+})
+if (length(feeds_publicados) == 0) {
+  stop("nenhum feed RSS em _site/ — alguma listagem perdeu o `feed:`? ",
+       "Sem feed o blog não existe para agregador (r-bloggers, leitores de feed).")
+}
+message(sprintf("  feeds: %s", paste(feeds_publicados, collapse = ", ")))
+
 cabecalhos <- c(
   "# Gerado por scripts/render-site.R — não editar à mão.",
   "/*",
@@ -335,6 +431,13 @@ cabecalhos <- c(
   "  Content-Type: text/plain; charset=utf-8",
   "/llms-full.txt",
   "  Content-Type: text/plain; charset=utf-8",
+  # Feeds RSS, um por listagem e por idioma. Declarados UM A UM de propósito:
+  # uma regra `/*.xml` pegaria também o sitemap.xml, que não é RSS. A lista sai
+  # do próprio _site/ (feeds_publicados, acima), então listagem nova com
+  # `feed:` entra aqui sozinha e feed que deixar de existir sai.
+  unlist(lapply(feeds_publicados, function(p) c(
+    p, "  Content-Type: application/rss+xml; charset=utf-8"
+  ))),
   "/site_libs/*",
   "  Cache-Control: public, max-age=604800",
   unlist(lapply(paginas, function(p) c(

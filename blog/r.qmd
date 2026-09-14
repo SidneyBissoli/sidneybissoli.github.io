@@ -1,0 +1,28 @@
+---
+title: "Posts sobre R"
+subtitle: "Só o que é sobre a linguagem e os pacotes — o feed que o r-bloggers assina"
+description: "Posts sobre a linguagem R e os pacotes que mantenho — healthbR, educabR, cvmdata — e sobre acesso a dados públicos brasileiros em R."
+listing:
+  contents: posts
+  include:
+    categories: "R"
+  sort: "date desc"
+  type: default
+  categories: false
+  fields: [title, subtitle, date, reading-time]
+  # Feed de texto INTEIRO: o r-bloggers republica o que vem no feed, e feed
+  # resumido vira post truncado no agregador.
+  feed:
+    type: full
+    title: "Sidney Bissoli — R"
+page-layout: full
+toc: false
+---
+
+Esta página lista apenas os posts marcados com a categoria **R**, e existe por
+causa do feed: agregadores como o [r-bloggers](https://www.r-bloggers.com)
+pedem um canal só de conteúdo em R, não o blog inteiro — que aqui também trata
+de saúde pública, psicologia e mercados financeiros.
+
+O feed está em [`/blog/r.xml`](r.xml). Para o blog completo, o feed é
+[`/blog/index.xml`](index.xml), e a lista de posts fica em [Blog](index.qmd).

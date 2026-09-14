@@ -1,0 +1,28 @@
+---
+title: "R posts"
+subtitle: "Only what is about the language and the packages — the feed r-bloggers subscribes to"
+description: "Posts about the R language and the packages I maintain — healthbR, educabR, cvmdata — and about accessing Brazilian public data in R."
+listing:
+  contents: posts
+  include:
+    categories: "R"
+  sort: "date desc"
+  type: default
+  categories: false
+  fields: [title, subtitle, date, reading-time]
+  # Full-text feed: r-bloggers republishes whatever the feed carries, and a
+  # summary-only feed shows up there as a truncated post.
+  feed:
+    type: full
+    title: "Sidney Bissoli — R"
+page-layout: full
+toc: false
+---
+
+This page lists only the posts tagged **R**, and it exists for the feed:
+aggregators such as [r-bloggers](https://www.r-bloggers.com) ask for a channel
+carrying R content only, not the whole blog — which here also covers public
+health, psychology and financial markets.
+
+The feed is at [`/en/blog/r.xml`](r.xml). For the complete blog, the feed is
+[`/en/blog/index.xml`](index.xml) and the post list is at [Blog](index.qmd).

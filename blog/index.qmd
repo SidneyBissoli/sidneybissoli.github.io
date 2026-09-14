@@ -1,6 +1,10 @@
 ---
 title: "Blog"
 subtitle: "Insights sobre Psicologia, Saúde Pública e Finanças"
+# `description` é o que alimenta o <description> do canal RSS — o `subtitle`
+# não alimenta. Sem ela o feed sai com a descrição vazia: o validador reclama e
+# o agregador mostra um espaço em branco no lugar do resumo do blog.
+description: "Tutoriais e análises sobre psicologia, saúde pública e mercados financeiros, com foco em dados e programação em R."
 listing:
   contents: posts
   sort: "date desc"
@@ -9,8 +13,16 @@ listing:
   fields: [image, title, subtitle, categories, date, reading-time]
   grid-columns: 3
   page-size: 9
+  # Feed do blog inteiro, em /blog/index.xml. Sem ele o blog não existe para
+  # leitor de feed nem para agregador — e era o que travava o r-bloggers, que
+  # sindicaliza por RSS e não aceita post avulso (medido em 14/09/2026:
+  # /blog/ respondia 200 e feed.xml, rss.xml e index.xml davam 404).
+  # O feed só de posts em R, que é o que o r-bloggers pede, está em blog/r.qmd.
+  feed: true
 page-layout: full
 toc: false
 ---
 
 Bem-vindo ao meu blog! Aqui compartilho insights, tutoriais e reflexões sobre psicologia, saúde pública e mercados financeiros, sempre com foco em análise de dados e programação em R.
+
+Assine o [feed RSS](index.xml) do blog inteiro, ou só o [feed dos posts sobre R](r.qmd).
