@@ -24,6 +24,25 @@
 setwd(here::here())
 library(stringr)
 
+# ---- 0. card de produto sem contagem de ferramentas ------------------------
+# Contagem escrita à mão envelhece em silêncio: os seis cards de MCP diziam
+# "21 ferramentas", "15 ferramentas"... desde 31/08/2026 e, quando os
+# servidores ganharam search/fetch, ficaram todos 2 abaixo do ar até 12/10.
+# O número certo é o tools/list do servidor, não um texto copiado dele — por
+# isso os cards não trazem número, e esta guarda impede que ele volte.
+message("[0/7] conferindo os cards de ferramentas sem contagem...")
+cards <- list.files("tools", pattern = "\\.qmd$", full.names = TRUE)
+contagens <- unlist(lapply(cards, function(f) {
+  linhas <- readLines(f, encoding = "UTF-8", warn = FALSE)
+  i <- which(str_detect(linhas, regex("\\b\\d+\\s+(ferramentas|tools)\\b", ignore_case = TRUE)))
+  if (length(i)) paste0(f, ":", i, ": ", str_trim(linhas[i])) else character()
+}))
+if (length(contagens)) {
+  stop("contagem de ferramentas escrita à mão num card (envelhece a cada tool nova; ",
+       "descreva o que o servidor cobre, sem número):\n", paste(contagens, collapse = "\n"),
+       call. = FALSE)
+}
+
 message("[1/7] renderizando os dois idiomas...")
 babelquarto::render_website(".", preview = FALSE)
 

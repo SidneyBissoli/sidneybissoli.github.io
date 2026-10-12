@@ -45,7 +45,7 @@ and I make it travel with the number.
 ::: {.card-body}
 ### IBGE (Brazilian statistics) {.card-title}
 
-**23 tools** over the IBGE APIs: geography, Census (1970–2022), economic and
+Tools over the IBGE APIs: geography, Census (1970–2022), economic and
 social indicators, SIDRA tables, cartographic meshes, given names, economic
 activity codes and health. Ranks all 5,570 municipalities in a single call, with
 the full distribution instead of a top 10 that hides the skew.
@@ -62,7 +62,7 @@ the full distribution instead of a top 10 that hides the skew.
 ::: {.card-body}
 ### Central Bank of Brazil {.card-title}
 
-**17 tools** over three BCB sources: the **SGS** time series, the **Focus**
+Tools over three BCB sources: the **SGS** time series, the **Focus**
 market-expectations survey and the official **PTAX** exchange rates. It handles
 the API's limits on its own — a 15-year daily window is sliced and merged — and
 compounds rather than sums the series that already are rates of change.
@@ -79,7 +79,7 @@ compounds rather than sums the series that already are rates of change.
 ::: {.card-body}
 ### Brazilian Federal Senate {.card-title}
 
-**69 tools** over the Senate's open data: senators, bills, votes, committees,
+Tools over the Senate's open data: senators, bills, votes, committees,
 floor proceedings, the e-Cidadania participation layer and the administrative
 tier (expenses, procurement, staff, budget). An independent, read-only service,
 not affiliated with the Senate.
@@ -96,7 +96,7 @@ not affiliated with the Senate.
 ::: {.card-body}
 ### Medical terminologies {.card-title}
 
-**33 tools** over ICD-11, LOINC, RxNorm, MeSH, ATC and the **Brazilian CID-10**
+Tools over ICD-11, LOINC, RxNorm, MeSH, ATC and the **Brazilian CID-10**
 (DataSUS V2008, bundled — no network call), plus WHO's official ICD-10 → ICD-11
 transition tables. Portuguese labels come from WHO and NLM themselves; never
 from machine translation.
@@ -113,7 +113,7 @@ from machine translation.
 ::: {.card-body}
 ### ILOSTAT (ILO) {.card-title}
 
-**6 tools** over the International Labour Organization's statistical database:
+Tools over the International Labour Organization's statistical database:
 more than 1,200 indicator dataflows on labour, by country, year, sex and age
 group. You search the dataflows before pulling data, so you never have to guess
 an indicator code.
@@ -130,7 +130,7 @@ an indicator code.
 ::: {.card-body}
 ### UNESCO UIS {.card-title}
 
-**5 tools** over the UNESCO Institute for Statistics: around 5,000 indicators on
+Tools over the UNESCO Institute for Statistics: around 5,000 indicators on
 education, science and R&D, culture and communication, by country, region and
 year. The data release is pinned on every query, so the same question gives the
 same answer tomorrow.

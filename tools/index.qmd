@@ -44,7 +44,7 @@ e eu a faço viajar junto com o número.
 ::: {.card-body}
 ### IBGE {.card-title}
 
-**23 ferramentas** sobre as APIs do IBGE: geografia, Censo (1970–2022),
+Ferramentas sobre as APIs do IBGE: geografia, Censo (1970–2022),
 indicadores econômicos e sociais, tabelas SIDRA, malhas cartográficas, nomes,
 CNAE e saúde. Ranqueia os 5.570 municípios numa chamada só, com a distribuição
 completa em vez de um top 10 que esconde a assimetria.
@@ -61,7 +61,7 @@ completa em vez de um top 10 que esconde a assimetria.
 ::: {.card-body}
 ### Banco Central {.card-title}
 
-**17 ferramentas** sobre três fontes do BCB: as séries temporais do **SGS**, a
+Ferramentas sobre três fontes do BCB: as séries temporais do **SGS**, a
 pesquisa de expectativas de mercado **Focus** e as cotações oficiais **PTAX**.
 Resolve sozinho os limites da API — janela diária de 15 anos é fatiada e
 fundida — e usa encadeamento, não soma, nas séries que já são variação.
@@ -78,7 +78,7 @@ fundida — e usa encadeamento, não soma, nas séries que já são variação.
 ::: {.card-body}
 ### Senado Federal {.card-title}
 
-**69 ferramentas** sobre os dados abertos do Senado: senadores, matérias,
+Ferramentas sobre os dados abertos do Senado: senadores, matérias,
 votações, comissões, plenário, e-Cidadania e a camada administrativa (CEAPS,
 contratações, servidores, orçamento). Serviço independente, somente leitura,
 não afiliado ao Senado.
@@ -95,7 +95,7 @@ não afiliado ao Senado.
 ::: {.card-body}
 ### Terminologias médicas {.card-title}
 
-**33 ferramentas** sobre ICD-11, LOINC, RxNorm, MeSH, ATC e a **CID-10
+Ferramentas sobre ICD-11, LOINC, RxNorm, MeSH, ATC e a **CID-10
 brasileira** (DataSUS V2008, embutida — sem chamada de rede), mais as tabelas
 oficiais de transição ICD-10 → ICD-11 da OMS. Rótulos em português vêm da OMS e
 da NLM; nunca de tradução de máquina.
@@ -112,7 +112,7 @@ da NLM; nunca de tradução de máquina.
 ::: {.card-body}
 ### ILOSTAT (OIT) {.card-title}
 
-**6 ferramentas** sobre a base estatística da Organização Internacional do
+Ferramentas sobre a base estatística da Organização Internacional do
 Trabalho: mais de 1.200 fluxos de indicadores de trabalho por país, ano, sexo e
 faixa etária. Busca-se o fluxo antes de puxar o dado, para não ter que adivinhar
 código de indicador.
@@ -129,7 +129,7 @@ código de indicador.
 ::: {.card-body}
 ### UNESCO UIS {.card-title}
 
-**5 ferramentas** sobre o Instituto de Estatística da UNESCO: cerca de 5.000
+Ferramentas sobre o Instituto de Estatística da UNESCO: cerca de 5.000
 indicadores de educação, ciência e P&D, cultura e comunicação, por país, região
 e ano. A release dos dados é fixada em toda consulta, então a mesma pergunta dá
 a mesma resposta amanhã.
