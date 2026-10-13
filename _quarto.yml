@@ -97,3 +97,9 @@ format:
     toc: false
     page-layout: full
     css: styles.css
+    # Verificação de propriedade no Bing Webmaster Tools (13/10/2026). O
+    # código é público por definição; tirar a linha DESVERIFICA o site.
+    include-in-header:
+      text: |
+        <meta name="msvalidate.01" content="F086422B71EC108D688E2AB6E1673999" />
+
