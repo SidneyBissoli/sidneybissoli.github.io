@@ -12,6 +12,7 @@
 #      charset e canonical, Content-Language por pasta, hreflang e sitemap
 #      na forma canonica (200, nao 307) e no dominio proprio.
 #      Conferir depois de publicar, nunca confiar no log do deploy.
+#   4. IndexNow: avisa os buscadores das URLs do sitemap (so se 3 passou).
 #
 # Uso:  powershell -File scripts/publicar-site.ps1
 
@@ -35,6 +36,9 @@ try {
     if (-not (Test-Path '_site\llms.txt'))        { throw "_site\llms.txt nao existe" }
     if (-not (Test-Path '_site\llms-full.txt'))   { throw "_site\llms-full.txt nao existe" }
     if (-not (Test-Path '_site\_headers'))       { throw "_site\_headers nao existe" }
+    $chaveIndexNow = ([IO.File]::ReadAllText((Join-Path $raiz 'indexnow-key.txt'))).Trim()
+    if ($chaveIndexNow -notmatch '^[a-zA-Z0-9-]{8,128}$') { throw "indexnow-key.txt fora do formato do protocolo" }
+    if (-not (Test-Path '_site\indexnow-key.txt')) { throw "_site\indexnow-key.txt nao existe -- conferir resources: no _quarto.yml" }
 
     # --- 2. deploy ----------------------------------------------------------
     # `npx.cmd` e nao `npx` (no PowerShell `npx` resolve para um shim .ps1 que
@@ -161,11 +165,50 @@ try {
         if ($s.code -ne 200) { $falhas += ("sitemap <loc> $u -> " + $s.code + " (esperado 200)") }
     }
 
+    # A chave do IndexNow tem de estar no ar com o conteudo EXATO: e o que o
+    # Bing le para aceitar o aviso do passo 4.
+    $urlChave = $dominio + '/indexnow-key.txt'
+    try {
+        $servida = (Invoke-WebRequest -Uri $urlChave -UseBasicParsing -TimeoutSec 30).Content
+        if ($servida -is [byte[]]) { $servida = [Text.Encoding]::UTF8.GetString($servida) }
+        if ($servida.Trim() -ne $chaveIndexNow) { $falhas += ("$urlChave -> conteudo diferente da chave local") }
+    } catch { $falhas += ("$urlChave -> " + $_.Exception.Message) }
+
     if ($falhas.Count -gt 0) {
         foreach ($f in $falhas) { Registrar ("FALHA: " + $f) }
         throw "conferencia ao vivo falhou (" + $falhas.Count + ")"
     }
-    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown com charset e canonical em 200, Content-Language por pasta, " + $alts.Count + " hreflang em 200, cache de site_libs, 404 ok, sitemap canonico no dominio proprio")
+    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown com charset e canonical em 200, Content-Language por pasta, " + $alts.Count + " hreflang em 200, cache de site_libs, 404 ok, sitemap canonico no dominio proprio, chave do IndexNow")
+
+    # --- 4. avisar os buscadores (IndexNow) ---------------------------------
+    # Desde 13/10/2026. O endpoint geral repassa a Bing, Yandex, Seznam e
+    # Naver; o Bing e o indice que o ChatGPT consulta. Manda TODAS as <loc>
+    # do sitemap ja conferido acima (o sitemap e a fonte das URLs, nada
+    # pinado aqui). So roda depois da conferencia: avisar o buscador de um
+    # deploy quebrado o faria rastrear o defeito.
+    # Resposta: 200 = aceito; 202 = aceito, chave ainda em validacao (normal
+    # nas primeiras vezes). Qualquer outra e falha VISIVEL: 403 = chave nao
+    # confere, 422 = URL fora do host, 429 = aviso demais. Nao ha "Crawler
+    # Hints" da Cloudflare fazendo isto por nos: depende de cache, e o site e
+    # Worker com assets -- nao medido, nao contado.
+    Registrar ("IndexNow: avisando " + $locs.Count + " URL(s)...")
+    $corpo = @{ host = 'sidneybissoli.com'; key = $chaveIndexNow; keyLocation = $urlChave; urlList = @($locs) } | ConvertTo-Json -Depth 3
+    $req = [System.Net.HttpWebRequest]::Create('https://api.indexnow.org/indexnow')
+    $req.Method = 'POST'
+    $req.ContentType = 'application/json; charset=utf-8'
+    $req.Timeout = 30000
+    $bytes = [Text.Encoding]::UTF8.GetBytes($corpo)
+    $req.ContentLength = $bytes.Length
+    $fluxo = $req.GetRequestStream(); $fluxo.Write($bytes, 0, $bytes.Length); $fluxo.Close()
+    try { $resp = $req.GetResponse() }
+    catch [System.Net.WebException] {
+        if ($null -eq $_.Exception.Response) { throw }
+        $resp = $_.Exception.Response
+    }
+    $codigo = [int]$resp.StatusCode
+    $resp.Close()
+    if (($codigo -ne 200) -and ($codigo -ne 202)) { throw "IndexNow respondeu $codigo (esperado 200 ou 202)" }
+    Registrar ("IndexNow: " + $codigo + " para " + $locs.Count + " URL(s)")
 }
 catch {
     Registrar ("ERRO: " + $_.Exception.Message)

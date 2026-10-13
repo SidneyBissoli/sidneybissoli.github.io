@@ -15,6 +15,12 @@ project:
     # lugar nenhum se eles entrarem. Reincluir quando os dados agregados
     # forem versionados.
     - "!dashboard/**"
+  # Chave do IndexNow (13/10/2026): o protocolo exige servi-la no próprio
+  # host para provar que quem avisa o Bing é o dono do site. É pública por
+  # definição. Fonte única: o publicar-site.ps1 lê o mesmo arquivo para o
+  # envio, então trocar a chave é trocar só este arquivo.
+  resources:
+    - indexnow-key.txt
 
 # Babelquarto multilingual configuration
 babelquarto:

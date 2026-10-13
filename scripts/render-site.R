@@ -173,6 +173,64 @@ if (length(sobraram) > 0) {
        paste(unique(sobraram), collapse = ", "))
 }
 
+# ---- 3b. link para o inglês que o movimento para en/ entortou --------------
+# Achado em 13/10/2026, ao medir os 404 dos robôs na zona: o fonte escreve
+# `[texto](/en/blog/posts/sidra-tabela-certa/)`, absoluto e certo, e o Quarto o
+# converte em relativo a partir de ONDE O .en.qmd É RENDERIZADO
+# (`blog/posts/sidra-via-mcp/`) — `../../../en/blog/...`. O babelquarto depois
+# move a página um nível abaixo, para `en/blog/posts/...`, e o mesmo relativo
+# passa a resolver em `/en/en/blog/...`: 404. Três links assim naquele dia (os
+# dois posts do SIDRA, que se citam, e a página de pacotes), mais as cópias no
+# feed em inglês. Só links para a árvore inglesa: link para o português
+# (`../../../blog/...`) não sofre, porque o fonte em inglês não o escreve.
+#
+# Volta ao que o autor escreveu: caminho absoluto a partir da raiz. Funciona
+# na página e no feed (leitor de RSS resolve relativo pelo link do ITEM, não
+# pelo do feed). Vale só dentro de `_site/en/`: na raiz, `../en/` é legítimo.
+PADRAO_EN_RELATIVO <- '(href|src)="(?:\\.\\./)+en/([^"]*)"'
+arquivos_en <- arquivos_url[startsWith(arquivos_url, "_site/en/")]
+links_en <- 0L
+for (f in arquivos_en) {
+  txt <- paste(readLines(f, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  n <- str_count(txt, PADRAO_EN_RELATIVO)
+  if (n == 0) next
+  writeLines(str_replace_all(txt, PADRAO_EN_RELATIVO, '\\1="/en/\\2"'), f, useBytes = TRUE)
+  links_en <- links_en + n
+}
+message(sprintf("  %d link(s) relativos para en/ reescritos como absolutos.", links_en))
+
+# Guarda por um caminho INDEPENDENTE do consertador (a mesma lição do passo 3):
+# não procura o padrão, resolve TODO link relativo interno contra a pasta do
+# arquivo, como o navegador faria, e exige que o alvo exista no _site/. Pega
+# esta classe e qualquer outra que gere link interno para o vazio.
+resolve_relativo <- function(pasta, href) {
+  pilha <- character()
+  for (x in c(str_split(pasta, "/")[[1]], str_split(href, "/")[[1]])) {
+    if (x %in% c("", ".")) next
+    if (x == "..") { pilha <- head(pilha, -1); next }
+    pilha <- c(pilha, x)
+  }
+  paste(pilha, collapse = "/")
+}
+sem_alvo <- character()
+for (f in arquivos_url) {
+  txt <- paste(readLines(f, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+  v <- unique(str_match_all(txt, '(?:href|src)="([^"]*)"')[[1]][, 2])
+  v <- v[!str_detect(v, "^([a-zA-Z][a-zA-Z0-9+.-]*:|#|//)") & nzchar(v)]
+  for (h in v) {
+    caminho <- URLdecode(sub("[?#].*$", "", h))
+    alvo <- if (startsWith(caminho, "/")) file.path("_site", sub("^/", "", caminho))
+            else file.path("_site", resolve_relativo(sub("^_site/?", "", dirname(f)), caminho))
+    if (!file.exists(alvo) && !file.exists(file.path(alvo, "index.html"))) {
+      sem_alvo <- c(sem_alvo, sprintf("%s -> %s", sub("^_site/", "", f), h))
+    }
+  }
+}
+if (length(sem_alvo) > 0) {
+  stop(length(sem_alvo), " link(s) interno(s) sem alvo em _site/:\n  ",
+       paste(unique(sem_alvo), collapse = "\n  "))
+}
+
 # ---- 4. redirecionamentos (arquivo _redirects do Worker) --------------------
 # O site do GitHub Pages (até 01/09/2026) servia caminhos que o layout atual
 # não gera: `publications/` (hoje `research/`) e as cópias `*.en.html` na raiz
