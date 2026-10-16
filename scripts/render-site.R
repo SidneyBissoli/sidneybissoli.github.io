@@ -491,6 +491,35 @@ if (length(feeds_publicados) == 0) {
 }
 message(sprintf("  feeds: %s", paste(feeds_publicados, collapse = ", ")))
 
+# WebMCP (16/10/2026): o script só chega ao _site/ por `project: resources:` e
+# só entra nas páginas pelo `include-in-header` do _quarto.yml — duas linhas
+# que podem sumir sem erro nenhum. Conferido aqui, em pt e en. E o `_headers`
+# abaixo NÃO pode negar a política `tools` (Permissions-Policy), que é o que
+# libera a API para a própria origem.
+if (!file.exists("_site/webmcp.js")) {
+  stop("_site/webmcp.js ausente — saiu de `project: resources:` no _quarto.yml?")
+}
+# O Quarto reescreve o `/webmcp.js` do include como caminho RELATIVO à página
+# (`./webmcp.js`, `../../../webmcp.js`) e o babelquarto copia o arquivo também
+# para `en/`: por isso a conferência é "o src resolve para um arquivo que
+# existe", não o literal.
+sem_webmcp <- Filter(function(f) {
+  src <- str_match(readLines(f, warn = FALSE, encoding = "UTF-8"), 'src="([^"]*webmcp\\.js)"')[, 2]
+  src <- src[!is.na(src)]
+  length(src) == 0 || !file.exists(file.path(dirname(f), src[1]))
+}, list.files("_site", pattern = "\\.html$", recursive = TRUE, full.names = TRUE))
+# Páginas de redirecionamento (meta refresh) e rascunhos (`draft: true`, que o
+# Quarto grava como HTML vazio, sem <head>) não têm o cabeçalho do Quarto.
+sem_webmcp <- Filter(function(f) {
+  linhas <- readLines(f, n = 40, warn = FALSE)
+  any(grepl("<head", linhas, fixed = TRUE)) &&
+    !any(grepl('http-equiv="refresh"', linhas, fixed = TRUE))
+}, sem_webmcp)
+if (length(sem_webmcp) > 0) {
+  stop(length(sem_webmcp), " página(s) sem /webmcp.js (include-in-header do _quarto.yml): ",
+       paste(head(sem_webmcp, 5), collapse = ", "))
+}
+
 cabecalhos <- c(
   "# Gerado por scripts/render-site.R — não editar à mão.",
   "/*",
@@ -525,6 +554,9 @@ cabecalhos <- c(
 n_regras <- sum(grepl("^/", cabecalhos))
 if (n_regras > 100) stop("_headers com ", n_regras, " regras — o limite do Worker é 100.")
 if (any(nchar(cabecalhos) > 2000)) stop("_headers com linha acima de 2.000 caracteres.")
+if (any(grepl("Permissions-Policy:.*\\btools=", cabecalhos))) {
+  stop("_headers mexe na política `tools` — isso desliga o WebMCP do site.")
+}
 writeLines(cabecalhos, "_site/_headers", useBytes = TRUE)
 message(sprintf("  %d regra(s), %d delas de canonical dos .md.", n_regras, length(paginas)))
 
