@@ -21,6 +21,10 @@ project:
   # envio, então trocar a chave é trocar só este arquivo.
   resources:
     - indexnow-key.txt
+    # Ferramentas WebMCP (16/10/2026) para agentes que rodam no navegador do
+    # visitante; carregado pelo include-in-header abaixo. Sem esta linha o
+    # arquivo não chega ao _site/ (o render-site.R para se faltar).
+    - webmcp.js
 
 # Babelquarto multilingual configuration
 babelquarto:
@@ -102,4 +106,5 @@ format:
     include-in-header:
       text: |
         <meta name="msvalidate.01" content="F086422B71EC108D688E2AB6E1673999" />
+        <script src="/webmcp.js" defer></script>
 
