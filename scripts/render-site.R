@@ -520,9 +520,37 @@ if (length(sem_webmcp) > 0) {
        paste(head(sem_webmcp, 5), collapse = ", "))
 }
 
+# Token do origin trial do WebMCP (16/10/2026): sem ele o Chrome só expõe as
+# ferramentas a quem ligou a flag de teste. Público por definição (vai em toda
+# resposta) e válido só para a origem assinada. Fonte única: o
+# publicar-site.ps1 lê o mesmo arquivo para conferir o cabeçalho no ar, então
+# renovar é trocar só o arquivo. O conteúdo é conferido aqui, não confiado:
+# token de outra origem ou de outro recurso o Chrome ignora sem erro nenhum.
+token_webmcp <- trimws(readLines("origin-trial-webmcp.txt", warn = FALSE)[1])
+dados_token <- local({
+  bytes <- jsonlite::base64_dec(token_webmcp)
+  # Formato v2/v3: versão (1 byte), assinatura (64), tamanho (4), JSON.
+  jsonlite::fromJSON(rawToChar(bytes[70:length(bytes)]))
+})
+if (!identical(sub(":443$", "", dados_token$origin), DOMINIO) ||
+    !identical(dados_token$feature, "WebMCP")) {
+  stop("origin-trial-webmcp.txt é de ", dados_token$origin, " / ", dados_token$feature,
+       " — esperado ", DOMINIO, " / WebMCP.")
+}
+vence_token <- as.POSIXct(dados_token$expiry, origin = "1970-01-01", tz = "UTC")
+dias_token <- as.numeric(difftime(vence_token, Sys.time(), units = "days"))
+# Aviso e não parada: token vencido só desliga o WebMCP, e isso não pode
+# travar a publicação do resto do site. A renovação está no painel.
+if (dias_token < 30) {
+  warning(sprintf("token do origin trial do WebMCP %s em %s — renovar e trocar origin-trial-webmcp.txt.",
+                  if (dias_token < 0) "VENCEU" else "vence", format(vence_token, "%d/%m/%Y", tz = "America/Sao_Paulo")))
+}
+message(sprintf("  origin trial WebMCP: vence em %s", format(vence_token, "%d/%m/%Y", tz = "America/Sao_Paulo")))
+
 cabecalhos <- c(
   "# Gerado por scripts/render-site.R — não editar à mão.",
   "/*",
+  paste0("  Origin-Trial: ", token_webmcp),
   "  X-Content-Type-Options: nosniff",
   "  Referrer-Policy: strict-origin-when-cross-origin",
   "  X-Frame-Options: SAMEORIGIN",

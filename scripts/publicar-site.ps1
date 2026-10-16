@@ -39,6 +39,9 @@ try {
     $chaveIndexNow = ([IO.File]::ReadAllText((Join-Path $raiz 'indexnow-key.txt'))).Trim()
     if ($chaveIndexNow -notmatch '^[a-zA-Z0-9-]{8,128}$') { throw "indexnow-key.txt fora do formato do protocolo" }
     if (-not (Test-Path '_site\indexnow-key.txt')) { throw "_site\indexnow-key.txt nao existe -- conferir resources: no _quarto.yml" }
+    # Token do origin trial do WebMCP: mesma fonte que o render-site.R usou
+    # para o _headers; conferido no ar no passo 3.
+    $tokenWebmcp = ([IO.File]::ReadAllText((Join-Path $raiz 'origin-trial-webmcp.txt'))).Trim()
 
     # --- 2. deploy ----------------------------------------------------------
     # `npx.cmd` e nao `npx` (no PowerShell `npx` resolve para um shim .ps1 que
@@ -137,8 +140,12 @@ try {
     $s = Status ($dominio + '/')
     if ($s.hdr['Content-Language'] -ne 'pt-BR')          { $falhas += ("/ -> Content-Language '" + $s.hdr['Content-Language'] + "' (esperado pt-BR)") }
     if ($s.hdr['X-Content-Type-Options'] -ne 'nosniff')  { $falhas += ("/ -> sem X-Content-Type-Options: nosniff") }
+    # Igualdade exata: um token repetido em duas regras sairia concatenado
+    # com virgula, e o Chrome ignora o cabecalho inteiro sem erro nenhum.
+    if ($s.hdr['Origin-Trial'] -ne $tokenWebmcp)         { $falhas += ("/ -> Origin-Trial diferente do origin-trial-webmcp.txt (WebMCP desligado para quem nao tem a flag)") }
     $s = Status ($dominio + '/en/')
     if ($s.hdr['Content-Language'] -ne 'en')             { $falhas += ("/en/ -> Content-Language '" + $s.hdr['Content-Language'] + "' (esperado en, sem concatenar)") }
+    if ($s.hdr['Origin-Trial'] -ne $tokenWebmcp)         { $falhas += ("/en/ -> Origin-Trial diferente do origin-trial-webmcp.txt") }
 
     # URLs canonicas (render-site.R, passo 5), DERIVADAS da pagina inicial ao
     # vivo: cada hreflang dela e o primeiro .js de site_libs (cache de uma
@@ -183,7 +190,7 @@ try {
         foreach ($f in $falhas) { Registrar ("FALHA: " + $f) }
         throw "conferencia ao vivo falhou (" + $falhas.Count + ")"
     }
-    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown com charset e canonical em 200, Content-Language por pasta, " + $alts.Count + " hreflang em 200, cache de site_libs, 404 ok, sitemap canonico no dominio proprio, chave do IndexNow")
+    Registrar ("verificado ao vivo: " + $devem200.Count + " paginas em 200, " + $devem301.Count + " redirecionamentos em 301, llms.txt e " + $posts.Count + " .md em text/markdown com charset e canonical em 200, Content-Language por pasta, " + $alts.Count + " hreflang em 200, cache de site_libs, 404 ok, sitemap canonico no dominio proprio, chave do IndexNow, token do origin trial do WebMCP")
 
     # --- 4. avisar os buscadores (IndexNow) ---------------------------------
     # Desde 13/10/2026. O endpoint geral repassa a Bing, Yandex, Seznam e
