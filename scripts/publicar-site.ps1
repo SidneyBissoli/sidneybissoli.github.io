@@ -92,6 +92,11 @@ try {
 
     $devem301 = @{
         'https://www.sidneybissoli.com/'          = 'https://sidneybissoli.com/'
+        # Pagina interna do www tambem: o worker do bcb libera so a origem
+        # sem www para o webmcp.js (worker/src/origin.ts); um redirecionamento
+        # que valesse so para a raiz deixaria /tools/ servida sob o www, e la
+        # a ferramenta do bcb levaria 403.
+        'https://www.sidneybissoli.com/tools/'    = 'https://sidneybissoli.com/tools/'
         ($dominio + '/publications/')             = '/research/'
         ($dominio + '/index.en.html')             = '/en/index.html'
         ($dominio + '/about.en.html')             = '/en/about.html'
