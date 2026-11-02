@@ -1,0 +1,215 @@
+---
+title: "sih-br-mcp, microdatasus or PySUS? One question about Brazilian hospital admissions, three ways"
+subtitle: "Pneumonia among Espírito Santo residents in 2024: the microdata in R, the microdata in Python and an MCP server inside an AI assistant — the same total, what each one costs, and a trap in the middle"
+author: "Sidney Bissoli"
+date: "2026-11-02"
+categories: [Public health, DataSUS, SIH, MCP, microdatasus, PySUS]
+toc: true
+# Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que
+# agentes e LLMs leem sem parser; listado no /llms.txt (render-site.R).
+format:
+  html: default
+  gfm: default
+---
+
+*Published 2 November 2026. Every number here was measured that day:
+sih-br-mcp 1.8.1 on the public endpoint, microdatasus 3.0.0 with dplyr 1.2.1
+and R 4.6.1 on Windows, PySUS 2.11.7 with Python 3.13 on Linux, over a
+residential connection in Brazil. The scripts are in
+[`scripts/comparativo/`](https://github.com/SidneyBissoli/sih-br-mcp/tree/master/scripts/comparativo)
+of the sih-br-mcp repository; nothing is illustrative. The same comparison,
+as a product page:
+[sih.sidneybissoli.com/vs-microdatasus-pysus](https://sih.sidneybissoli.com/vs-microdatasus-pysus).*
+
+If you work with Brazilian public hospital admissions — SIH/SUS, the AIH
+records DATASUS publishes every month — you almost certainly reach the data
+through one of two packages: [microdatasus](https://github.com/rfsaldanha/microdatasus),
+by Raphael Saldanha, in R, or [PySUS](https://github.com/AlertaDengue/PySUS),
+by the AlertaDengue team, in Python. Both download and decode the
+**microdata**: one record per admission.
+[sih-br-mcp](https://sih.sidneybissoli.com) is mine and sits one layer up: an
+MCP server that answers the **aggregate question** inside an AI assistant
+(Claude, ChatGPT, any MCP client) from pre-built cubes, with provenance in
+every answer.
+
+They are tools for different jobs, which is exactly why it is worth putting
+all three in front of the same question.
+
+## The question, and why it needs 432 files
+
+> How many pneumonia admissions (ICD-10 J12–J18) did residents of Espírito
+> Santo have in 2024, and how many deaths?
+
+It looks like one file. DATASUS publishes SIH as one file per **hospital
+state** and **billing month** (the month the AIH was billed, not the month
+of admission). The question is by state of **residence** and **admission
+date**. Two consequences:
+
+- A resident of Espírito Santo admitted in Minas Gerais is in Minas Gerais's
+  file.
+- An admission in December 2024 may be billed in March 2025; the four
+  following billing months close 99.7–99.9% of a year.
+
+The honest answer from microdata: 27 states × 16 billing months (2024-01 to
+2025-04) = **432 files, 1,358 MiB of `.dbc`, 18,863,265 records**.
+
+The natural shortcut, reading only Espírito Santo's 16 files (30 MiB), gives
+**13,097** admissions. It misses 208: residents admitted in Minas Gerais
+(102), Rio de Janeiro (83) and elsewhere. Small (1.6%), and exactly the kind
+of difference nobody notices.
+
+## Three ways
+
+| | Admissions | Deaths | Downloaded | Time |
+|:--|--:|--:|:--|--:|
+| **sih-br-mcp** 1.8.1 | 13,305 | 1,250 | 21 KB response | 0.9 s |
+| microdatasus 3.0.0 | 13,305 | 1,250 | 432 files, 1,358 MiB | 40.6 min |
+| PySUS 2.11.7, `group="RD"` | 9,135 | 760 | 345 of 432 files | 59.4 min\* |
+
+\* On Linux under WSL, reading and writing the Windows disk: not comparable
+with microdatasus's time.
+
+microdatasus and sih-br-mcp reach **the same number, group by group**: J12
+461, J13 37, J14 1, J15 3,648, J16 265, J17 100, J18 8,793. That is neither
+coincidence nor anyone's merit: sih-br-mcp's cubes are built from a 1:1
+Parquet mirror of the same `.dbc` files, over the same billing-month window.
+What differs is **where the work happens**. With microdata, on your machine,
+for every question. With sih-br-mcp, once, when the cubes are built; the
+question only reads the result.
+
+PySUS fell short for a reason that gets its own section below.
+
+### microdatasus (R)
+
+One file at a time: binding all 432 does not fit in memory.
+
+```r
+library(microdatasus)
+library(dplyr)
+
+ufs   <- c("AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA",
+           "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO")
+comps <- seq(as.Date("2024-01-01"), as.Date("2025-04-01"), by = "month")
+
+pneu <- list()
+for (d in as.list(comps)) for (uf in ufs) {
+  y <- as.integer(format(d, "%Y")); m <- as.integer(format(d, "%m"))
+  rd <- fetch_datasus(year_start = y, month_start = m, year_end = y, month_end = m,
+                      uf = uf, information_system = "SIH-RD",
+                      vars = c("MUNIC_RES", "DT_INTER", "DIAG_PRINC", "MORTE"))
+  pneu[[length(pneu) + 1]] <- rd |>
+    filter(substr(MUNIC_RES, 1, 2) == "32",                     # lives in ES
+           substr(DT_INTER, 1, 4) == "2024",                    # admitted in 2024
+           substr(DIAG_PRINC, 1, 3) %in% sprintf("J%02d", 12:18))
+}
+bind_rows(pneu) |> summarise(admissions = n(), deaths = sum(MORTE == "1"))
+#>   admissions deaths
+#> 1      13305   1250
+```
+
+432 files, no errors, 40.6 minutes. `fetch_datasus()`'s `vars =` helps: only
+four columns stay in memory. Note `MORTE == "1"`: `fetch_datasus()` returns
+everything as character, and that is what you compare — after
+`process_sih()`, the code becomes `"Sim"`/`"Não"`.
+
+### PySUS (Python)
+
+```python
+import pandas as pd
+import pysus
+
+ufs = "AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO".split()
+comps = [(2024, m) for m in range(1, 13)] + [(2025, m) for m in range(1, 5)]
+pneumonia = {f"J{n}" for n in range(12, 19)}
+
+parts = []
+for y, m in comps:
+    for uf in ufs:
+        rd = pysus.ftp.sih(state=uf, year=y, month=m, group="RD", as_dataframe=True)
+        if rd.empty:
+            continue
+        parts.append(rd[rd["MUNIC_RES"].str[:2].eq("32")
+                        & rd["DT_INTER"].str[:4].eq("2024")
+                        & rd["DIAG_PRINC"].str[:3].isin(pneumonia)])
+pneu = pd.concat(parts)
+len(pneu)
+#> 9135
+```
+
+### sih-br-mcp (inside the assistant)
+
+The question goes in plain language. The assistant picks the tool, and the
+call it makes is this:
+
+```
+get_hospitalizations {
+  "uf": ["ES"], "year": [2024], "cid_chapter": [10], "group_by": ["cid_group"]
+}
+```
+
+The answer carries one row per ICD group (J12 to J18 add up to 13,305
+admissions and 1,250 deaths) and a provenance block saying where each number
+came from: the billing months read (2024-01 to 2025-04, all 27 file states),
+the mirror's vintage, the MD5 of every source `.dbc` and the formal DATASUS
+citation. First call in the session, 0.9 s; the second, 0.7 s.
+
+## The trap in the middle: PySUS 2.11.7 and the files without a group
+
+With `group="RD"`, the loop above returned **9,135** admissions, not 13,305 —
+31% fewer, with no error and no warning.
+
+PySUS 2.x does not list the DATASUS FTP on each call: it queries its own
+catalog (a DuckDB database downloaded on first use) pointing to Parquet
+copies of the files. In that catalog, **4,526 of the 10,946 SIH RD files have
+no group**. A `group="RD"` query filters by group and does not see them. In
+this question's window that is **87 of 432 files** — including 7 of
+Espírito Santo's own 16 months (Jan, Feb, Mar, Jul and Nov 2024; Jan and Apr
+2025) — and the pneumonia admissions inside them add up to **4,170**. The
+arithmetic closes: 9,135 + 4,170 = 13,305.
+
+Calling **without** `group` reaches those files, together with the month's
+other groups (ER, RJ and SP), which you then drop by name. On Windows there
+is a second defect, upstream of that one: the catalog returns `WindowsPath`
+objects, their `str()` comes out with backslashes, and a prefix check written
+with forward slashes discards them all. The SIH calls came back empty, and so
+did the file listings for SIM and SINASC.
+
+Both are the kind of defect fixed in an afternoon once reported. Meanwhile,
+anyone using PySUS 2.11 for SIH should check **how many files came back**,
+not only how many rows.
+
+## Volume, in numbers
+
+| | Size |
+|:--|:--|
+| Raw SIH-RD microdata, 1992–2026, in the mirror | 23.86 GiB, 11,211 files, 432,173,746 records |
+| Everything sih-br-mcp's cube channel publishes | 1.63 GiB |
+| This post's question | 1,358 MiB from microdata; 21 KB from sih-br-mcp |
+| Admissions, days, spending and deaths per year, 1992–2025 | 420,107,114 admissions, one call under 1 s |
+
+## What sih-br-mcp does not do
+
+- **Individual records.** The cubes are aggregates; no AIH can be recovered.
+- **Variables the cubes do not carry**: procedure performed, facility (CNES),
+  admission type, secondary diagnosis.
+- **Other DATASUS systems**: SIM, SINASC, SIA, SINAN, CNES.
+- **What DATASUS published today.** The vintage is the mirror's, and every
+  answer says which.
+
+For all of that, use microdatasus or PySUS.
+
+## Which one
+
+- **Aggregate question, auditable answer, inside the assistant**:
+  sih-br-mcp.
+- **Record-level data, variables outside the cubes, other systems, in R**:
+  microdatasus (and [read.dbc](https://cran.r-project.org/package=read.dbc)
+  if you only need to open the `.dbc`).
+- **The same, in Python**: PySUS, checking how many files came back.
+- **To check sih-br-mcp**: redo the count from microdata, as this post did. A
+  difference is a bug; [open an
+  issue](https://github.com/SidneyBissoli/sih-br-mcp/issues) with the slice.
+
+The three complement more than they compete. sih-br-mcp exists only because
+the microdata is open and because microdatasus and PySUS showed, for years,
+what can be done with it. Thanks to Raphael Saldanha and the PySUS team.
