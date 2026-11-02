@@ -171,11 +171,16 @@ grupos do mês (ER, RJ e SP), que é preciso descartar pelo nome. No Windows há
 um segundo defeito, anterior a esse: o catálogo devolve caminhos do tipo
 `WindowsPath`, o `str()` deles sai com barra invertida, e uma checagem de
 prefixo escrita com barra normal descarta todos. As chamadas do SIH voltaram
-vazias, e a listagem de arquivos do SIM e do SINASC também.
+vazias, e a listagem de arquivos do SIM e do SINASC também. Esse já tinha
+sido [relatado](https://github.com/AlertaDengue/PySUS/issues/372) e está
+corrigido no código desde 30/10
+([PR #374](https://github.com/AlertaDengue/PySUS/pull/374)), à espera da
+próxima versão.
 
-São defeitos do tipo que se conserta numa tarde depois de relatado. Até lá,
-quem usa o PySUS 2.11 para o SIH faz bem em conferir **quantos arquivos
-voltaram**, não só quantas linhas.
+O dos arquivos sem grupo eu [relatei no mesmo
+dia](https://github.com/AlertaDengue/PySUS/issues/380). É do tipo que se
+conserta numa tarde. Até lá, quem usa o PySUS 2.11 para o SIH faz bem em
+conferir **quantos arquivos voltaram**, não só quantas linhas.
 
 ## Volume, em números
 

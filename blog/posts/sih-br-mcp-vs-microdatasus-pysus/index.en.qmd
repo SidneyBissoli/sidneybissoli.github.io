@@ -172,11 +172,16 @@ other groups (ER, RJ and SP), which you then drop by name. On Windows there
 is a second defect, upstream of that one: the catalog returns `WindowsPath`
 objects, their `str()` comes out with backslashes, and a prefix check written
 with forward slashes discards them all. The SIH calls came back empty, and so
-did the file listings for SIM and SINASC.
+did the file listings for SIM and SINASC. That one had already been
+[reported](https://github.com/AlertaDengue/PySUS/issues/372) and is fixed in
+the code since 30 October
+([PR #374](https://github.com/AlertaDengue/PySUS/pull/374)), awaiting the
+next release.
 
-Both are the kind of defect fixed in an afternoon once reported. Meanwhile,
-anyone using PySUS 2.11 for SIH should check **how many files came back**,
-not only how many rows.
+The missing-group one I [reported the same
+day](https://github.com/AlertaDengue/PySUS/issues/380). It is the kind of
+defect fixed in an afternoon. Meanwhile, anyone using PySUS 2.11 for SIH
+should check **how many files came back**, not only how many rows.
 
 ## Volume, in numbers
 
