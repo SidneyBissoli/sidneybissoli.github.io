@@ -19,7 +19,14 @@
 $ErrorActionPreference = 'Stop'
 
 $raiz    = Split-Path -Parent $PSScriptRoot
-$rscript = 'C:\Program Files\R\R-4.6.1\bin\Rscript.exe'
+# Newest complete R install. A leftover Rscript.exe from an uninstalled version
+# passes Test-Path but exits 10 with no message, so R.exe is the proof.
+$rInstall = Get-ChildItem 'C:\Program Files\R' -Directory -Filter 'R-*' |
+    Where-Object { $_.Name -match '^R-\d+\.\d+\.\d+$' -and (Test-Path (Join-Path $_.FullName 'bin\R.exe')) } |
+    Sort-Object { [version]($_.Name -replace '^R-', '') } -Descending |
+    Select-Object -First 1
+if (-not $rInstall) { throw 'no complete R install under C:\Program Files\R' }
+$rscript = Join-Path $rInstall.FullName 'bin\Rscript.exe'
 $dominio = 'https://sidneybissoli.com'
 
 function Registrar($texto) { Write-Output ("[publicar-site] " + $texto) }
