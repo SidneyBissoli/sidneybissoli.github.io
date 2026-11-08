@@ -4,7 +4,7 @@
 # direto: sem o segundo passo daqui, a versão em inglês sai com a barra de
 # navegação em português.
 #
-#   "C:/Program Files/R/R-4.6.1/bin/Rscript.exe" scripts/render-site.R
+#   "C:/Program Files/R/R-4.6.2/bin/Rscript.exe" scripts/render-site.R
 #
 # POR QUE EXISTE O SEGUNDO PASSO. O caminho normal para traduzir a barra seria
 # um bloco `navbar` no `_quarto-en.yml`, e era o que este projeto tinha. Só que
