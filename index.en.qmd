@@ -1,5 +1,6 @@
 ---
-pagetitle: "Sidney Bissoli"
+pagetitle: "Sidney Bissoli — Brazilian public data for R and AI"
+title-prefix: ""
 page-layout: custom
 toc: false
 css: styles.css

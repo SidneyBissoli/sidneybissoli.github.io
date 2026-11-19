@@ -1,5 +1,6 @@
 ---
 title: "R packages"
+pagetitle: "R packages for Brazilian public data"
 subtitle: "I write packages that hand back Brazilian public data tidy, straight from R"
 page-layout: full
 toc: false

@@ -1,5 +1,6 @@
 ---
 title: "Servidores MCP"
+pagetitle: "Servidores MCP de dados públicos oficiais"
 subtitle: "Dou a assistentes de IA acesso ao vivo a dados públicos, com procedência em toda resposta"
 page-layout: full
 toc: false
