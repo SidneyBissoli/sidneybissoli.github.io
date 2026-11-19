@@ -18,6 +18,14 @@
   --blue-very-light: #ebf8ff;
   --grey-light: #edf2f7;
   --white: #ffffff;
+  /* Dark band shared by navbar, home, page titles and footer (19/11/2026). */
+  --navy: #0f1c2e;
+  --navy-deep: #0b1524;
+  --ink: #f4f6fa;
+  --muted-on-navy: #a9b6c8;
+  --accent-on-navy: #63b3ed;
+  --line-on-navy: rgba(255, 255, 255, 0.14);
+  --glow: radial-gradient(1200px 600px at 85% -10%, rgba(99, 179, 237, 0.18), transparent 60%);
 }
 
 /* ============================================
@@ -45,72 +53,235 @@ h2 { font-size: 1.8rem; }
 h3 { font-size: 1.4rem; color: var(--secondary-color); }
 
 /* ============================================
-   Hero Section (Home Page)
+   Home Page (19/11/2026)
+   One dark section: one statement, four numbered tiles. Replaces the
+   photo+quote hero and the text block below it, which read as two designs.
    ============================================ */
 
-.hero-section {
-  min-height: calc(100vh - 120px);
+.home {
+  --home-bg: var(--navy);
+  --home-ink: var(--ink);
+  --home-muted: var(--muted-on-navy);
+  --home-accent: var(--accent-on-navy);
+  --home-line: var(--line-on-navy);
+  background: var(--glow), var(--home-bg);
+  color: var(--home-ink);
+  min-height: calc(100vh - 140px);
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(180deg, var(--white) 0%, var(--light-gray) 100%);
+  padding: 4.5rem 1.5rem 5rem;
 }
 
-.hero-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4rem;
-  max-width: 1100px;
+/* Quarto pads every child of #quarto-content (`#quarto-content > *`,
+   padding-top: 14px); the id outranks `.home`, so the padding goes here. */
+#quarto-content > .home {
+  padding-top: 4.5rem;
+}
+
+.home-inner {
+  max-width: 1080px;
   width: 100%;
+  margin: 0 auto;
 }
 
-.hero-image-col {
-  flex-shrink: 0;
+.home-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 4rem;
+  align-items: center;
+  margin-bottom: 3rem;
 }
 
-.hero-image {
-  width: 340px;
-  height: 340px;
-  border-radius: 50%;
+.home-photo-col p,
+.home-photo-col figure {
+  margin: 0;
+}
+
+.home-photo-col {
+  text-align: center;
+}
+
+.home-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
   object-fit: cover;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s ease;
+  border-radius: 50%;
+  /* The source PNG is a circle on white; clip just inside its edge. */
+  clip-path: circle(49.4%);
+  margin: 0 auto 1.5rem;
 }
 
-.hero-image:hover {
-  transform: scale(1.02);
-}
-
-.hero-text-col {
-  text-align: left;
-}
-
-.hero-section h1 {
-  font-size: 3rem;
-  margin: 0 0 0.5rem 0;
+.home-name {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 2.1rem;
   font-weight: 700;
+  line-height: 1.1;
+  color: var(--home-ink);
 }
 
-.hero-subtitle {
-  font-size: 1.3rem;
-  color: var(--secondary-color);
-  margin-bottom: 2rem;
+.home-role {
+  margin-top: 0.4rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  color: var(--home-muted);
+}
+
+.home h1 {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: clamp(2.6rem, 6vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--home-ink);
+  margin: 0 0 1.5rem;
+  max-width: 16ch;
+}
+
+.home-accent {
+  color: var(--home-accent);
+}
+
+.home-lead {
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.6;
+  color: var(--home-muted);
+  max-width: 46ch;
+}
+
+.home-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--home-line);
+}
+
+.home-tiles p {
+  display: contents;
+}
+
+.home .tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.5rem 1.25rem 0.5rem 0;
+  color: var(--home-ink);
+  text-decoration: none;
+  border-right: 1px solid var(--home-line);
+  margin-right: 1.25rem;
+  transition: color 0.2s ease;
+}
+
+.home .tile:last-child {
+  border-right: none;
+  margin-right: 0;
+}
+
+.home .tile:hover {
+  color: var(--home-ink);
+  text-decoration: none;
+}
+
+.home .tile:hover .tile-label {
+  color: var(--home-accent);
+}
+
+.tile-num {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--home-accent);
+}
+
+.tile-label {
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: color 0.2s ease;
+}
+
+.tile-desc {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--home-muted);
+}
+
+/* ============================================
+   Page Title Band (every page but the home, 19/11/2026)
+   ============================================ */
+
+#title-block-header.quarto-title-block.default .quarto-title-banner,
+.quarto-title-banner {
+  background: var(--glow), var(--navy);
+  color: var(--ink);
+  padding: 4.5rem 0 3.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.quarto-title-banner .quarto-title h1.title {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.quarto-title-banner .subtitle,
+.quarto-title-banner .quarto-title .subtitle {
+  margin-top: 1rem;
+  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--muted-on-navy);
+  max-width: 52ch;
+}
+
+.quarto-title-banner .quarto-categories {
+  margin-top: 1.25rem;
+}
+
+.quarto-title-banner .quarto-category {
+  background: rgba(99, 179, 237, 0.14);
+  color: var(--accent-on-navy);
+  border: 1px solid rgba(99, 179, 237, 0.35);
+  opacity: 1;
+}
+
+/* Banner text lines up with the body text. Full-width pages (main is
+   .column-page-left) place text on the body-content grid line; article pages
+   also pad main (.content, 2rem, Content Pages rule below). Measured on
+   screenshots at 1440px and 390px, 19/11/2026. */
+.quarto-title-banner .quarto-title,
+#title-block-header > .quarto-title-meta {
+  grid-column: body-content-start / body-content-end;
+}
+
+body:not(:has(main.column-page-left)) .quarto-title-banner .quarto-title,
+body:not(:has(main.column-page-left)) #title-block-header > .quarto-title-meta {
+  padding-left: 2rem;
+}
+
+.quarto-title-banner .description,
+.quarto-title-banner .description p {
+  color: var(--muted-on-navy);
   font-weight: 400;
 }
 
-.hero-quote {
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 1.15rem;
-  color: var(--secondary-color);
-  line-height: 1.8;
-  max-width: 400px;
+main h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-.hero-quote em {
-  font-style: italic;
-  color: var(--text-color);
+/* Listing cards (blog, projects): no grey placeholder when a post has no
+   image, and titles sized for a three-column grid. */
+.listing-item-img-placeholder {
+  display: none !important;
+}
+
+.quarto-grid-item .card-title {
+  font-size: 1.3rem;
+  line-height: 1.25;
 }
 
 /* ============================================
@@ -118,26 +289,28 @@ h3 { font-size: 1.4rem; color: var(--secondary-color); }
    ============================================ */
 
 .navbar {
-  background-color: var(--white) !important;
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background-color: var(--navy-deep) !important;
+  border-bottom: 1px solid var(--line-on-navy);
 }
 
 .navbar-nav .nav-link {
   font-weight: 500;
-  color: var(--secondary-color) !important;
+  color: var(--muted-on-navy) !important;
   margin: 0 0.5rem;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease;
 }
 
-.navbar-nav .nav-link:hover {
-  color: var(--accent-color) !important;
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--ink) !important;
 }
 
-.navbar-brand {
+.navbar-brand,
+.navbar-brand .navbar-title {
   font-family: 'Crimson Text', serif;
-  font-weight: 600;
-  font-size: 1.3rem;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--ink) !important;
 }
 
 /* ============================================
@@ -145,11 +318,15 @@ h3 { font-size: 1.4rem; color: var(--secondary-color); }
    ============================================ */
 
 .nav-footer {
-  background-color: var(--light-gray) !important;
-  border-top: 1px solid var(--border-color);
+  background-color: var(--navy-deep) !important;
+  border-top: 1px solid var(--line-on-navy);
   padding: 1.5rem 0;
-  color: var(--secondary-color);
+  color: var(--muted-on-navy);
   font-size: 0.9rem;
+}
+
+.nav-footer a {
+  color: var(--accent-on-navy);
 }
 
 /* ============================================
@@ -178,13 +355,15 @@ a:hover {
 
 .card {
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  transition: all 0.3s ease;
+  border-top: 3px solid var(--navy);
+  border-radius: 14px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 18px 40px rgba(15, 28, 46, 0.14);
+  border-top-color: var(--accent-color);
   transform: translateY(-4px);
 }
 
@@ -199,7 +378,7 @@ a:hover {
 
 .card-title {
   font-family: 'Crimson Text', serif;
-  font-size: 1.2rem;
+  font-size: 1.45rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
@@ -346,36 +525,41 @@ hr {
    ============================================ */
 
 @media (max-width: 768px) {
-  .hero-section {
-    min-height: auto;
-    padding: 3rem 1.5rem;
+  /* On phones every page pads main by 2rem; the banner follows. */
+  .quarto-title-banner .quarto-title,
+  #title-block-header > .quarto-title-meta {
+    padding-left: 2rem !important;
+    padding-right: 2rem;
   }
 
-  .hero-container {
-    flex-direction: column;
-    text-align: center;
+  .home,
+  #quarto-content > .home {
+    padding: 3rem 1.25rem 3.5rem;
+  }
+
+  .home-top {
+    grid-template-columns: 1fr;
     gap: 2rem;
   }
 
-  .hero-text-col {
-    text-align: center;
+  .home-photo-col {
+    order: -1;
   }
 
-  .hero-section h1 {
-    font-size: 2.2rem;
+  .home-photo {
+    max-width: 220px;
   }
 
-  .hero-subtitle {
-    font-size: 1.1rem;
+  .home-tiles {
+    grid-template-columns: 1fr 1fr;
   }
 
-  .hero-quote {
-    max-width: 100%;
-  }
-
-  .hero-image {
-    width: 180px;
-    height: 180px;
+  .home .tile {
+    border-right: none;
+    margin-right: 0;
+    padding-right: 0.75rem;
+    border-bottom: 1px solid var(--home-line);
+    padding-bottom: 1.25rem;
   }
 
   h1 { font-size: 2rem; }
@@ -403,18 +587,3 @@ hr {
 }
 */
 
-/* Conteúdo da página inicial, abaixo do hero (18/11/2026): o Bing Webmaster
-   acusou "insufficient content" com só o nome e a citação (~25 palavras). */
-.home-content {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
-}
-
-.home-content h2 {
-  margin-top: 0;
-}
-
-.home-content h3 {
-  margin-top: 2rem;
-}

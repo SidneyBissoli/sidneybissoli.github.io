@@ -23,10 +23,10 @@ argumento; e da clínica, onde aprendi que a coisa mais perigosa não é não sa
 
 ## O que eu construí
 
-**[Servidores MCP](/tools/)** — seis servidores que dão a assistentes de IA
+**[Servidores MCP](/tools/)** — sete servidores que dão a assistentes de IA
 acesso ao vivo a dados do IBGE, do Banco Central, do Senado Federal, do DataSUS
 e de bases internacionais da OIT e da UNESCO. Toda resposta carrega procedência;
-os seis pontuam 100% em conformidade de protocolo, com verificação automática
+os sete pontuam 100% em conformidade de protocolo, com verificação automática
 que impede regressão.
 
 **[Pacotes R](/packages/)** — cinco pacotes de acesso a dados públicos, dois
