@@ -1,5 +1,7 @@
 ---
 title: "Central Bank of Brazil series: SGS, Focus and PTAX without the traps"
+pagetitle: "Central Bank of Brazil series: SGS, Focus, PTAX"
+description: "How to query the Central Bank of Brazil's SGS, Focus and PTAX: three API limits measured live, level vs. rate series, and what the ODbL requires."
 subtitle: "Three API limits measured live, level series vs. rate series, and what the ODbL requires"
 author: "Sidney Bissoli"
 date: "2026-08-31"

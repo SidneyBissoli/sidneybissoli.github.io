@@ -1,5 +1,7 @@
 ---
 title: "Querying SIDRA through MCP in Claude and ChatGPT — IBGE inside the assistant, with provenance"
+pagetitle: "Querying IBGE SIDRA via MCP in Claude and ChatGPT"
+description: "How to connect ibge-br-mcp in Claude and ChatGPT, and one real SIDRA query end to end: from the question to the URL that reproduces the figure."
 subtitle: "How to connect ibge-br-mcp in each client, and one real query end to end: from the question to the URL that reproduces it"
 author: "Sidney Bissoli"
 date: "2026-09-02"

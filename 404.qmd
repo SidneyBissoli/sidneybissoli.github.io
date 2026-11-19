@@ -1,5 +1,6 @@
 ---
 title: "Página não encontrada"
+description: "A página procurada não existe ou mudou de endereço."
 page-layout: article
 toc: false
 ---

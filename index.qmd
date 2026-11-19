@@ -1,5 +1,6 @@
 ---
 pagetitle: "Sidney Bissoli — dados públicos brasileiros para R e IA"
+description: "Ferramentas que entregam dados públicos brasileiros com a fonte: sete servidores MCP para assistentes de IA e cinco pacotes R."
 title-prefix: ""
 page-layout: custom
 toc: false

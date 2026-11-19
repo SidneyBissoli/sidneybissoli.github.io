@@ -1,5 +1,7 @@
 ---
 title: "ICD-10, ICD-11 and what changes for people working with Brazilian health data"
+pagetitle: "ICD-10 to ICD-11 in Brazilian health data"
+description: "The structure of the ICD-10 version used by Brazil's SUS (V2008) in numbers, and what WHO's ICD-11 transition tables are, and are not."
 subtitle: "The V2008 structure in numbers, and what WHO's transition tables are — and are not"
 author: "Sidney Bissoli"
 date: "2026-08-31"

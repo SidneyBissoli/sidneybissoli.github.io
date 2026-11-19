@@ -1,5 +1,7 @@
 ---
 title: "Séries do Banco Central: SGS, Focus e PTAX sem cair nas armadilhas"
+pagetitle: "Séries do Banco Central: SGS, Focus e PTAX"
+description: "Como consultar SGS, Focus e PTAX do Banco Central: os três limites da API medidos ao vivo, série de nível contra série de taxa e o que a ODbL exige."
 subtitle: "Os três limites da API medidos ao vivo, série de nível contra série de taxa, e o que a ODbL exige"
 author: "Sidney Bissoli"
 date: "2026-08-31"

@@ -1,5 +1,7 @@
 ---
 title: "healthbR ou microdatasus? Os dois pacotes R para o DATASUS, lado a lado no mesmo download"
+pagetitle: "healthbR ou microdatasus? Dois pacotes R no DATASUS"
+description: "SIM, SINASC e SIH lidos pelo healthbR e pelo microdatasus no mesmo download: o que cada um devolve, quanto demora e uma armadilha de cada lado."
 subtitle: "SIM, SINASC e SIH lidos pelos dois pacotes: o que cada um devolve, quanto demora, onde os códigos viram rótulos — e uma armadilha em cada lado"
 author: "Sidney Bissoli"
 date: "2026-09-05"

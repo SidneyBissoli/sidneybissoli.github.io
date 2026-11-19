@@ -1,5 +1,6 @@
 ---
 title: "R packages"
+description: "R packages that return tidy Brazilian public data: education (INEP), public health, CVM and the Senate; two of them on CRAN."
 pagetitle: "R packages for Brazilian public data"
 subtitle: "I write packages that hand back Brazilian public data tidy, straight from R"
 page-layout: full

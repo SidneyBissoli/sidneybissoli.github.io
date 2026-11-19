@@ -1,5 +1,7 @@
 ---
 title: "CID-10, CID-11 e o que muda para quem trabalha com dados do SUS"
+pagetitle: "CID-10 e CID-11 nos dados do SUS: o que muda"
+description: "A estrutura da CID-10 usada no SUS (V2008) em números, e o que as tabelas de transição da OMS para a CID-11 são e o que elas não são."
 subtitle: "A estrutura da V2008 em números, o que as tabelas de transição da OMS são — e o que elas não são"
 author: "Sidney Bissoli"
 date: "2026-08-31"

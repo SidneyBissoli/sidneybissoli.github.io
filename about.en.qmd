@@ -1,5 +1,6 @@
 ---
 title: "About me"
+description: "Sidney Bissoli is a psychologist and data scientist who builds MCP servers and R packages that deliver Brazilian public data with its source."
 pagetitle: "About me: psychologist, public data"
 page-layout: article
 toc: true

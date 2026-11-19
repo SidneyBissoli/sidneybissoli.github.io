@@ -1,5 +1,7 @@
 ---
 title: "Como achar a tabela certa no SIDRA — e como saber que é a certa"
+pagetitle: "Como achar a tabela certa no SIDRA do IBGE"
+description: "Os três passos para achar a tabela certa no SIDRA do IBGE, os metadados que confirmam a escolha e as quatro armadilhas que mais custam caro."
 subtitle: "Os três passos, os metadados que decidem, e as quatro armadilhas que mais custam caro"
 author: "Sidney Bissoli"
 date: "2026-08-31"
