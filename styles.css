@@ -402,3 +402,19 @@ hr {
   }
 }
 */
+
+/* Conteúdo da página inicial, abaixo do hero (18/11/2026): o Bing Webmaster
+   acusou "insufficient content" com só o nome e a citação (~25 palavras). */
+.home-content {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+}
+
+.home-content h2 {
+  margin-top: 0;
+}
+
+.home-content h3 {
+  margin-top: 2rem;
+}
