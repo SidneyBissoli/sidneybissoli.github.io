@@ -1,5 +1,6 @@
 ---
 title: "Pacotes R"
+pagetitle: "Pacotes R de dados públicos brasileiros"
 subtitle: "Escrevo pacotes que entregam dado público brasileiro arrumado, direto no R"
 page-layout: full
 toc: false

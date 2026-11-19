@@ -1,5 +1,6 @@
 ---
 title: "About me"
+pagetitle: "About me: psychologist, public data"
 page-layout: article
 toc: true
 # Markdown ao lado do HTML (mesmo caminho, index.md): a superficie que

@@ -1,5 +1,6 @@
 ---
 title: "Blog"
+pagetitle: "Blog: psychology, public health, finance"
 subtitle: "Insights on Psychology, Public Health and Finance"
 # Feeds the RSS channel <description>; `subtitle` does not.
 description: "Tutorials and analyses on psychology, public health and financial markets, with a focus on data and R programming."
