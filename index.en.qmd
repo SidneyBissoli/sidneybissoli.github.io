@@ -33,3 +33,40 @@ Data scientist & psychologist
 :::
 
 :::
+
+::: {.home-content}
+
+## Brazilian public data, ready to check
+
+I work with Brazilian public data and build tools that deliver it ready for
+analysis: every number comes with its source and the path back to it, because a
+number without provenance cannot support an argument.
+
+### MCP servers for AI assistants
+
+Servers that give Claude, ChatGPT and other assistants live access to official
+data: IBGE (SIDRA, Census, municipalities), the Central Bank of Brazil (SGS time
+series, Focus market expectations, PTAX exchange rates), the Brazilian Senate
+(votes, bills, parliamentary expenses), medical terminologies (ICD-10, ICD-11,
+LOINC) and the international databases of the ILO and UNESCO. Nothing to
+install: point any MCP client at the server's address. [See the servers →](/tools/)
+
+### R packages
+
+Packages that download, read and tidy official data straight into R: education
+(INEP), public health (DATASUS, PNS, VIGITEL), listed companies and funds (CVM)
+and the Brazilian Senate. Two of them are on CRAN. [See the packages →](/packages/)
+
+### Blog
+
+Tutorials and analyses built on the data these tools serve: finding the right
+SIDRA table, the pitfalls of Central Bank time series, and the move from ICD-10
+to ICD-11 in Brazil's public health system. [Read the blog →](/blog/)
+
+### A citable dataset
+
+The participation layer of the Brazilian Senate's e-Cidadania portal, versioned,
+with a DOI on Zenodo and field-by-field provenance: the layer no legislative data
+package covered. [Learn more →](/about.html)
+
+:::

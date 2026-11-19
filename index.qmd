@@ -33,3 +33,40 @@ Cientista de dados & psicólogo
 :::
 
 :::
+
+::: {.home-content}
+
+## Dados públicos brasileiros, prontos para conferir
+
+Trabalho com dados públicos brasileiros e construo ferramentas que os entregam
+prontos para análise: cada número vem com a fonte e o caminho de volta até ela,
+porque um número sem procedência não sustenta um argumento.
+
+### Servidores MCP para assistentes de IA
+
+Servidores que dão ao Claude, ao ChatGPT e a outros assistentes acesso ao vivo a
+dados oficiais: IBGE (SIDRA, Censo, municípios), Banco Central (séries do SGS,
+expectativas Focus, câmbio PTAX), Senado Federal (votações, matérias, cota
+parlamentar), terminologias médicas (CID-10, CID-11, LOINC) e as bases
+internacionais da OIT e da UNESCO. Não é preciso instalar nada: basta apontar o
+cliente MCP para o endereço do servidor. [Ver os servidores →](/tools/)
+
+### Pacotes R
+
+Pacotes que baixam, leem e arrumam dados oficiais direto no R: educação (INEP),
+saúde pública (DATASUS, PNS, VIGITEL), companhias abertas e fundos (CVM) e o
+Senado Federal. Dois deles estão no CRAN. [Ver os pacotes →](/packages/)
+
+### Blog
+
+Tutoriais e análises com os dados que essas ferramentas servem: como achar a
+tabela certa no SIDRA, as armadilhas das séries do Banco Central e a passagem da
+CID-10 para a CID-11 no SUS. [Ler o blog →](/blog/)
+
+### Um conjunto de dados citável
+
+A camada de participação do portal e-Cidadania do Senado Federal, versionada,
+com DOI no Zenodo e procedência campo a campo: a camada que nenhum pacote de
+acesso a dados legislativos cobria. [Saiba mais →](/about.html)
+
+:::
