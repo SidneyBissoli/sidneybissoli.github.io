@@ -21,7 +21,7 @@ the open standard that connects assistants to data sources. They work with
 Claude, ChatGPT and any compatible client, and need no installation: point the
 client at the address.
 
-## What I guaranteed across the six
+## What I guaranteed across the seven
 
 **Provenance on every response.** I made each figure come with its source, the
 reference period, the canonical URL that reproduces the query, the real
@@ -30,7 +30,7 @@ makes the number checkable, citable and auditable. When the server computes
 something — a variation, a distribution — the result is flagged as derived, with
 the convention it used.
 
-**Verified protocol conformity.** I brought all six to 100% on
+**Verified protocol conformity.** I brought all seven to 100% on
 [`mcpscore`](https://pypi.org/project/mcpscore/), with a CI ratchet that blocks
 regression: a change that lowers the score is not accepted.
 
@@ -112,6 +112,23 @@ from machine translation.
 ::: {.g-col-12 .g-col-md-6}
 ::: {.card .h-100}
 ::: {.card-body}
+### SIH/SUS (DATASUS) {.card-title}
+
+Brazil's public-health-system hospital admissions, 1992 to 2025: causes by ICD
+code, monthly series, ambulatory care sensitive conditions (ICSAP) and rates
+per 100,000 by state and municipality. It reads aggregated cubes from a public
+Parquet mirror, never the FTP or TabNet.
+
+[`sih.sidneybissoli.com`](https://sih.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/sih-br-mcp) ·
+[npm](https://www.npmjs.com/package/sih-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
 ### ILOSTAT (ILO) {.card-title}
 
 Tools over the International Labour Organization's statistical database:
@@ -153,7 +170,7 @@ In any MCP client with HTTP support, point it at the server address followed by
 https://ibge.sidneybissoli.com/mcp
 ```
 
-No installation, no sign-up, no API key. For local use, the five published to
+No installation, no sign-up, no API key. For local use, the six published to
 npm run with `npx` — for example, `npx -y ibge-br-mcp`.
 
 Then just ask:

@@ -23,10 +23,10 @@ knowing* — it is believing you know.
 
 ## What I have built
 
-**[MCP servers](/tools/)** — six servers that give AI assistants live access to
+**[MCP servers](/tools/)** — seven servers that give AI assistants live access to
 data from IBGE (Brazilian statistics), the Central Bank of Brazil, the Federal
 Senate, DataSUS, and the international databases of the ILO and UNESCO. Every
-response carries provenance; all six score 100% on protocol conformity, with
+response carries provenance; all seven score 100% on protocol conformity, with
 automated checks that block regression.
 
 **[R packages](/packages/)** — five packages for accessing public data, two of

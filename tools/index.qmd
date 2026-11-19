@@ -21,7 +21,7 @@ padrão aberto que conecta assistentes a fontes de dados. Funcionam com Claude,
 ChatGPT e qualquer cliente compatível, e não exigem instalação: basta apontar o
 cliente para o endereço.
 
-## O que eu garanti nos seis
+## O que eu garanti nos sete
 
 **Procedência em toda resposta.** Fiz cada número sair com a fonte, o período de
 referência, a URL canônica que reproduz a consulta, o instante real da extração
@@ -29,7 +29,7 @@ e a licença. Não é um rodapé decorativo: é o que permite conferir, citar e
 auditar. Quando o servidor calcula alguma coisa — uma variação, uma
 distribuição —, o resultado vem marcado como derivado, com a convenção usada.
 
-**Conformidade de protocolo verificada.** Deixei os seis em 100% no
+**Conformidade de protocolo verificada.** Deixei os sete em 100% no
 [`mcpscore`](https://pypi.org/project/mcpscore/), com uma catraca no CI que
 impede regressão: uma alteração que derrube a nota não é aceita.
 
@@ -111,6 +111,23 @@ da NLM; nunca de tradução de máquina.
 ::: {.g-col-12 .g-col-md-6}
 ::: {.card .h-100}
 ::: {.card-body}
+### SIH/SUS (DATASUS) {.card-title}
+
+Internações hospitalares do SUS de 1992 a 2025: causas pela CID, séries
+mensais, condições sensíveis à atenção primária (ICSAP) e taxas por 100 mil
+habitantes, por UF e município. Lê cubos agregados de um espelho público em
+Parquet, nunca o FTP nem o TabNet.
+
+[`sih.sidneybissoli.com`](https://sih.sidneybissoli.com) ·
+[GitHub](https://github.com/SidneyBissoli/sih-br-mcp) ·
+[npm](https://www.npmjs.com/package/sih-br-mcp)
+:::
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.card .h-100}
+::: {.card-body}
 ### ILOSTAT (OIT) {.card-title}
 
 Ferramentas sobre a base estatística da Organização Internacional do
@@ -152,7 +169,7 @@ seguido de `/mcp`. Por exemplo, para o do IBGE:
 https://ibge.sidneybissoli.com/mcp
 ```
 
-Não há instalação, cadastro nem chave de API. Para uso local, os cinco
+Não há instalação, cadastro nem chave de API. Para uso local, os seis
 publicados no npm rodam com `npx` — por exemplo, `npx -y ibge-br-mcp`.
 
 Depois é só perguntar em português:

@@ -51,7 +51,10 @@ website:
   # é o endereço que o buscador considera oficial.
   site-url: "https://sidneybissoli.com"
   navbar:
-    background: light
+    # Escura desde 19/11/2026, junto com a página inicial e a faixa de
+    # título de cada página (title-block-banner, abaixo).
+    background: "#0b1524"
+    foreground: "#dbe3ee"
     pinned: true
     # collapse: true (padrao) porque sao sete itens: em tela estreita
     # eles viram menu sanfona em vez de estourar a linha.
@@ -90,7 +93,7 @@ website:
   page-footer:
     center: |
       © 2025 Sidney Bissoli · Feito com [Quarto](https://quarto.org/)
-    background: light
+    background: "#0b1524"
 
 format:
   html:
@@ -100,6 +103,9 @@ format:
     linestretch: 1.6
     toc: false
     page-layout: full
+    # Faixa azul-escura com o título em toda página (19/11/2026), no mesmo
+    # desenho da página inicial; a cor e a tipografia ficam no styles.css.
+    title-block-banner: true
     css: styles.css
     # Verificação de propriedade no Bing Webmaster Tools (13/10/2026). O
     # código é público por definição; tirar a linha DESVERIFICA o site.
