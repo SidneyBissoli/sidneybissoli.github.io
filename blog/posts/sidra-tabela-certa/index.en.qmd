@@ -1,5 +1,7 @@
 ---
 title: "Finding the right SIDRA table — and knowing that it is the right one"
+pagetitle: "Finding the right SIDRA table at IBGE"
+description: "The three steps to find the right IBGE SIDRA table, the metadata that confirms the choice, and the four traps that cost the most."
 subtitle: "The three steps, the metadata that settles it, and the four traps that cost the most"
 author: "Sidney Bissoli"
 date: "2026-08-31"

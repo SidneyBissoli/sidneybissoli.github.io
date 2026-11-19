@@ -1,5 +1,7 @@
 ---
 title: "healthbR or microdatasus? The two R packages for DATASUS, side by side on the same download"
+pagetitle: "healthbR or microdatasus? R packages for DATASUS"
+description: "SIM, SINASC and SIH read by healthbR and microdatasus from the same download: what each returns, how long it takes, and one trap on each side."
 subtitle: "SIM, SINASC and SIH read by both packages: what each returns, how long it takes, where codes become labels — and one trap on each side"
 author: "Sidney Bissoli"
 date: "2026-09-05"

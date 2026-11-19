@@ -1,5 +1,6 @@
 ---
 title: "Pacotes R"
+description: "Pacotes R que entregam dados públicos brasileiros arrumados: educação (INEP), saúde pública, CVM e Senado; dois deles no CRAN."
 pagetitle: "Pacotes R de dados públicos brasileiros"
 subtitle: "Escrevo pacotes que entregam dado público brasileiro arrumado, direto no R"
 page-layout: full

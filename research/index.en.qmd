@@ -1,5 +1,6 @@
 ---
 title: "Research"
+description: "Academic publications and professional work by Sidney Bissoli in psychology, public health and data."
 subtitle: "Academic Publications and Professional Work"
 page-layout: article
 toc: true

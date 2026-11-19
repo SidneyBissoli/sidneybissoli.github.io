@@ -1,5 +1,6 @@
 ---
 title: "MCP servers"
+description: "Seven MCP servers that give AI assistants live access to official public data (IBGE, Central Bank, Senate, DATASUS and more), with the source."
 pagetitle: "MCP servers for official public data"
 subtitle: "I give AI assistants live access to public data, with provenance on every response"
 page-layout: full

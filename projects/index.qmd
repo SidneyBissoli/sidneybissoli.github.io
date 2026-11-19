@@ -1,5 +1,6 @@
 ---
 title: "Projetos"
+description: "Projetos de análise de dados em R em psicologia, saúde pública e mercados financeiros."
 subtitle: "Análises em R para Psicologia, Saúde Pública e Mercados Financeiros"
 listing:
   contents:

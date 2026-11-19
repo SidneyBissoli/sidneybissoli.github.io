@@ -1,5 +1,7 @@
 ---
 title: "Consultando o SIDRA por MCP no Claude e no ChatGPT — o IBGE dentro do assistente, com procedência"
+pagetitle: "SIDRA por MCP no Claude e no ChatGPT"
+description: "Como conectar o ibge-br-mcp no Claude e no ChatGPT, e uma consulta real ao SIDRA de ponta a ponta: da pergunta à URL que reproduz o número."
 subtitle: "Como conectar o ibge-br-mcp em cada cliente, e uma consulta real de ponta a ponta: da pergunta à URL que a reproduz"
 author: "Sidney Bissoli"
 date: "2026-09-02"

@@ -1,5 +1,6 @@
 ---
 title: "Sobre mim"
+description: "Sidney Bissoli é psicólogo e cientista de dados. Constrói servidores MCP e pacotes R que entregam dados públicos brasileiros com a fonte."
 pagetitle: "Sobre mim: psicólogo e dados públicos"
 page-layout: article
 toc: true

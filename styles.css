@@ -261,10 +261,11 @@ body:not(:has(main.column-page-left)) #title-block-header > .quarto-title-meta {
   padding-left: 2rem;
 }
 
-.quarto-title-banner .description,
-.quarto-title-banner .description p {
-  color: var(--muted-on-navy);
-  font-weight: 400;
+/* The `description` field feeds <meta name="description"> (search snippet),
+   the RSS channel and the listing cards; in the band it would repeat the
+   subtitle, so it stays out of sight there (19/11/2026). */
+.quarto-title-banner .description {
+  display: none;
 }
 
 main h2 {

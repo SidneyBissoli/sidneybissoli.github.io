@@ -1,5 +1,7 @@
 ---
 title: "sih-br-mcp, microdatasus ou PySUS? A mesma pergunta sobre internações do SUS por três caminhos"
+pagetitle: "sih-br-mcp, microdatasus ou PySUS? Internações do SUS"
+description: "Pneumonia em moradores do Espírito Santo em 2024 por três caminhos: microdatasus no R, PySUS no Python e sih-br-mcp no assistente de IA."
 subtitle: "Pneumonia em moradores do Espírito Santo em 2024: o microdado em R, o microdado em Python e um servidor MCP no assistente de IA — o mesmo total, quanto custa cada um, e uma armadilha no meio"
 author: "Sidney Bissoli"
 date: "2026-11-02"

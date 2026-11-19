@@ -1,5 +1,6 @@
 ---
 title: "Projects"
+description: "Data analysis projects in R on psychology, public health and financial markets."
 subtitle: "R Analysis for Psychology, Public Health and Financial Markets"
 listing:
   contents:

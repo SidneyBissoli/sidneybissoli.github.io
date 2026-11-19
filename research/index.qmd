@@ -1,5 +1,6 @@
 ---
 title: "Pesquisa"
+description: "Publicações acadêmicas e trabalhos profissionais de Sidney Bissoli em psicologia, saúde pública e dados."
 subtitle: "Publicações Acadêmicas e Trabalhos Profissionais"
 page-layout: article
 toc: true

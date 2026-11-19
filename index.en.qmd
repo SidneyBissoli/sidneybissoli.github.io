@@ -1,5 +1,6 @@
 ---
 pagetitle: "Sidney Bissoli — Brazilian public data for R and AI"
+description: "Tools that deliver Brazilian public data with its source: seven MCP servers for AI assistants and five R packages."
 title-prefix: ""
 page-layout: custom
 toc: false

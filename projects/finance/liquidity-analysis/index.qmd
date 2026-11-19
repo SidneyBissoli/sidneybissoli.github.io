@@ -1,5 +1,7 @@
 ---
 title: "Liquidity Ratios Analysis - Brazilian Stock Market (B3)"
+pagetitle: "Liquidity ratios of B3-listed companies"
+description: "Liquidity ratio analysis of companies listed on Brazil's B3 stock exchange, from balance sheet data, to support investment decisions."
 subtitle: "Balance Sheet Analysis for Investment Decision Support"
 author: "Sidney Bissoli"
 date: "2025-01-05"
