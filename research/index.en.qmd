@@ -29,7 +29,7 @@ This article is part of a larger project examining how the concept of transferen
 
 ## R Analysis Projects
 
-I published here an [analysis of the liquidity ratios of companies listed on B3](/projects/finance/liquidity-analysis/),
+I published here an [analysis of the liquidity ratios of companies listed on B3](https://sidneybissoli.com/projects/finance/liquidity-analysis/),
 built in R from their balance sheets.
 
 ### RPubs Portfolio
