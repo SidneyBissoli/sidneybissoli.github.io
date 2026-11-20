@@ -29,12 +29,8 @@ This article is part of a larger project examining how the concept of transferen
 
 ## R Analysis Projects
 
-Visit my [Projects](/projects/) page to see detailed R analysis on:
-
-- Psychological and behavioral research
-- Public health data analysis
-- Financial markets research
-- Predictive modeling applications
+I published here an [analysis of the liquidity ratios of companies listed on B3](https://sidneybissoli.com/projects/finance/liquidity-analysis/),
+built in R from their balance sheets.
 
 ### RPubs Portfolio
 

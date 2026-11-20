@@ -261,6 +261,26 @@ body:not(:has(main.column-page-left)) #title-block-header > .quarto-title-meta {
   padding-left: 2rem;
 }
 
+/* Full-width pages (Pacotes R, Servidores MCP, Escritos): the band takes
+   main's own box. `.content` (Content Pages, below) is max-width 800px,
+   centred with `margin: 0 auto` and padded 2rem inside page-start /
+   body-content-end, so the text only met the body-content-start line by
+   chance: measured 20/11/2026, the title sat 14 px right of the text at
+   1440-1920px, 26 px at 768 and 61 px at 1024 on all three pages (the note
+   of 19/11 had only /packages/). Same column, width, centring and padding
+   = 0 px at 390, 768, 1024, 1200, 1440 and 1920. */
+body:has(main.column-page-left) .quarto-title-banner .quarto-title,
+body:has(main.column-page-left) #title-block-header > .quarto-title-meta {
+  grid-column: page-start / body-content-end;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 /* The `description` field feeds <meta name="description"> (search snippet),
    the RSS channel and the listing cards; in the band it would repeat the
    subtitle, so it stays out of sight there (19/11/2026). */

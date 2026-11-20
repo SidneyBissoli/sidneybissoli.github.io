@@ -72,8 +72,10 @@ website:
       # com o item, a barra apontava para o .qmd cru e o visitante recebia o
       # fonte em vez de uma pagina (medido em 01/09/2026 antes de publicar).
       # Reincluir junto com a reinclusao do render dos paineis.
-      - href: projects/index.qmd
-        text: Projetos
+      # "Projetos" saiu da barra em 20/11/2026 por decisao do Sidney: a
+      # listagem ficou vazia no redesenho de 19/11. /projects/ redireciona
+      # (render-site.R, REDIRECIONAMENTOS); a analise de liquidez segue no ar
+      # e e citada em Publicacoes.
       - href: blog/index.qmd
         text: Escritos
       - href: research/index.qmd
