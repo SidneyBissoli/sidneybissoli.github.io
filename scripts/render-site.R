@@ -54,7 +54,6 @@ ROTULOS <- c(
   "Servidores MCP" = "MCP servers",
   "Pacotes R"      = "R packages",
   "Painéis"        = "Dashboards",
-  "Projetos"       = "Projects",
   "Escritos"       = "Writing",
   "Publicações"    = "Publications",
   "Sobre mim"      = "About me"
@@ -253,7 +252,14 @@ REDIRECIONAMENTOS <- c(
   "/publications/index.html" = "/research/index.html",
   "/publications/"           = "/research/",
   "/index.en.html"           = "/en/index.html",
-  "/about.en.html"           = "/en/about.html"
+  "/about.en.html"           = "/en/about.html",
+  # A listagem de Projetos saiu do site em 20/11/2026 (aba retirada pelo
+  # dono; estava vazia). A única análise dela segue no ar e é citada em
+  # Publicações, para onde vai quem chega pelo endereço antigo.
+  "/projects/index.html"     = "/research/index.html",
+  "/projects/"               = "/research/",
+  "/en/projects/index.html"  = "/en/research/index.html",
+  "/en/projects/"            = "/en/research/"
 )
 
 message("[4/7] escrevendo _site/_redirects ...")

@@ -29,12 +29,8 @@ Este artigo faz parte de um projeto maior que examina como o conceito de transfe
 
 ## Projetos de Análise em R
 
-Visite minha página de [Projetos](/projects/) para ver análises detalhadas em R sobre:
-
-- Pesquisa psicológica e comportamental
-- Análise de dados em saúde pública
-- Pesquisa em mercados financeiros
-- Aplicações de modelagem preditiva
+Publiquei aqui uma [análise dos índices de liquidez de companhias listadas na B3](/projects/finance/liquidity-analysis/),
+feita em R a partir dos balanços patrimoniais (em inglês).
 
 ### Portfólio no RPubs
 
